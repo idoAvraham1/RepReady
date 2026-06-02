@@ -1,0 +1,97 @@
+[OVERVIEW]
+SignalHQ is a buyer-intent and sales intelligence platform that aggregates signals from 15+ data sources — web behavior, job postings, G2 review activity, technology stack changes, funding announcements, and executive moves — to surface accounts most likely to buy right now. SignalHQ feeds prioritized prospect lists and real-time alerts directly to sales reps and their CRM, eliminating cold prospecting guesswork and allowing teams to focus on accounts with active buying intent.
+
+[PRICING]
+SignalHQ Pricing (annual billing):
+
+Essentials Plan — $79 per seat per month
+  - Up to 10 seats
+  - Access to 5 signal types (web intent, G2 reviews, job postings, funding, tech changes)
+  - 250 account monitors
+  - Weekly digest email
+  - CSV export
+  - HubSpot and Salesforce push (read-only)
+  - Email support
+
+Pro Plan — $139 per seat per month
+  - Up to 50 seats
+  - All 15+ signal types
+  - 2,500 account monitors
+  - Real-time Slack and CRM alerts
+  - AI account prioritization score
+  - Contact-level intent (which personas are researching)
+  - Bi-directional CRM sync
+  - Outreach and Salesloft sequence triggers
+  - Priority support
+
+Enterprise Plan — Custom pricing
+  - Unlimited seats and account monitors
+  - Custom signal ingestion (proprietary data feeds, partner ecosystems)
+  - Dedicated data team for signal calibration
+  - API access (full)
+  - Data warehouse delivery (Snowflake, BigQuery)
+  - SOC 2 Type II and GDPR DPA included
+  - 99.9% uptime SLA
+
+[FEATURES]
+Signal Types Covered:
+1. Web intent: 3rd-party behavioral data showing accounts researching solutions in your category
+2. G2 review activity: accounts comparing your product category on G2/Capterra
+3. Job postings: hiring for roles that signal a buying motion (e.g., "Director of Sales Enablement")
+4. Funding announcements: accounts that just raised venture capital
+5. Technology installs/removals: new tech stack additions or competitive removals detected
+6. Executive moves: new CRO/VP Sales hired (common trigger for platform changes)
+7. News mentions: product launches, partnerships, expansions
+8. Social intent: LinkedIn post engagement on relevant topics
+9. Conference attendance: registered attendees for industry events
+10. Contract renewal signals: estimated contract end dates for competitive accounts
+11. Champion tracking: contact who moved to a new company (warm introduction opportunity)
+12. Website traffic spikes: unusual increases in traffic to your pricing or competitor comparison pages
+13. Support ticket volume (for expansion signals on existing customers)
+14. Product review responses: tracking when accounts respond to review requests
+15. Regulatory changes: industry-specific regulatory triggers (e.g., HIPAA, SOC2 mandates)
+
+AI Account Prioritization:
+- SignalScore (0–100): composite score weighting recency, signal strength, and fit data (ICP match)
+- Account hot streaks: consecutive signal events within a rolling 14-day window
+- "Strike while hot" alerts: real-time push when an account crosses a configurable threshold
+- Team-wide signal deduplication: prevents multiple reps from working the same signal simultaneously
+
+[INTEGRATIONS]
+- CRM: Salesforce (bi-directional), HubSpot (bi-directional), Pipedrive, Zoho
+- Sales engagement: Outreach, Salesloft, Apollo, Lemlist (automated sequence triggers)
+- BI/data warehouse: Snowflake, BigQuery, Databricks (Enterprise)
+- Messaging: Slack (real-time alerts), Teams
+- Data providers: Bombora (co-op intent), G2 Buyer Intent, LinkedIn Sales Navigator
+- Prospecting: ZoomInfo (contact enrichment), Apollo, Clay
+
+[SLA AND SUPPORT]
+Essentials: Email support, 3-day response.
+Pro: Chat + email, business hours. 99.5% uptime SLA. Signal data refreshed every 24 hours.
+Enterprise: 24/7 support, dedicated data team. Signal refresh: up to real-time for web intent. 99.9% uptime.
+
+[DATA COVERAGE]
+- 350M+ contacts in the contact database
+- 40M+ company profiles
+- 180+ countries covered for funding and news signals
+- Intent data from 4,000+ B2B publisher sites (via Bombora co-op network)
+- G2 review data updated daily
+
+[COMPETITIVE DIFFERENTIATORS]
+vs. Bombora: SignalHQ offers 15+ signal types vs. Bombora's single intent signal. SignalHQ's AI scoring layer synthesizes signals into a single actionable score. Bombora is a data vendor; SignalHQ is a workflow platform.
+vs. 6sense: SignalHQ is 50% less expensive per seat and requires no professional services for deployment. 6sense's predictive modeling requires 6+ months of data ingestion to reach accuracy. SignalHQ's scoring works from day one.
+vs. Demandbase: SignalHQ is focused on outbound sales rep workflows while Demandbase is primarily an ABM advertising platform. SignalHQ integrates deeper with sales engagement tools (Outreach, Salesloft).
+vs. ZoomInfo Intent: ZoomInfo Intent is an add-on to a contact database. SignalHQ is a standalone intent platform with 3x more signal types and real-time alerting vs. ZoomInfo's weekly digest.
+
+[FREQUENTLY ASKED QUESTIONS]
+Q: How fresh is the intent data?
+A: Web intent data is refreshed every 24 hours on Pro and every 4 hours on Enterprise. Funding and job posting signals are ingested within minutes of publication. Executive move signals are typically captured within 48 hours.
+
+Q: How do I avoid my team working duplicate signals?
+A: SignalHQ's team deduplication engine assigns signal ownership to the CRM owner of the account. Unowned accounts can be claimed first-come-first-served or distributed by territory rules.
+
+Q: Can SignalHQ track our existing customers for expansion signals?
+A: Yes. Customer accounts can be tagged and monitored for expansion triggers: support ticket spikes, new hiring in target departments, or technology changes indicating increased usage needs.
+
+Q: What is the minimum contract length?
+A: Annual contracts are standard. Monthly contracts are available for Essentials at a 25% premium. Enterprise contracts are typically 2–3 years with custom terms.

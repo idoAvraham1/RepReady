@@ -1,0 +1,105 @@
+[OVERVIEW]
+DealDesk is a collaborative deal-room and proposal automation platform that helps sales teams close enterprise deals faster. Reps create a branded, interactive deal room for each opportunity — a shared digital workspace where prospects can review proposals, pricing, case studies, and contract documents. DealDesk tracks prospect engagement (who viewed what and for how long), sends real-time rep alerts on buyer activity, and automates proposal generation from CRM data using AI.
+
+[PRICING]
+DealDesk Pricing (annual billing):
+
+Starter Plan — $55 per seat per month
+  - Up to 10 seats
+  - 50 active deal rooms
+  - AI proposal generator (basic templates)
+  - Proposal viewing analytics (page-by-page heatmap)
+  - E-signature (up to 20 signers/month)
+  - Salesforce and HubSpot read integration
+  - Email support
+
+Pro Plan — $95 per seat per month
+  - Up to 75 seats
+  - Unlimited active deal rooms
+  - Advanced AI proposal generator (pull live CRM data, custom pricing tables)
+  - Full engagement analytics (video views, document download tracking)
+  - Real-time rep alerts via Slack and email
+  - Mutual Action Plan (MAP) templates
+  - E-signature (unlimited)
+  - Bi-directional CRM sync (auto-updates opportunity stage on key buyer actions)
+  - Priority support + CSM
+
+Enterprise Plan — Custom pricing
+  - Unlimited seats and deal rooms
+  - Custom AI model trained on your winning proposals
+  - Brand governance tools (approved asset libraries, compliance checks)
+  - Advanced contract management and redline tracking
+  - Revenue recognition tagging
+  - API + webhooks
+  - Legal and security review portal (external NDA, DPA, MSA sharing)
+  - 99.9% uptime SLA, dedicated CSM
+
+[FEATURES]
+Deal Room Features:
+- Branded microsites with custom domain (e.g., deals.yourcompany.com/acme)
+- Password-protected or open-access rooms
+- Content blocks: embed video, PDF, pricing tables, ROI calculators, case studies, testimonials
+- Mutual Action Plan (MAP) builder: shared timeline with rep and buyer task ownership
+- Stakeholder mapping: add multiple buyer contacts with tracked individual engagement
+- Champion enablement kit: package materials for your internal champion to sell upward
+
+AI Proposal Generator:
+- Pulls deal data from CRM (company name, deal size, products, contacts) automatically
+- Populates proposal template with relevant case studies (matched by industry and use case)
+- Generates executive summary, ROI section, and timeline automatically
+- Pricing table builder with optional volume discount configurator
+- A/B tested proposal structures: AI recommends which template wins in similar deals
+
+Engagement Intelligence:
+- Real-time notifications: "Acme's VP of Finance just spent 8 minutes on the pricing page"
+- Proposal heat maps: time-on-page per section across all viewers
+- Stakeholder activity feed: chronological log of all buyer interactions
+- Stale deal alerts: no buyer activity in 7+ days triggers rep notification
+- Deal risk scoring: AI flags deals with low engagement or one-sided communication
+
+E-Signature and Contract:
+- Native e-signature compliant with eIDAS, UETA, ESIGN
+- Signature audit trail with IP, timestamp, and geolocation
+- Bulk send for order forms and MSAs
+- Contract redline viewer (Enterprise): tracked changes with inline comments
+- CRM auto-update on signature completion (close date, contract value)
+
+[INTEGRATIONS]
+- CRM: Salesforce (native managed package), HubSpot, Pipedrive, Dynamics 365
+- Sales engagement: Outreach, Salesloft (send deal room link directly from sequence)
+- Messaging: Slack (engagement alerts), Teams
+- Content management: Highspot, Seismic, Showpad (pull pre-approved assets)
+- E-signature: DocuSign (fallback), Adobe Sign
+- Analytics: Salesforce Reports, Tableau, Looker
+
+[SLA AND SUPPORT]
+Starter: Email support. Best-effort uptime.
+Pro: Priority chat + email, business hours. 99.5% uptime SLA. CSM assigned at 25+ seats.
+Enterprise: Dedicated CSM + technical account manager. 99.9% uptime. SLA credits apply.
+
+[ONBOARDING]
+Starter: Self-serve. Functional in 30 minutes.
+Pro: 3-session onboarding (CRM connection, template setup, rep training). Live in 1 week.
+Enterprise: 4–6 week implementation including brand kit configuration, content library migration, custom AI proposal model training, and manager enablement sessions.
+
+[COMPETITIVE DIFFERENTIATORS]
+vs. Proposify: DealDesk includes real-time buyer engagement intelligence and Mutual Action Plans, which Proposify does not. DealDesk's AI proposal generation is superior — Proposify requires manual template population.
+vs. PandaDoc: DealDesk is more focused on multi-stakeholder enterprise deals with its stakeholder mapping and deal room concept. PandaDoc is stronger for high-volume, simple document workflows. DealDesk's engagement analytics are significantly deeper.
+vs. Dock: DealDesk offers a more mature AI proposal generator and deeper CRM sync. Dock has a cleaner UX for simple use cases but lacks DealDesk's engagement risk scoring and contract management.
+vs. Salesforce CPQ: DealDesk is not a CPQ replacement — it complements CPQ with the buyer-facing experience layer and proposal intelligence. DealDesk integrates with Salesforce CPQ to pull approved pricing and generate deal rooms automatically.
+
+[FREQUENTLY ASKED QUESTIONS]
+Q: Can prospects download documents from a deal room?
+A: Yes, reps can enable or disable download on a per-document basis. All downloads are tracked and attributed to the specific stakeholder.
+
+Q: Does DealDesk replace DocuSign?
+A: DealDesk includes native e-signature for most use cases. Customers who require DocuSign for compliance reasons (regulated industries) can route signatures through DocuSign via our integration while keeping all analytics in DealDesk.
+
+Q: How does the AI proposal generator get better over time?
+A: Enterprise customers can enable the "Winning Proposals" model, which trains on your closed-won deals (anonymized) to identify the content patterns, structure, and language associated with your highest win rates.
+
+Q: What happens to deal rooms after a deal closes?
+A: Rooms can be archived, converted into customer onboarding portals, or retained for reference. Archived rooms preserve all engagement data for analysis.
+
+Q: Is there a character limit on deal room content?
+A: No. Deal rooms support unlimited content blocks. For performance, DealDesk lazy-loads content so large rooms remain fast for buyers.

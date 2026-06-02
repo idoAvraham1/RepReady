@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>RepReady — AI Sales Assistant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/style.css" />
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════════════════════
+       LANDING PAGE
+       ══════════════════════════════════════════════════════ -->
+  <div id="landing">
+
+    <!-- Navbar -->
+    <nav class="landing-nav" aria-label="Main navigation">
+      <a href="#" class="logo landing-logo" id="landingLogo" aria-label="RepReady">
+        <div class="logo-mark">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect width="20" height="20" rx="6" fill="currentColor"/>
+            <path d="M5 6h4.5a2.5 2.5 0 0 1 0 5H5V6zm0 5h3l2.5 3.5H8L5.5 11z" fill="white" fill-opacity="0.92"/>
+            <path d="M12.5 14l-1.5-2" stroke="white" stroke-opacity="0.92" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="logo-name">RepReady</span>
+      </a>
+      <button class="landing-nav-btn js-open-app">Open App</button>
+    </nav>
+
+    <!-- Hero -->
+    <section class="landing-hero">
+      <div class="landing-glow" aria-hidden="true"></div>
+      <div class="landing-hero-content">
+        <div class="landing-badge" aria-label="AI-Powered Live Sales Assistant">
+          <span class="landing-badge-dot" aria-hidden="true"></span>
+          AI-Powered · Live Sales Assistant
+        </div>
+        <h1 class="landing-headline">
+          Close More Deals.<br>Know Every Answer.
+        </h1>
+        <p class="landing-sub">
+          RepReady gives your sales reps instant, cited answers during live calls — powered by your own product knowledge.
+        </p>
+        <div class="landing-cta-group">
+          <button class="landing-cta js-open-app" aria-label="Open the chat interface">
+            Open Chats
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+          <button class="landing-cta-ghost" aria-label="Watch demo (coming soon)">
+            Watch Demo
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Feature highlights -->
+    <section class="landing-features" aria-label="Key features">
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">⚡</span>
+        <h3 class="feature-title">Real-time answers</h3>
+        <p class="feature-desc">Instant responses during live sales calls</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">📄</span>
+        <h3 class="feature-title">Always cited</h3>
+        <p class="feature-desc">Every answer sourced from your approved docs</p>
+      </div>
+      <div class="feature-card">
+        <span class="feature-icon" aria-hidden="true">🎯</span>
+        <h3 class="feature-title">Gap detection</h3>
+        <p class="feature-desc">Unanswered questions flagged automatically</p>
+      </div>
+    </section>
+
+  </div>
+  <!-- /landing -->
+
+
+  <!-- ══════════════════════════════════════════════════════
+       APP (chat interface — hidden until navigated to)
+       ══════════════════════════════════════════════════════ -->
+  <div class="app hidden" id="app">
+
+    <!-- ── LEFT SIDEBAR ──────────────────────────────────── -->
+    <aside class="sidebar" id="sidebar" aria-label="Conversations">
+
+      <div class="sidebar-header">
+        <div class="sidebar-stats" id="sidebarStats" aria-label="Pipeline summary">
+          <span class="stat-chip won">0 Won</span>
+          <span class="stat-chip progress">0 Active</span>
+          <span class="stat-chip lost">0 Lost</span>
+        </div>
+      </div>
+
+      <div class="sidebar-body">
+        <button class="sidebar-new-btn" id="sidebarNewChatBtn" aria-label="Start a new conversation">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Chat
+        </button>
+
+        <div class="conv-section-label" id="convSectionLabel" style="display:none">Recent</div>
+        <div class="conv-list" id="convList" role="listbox" aria-label="Conversations"></div>
+      </div>
+
+    </aside>
+
+    <!-- ── RIGHT: MAIN PANEL ─────────────────────────────── -->
+    <div class="main-panel">
+
+      <!-- Top bar -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <button class="btn-back" id="backBtn" aria-label="Back to home">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
+            </svg>
+            Back
+          </button>
+          <a href="#" class="logo" id="logoLink" aria-label="RepReady">
+            <div class="logo-mark">
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="20" height="20" rx="6" fill="currentColor"/>
+                <path d="M5 6h4.5a2.5 2.5 0 0 1 0 5H5V6zm0 5h3l2.5 3.5H8L5.5 11z" fill="white" fill-opacity="0.92"/>
+                <path d="M12.5 14l-1.5-2" stroke="white" stroke-opacity="0.92" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <span class="logo-name">RepReady</span>
+          </a>
+        </div>
+
+        <button class="btn-new-chat" id="newChatBtn" title="Start a new conversation">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          New Chat
+        </button>
+      </header>
+
+      <!-- Chat area -->
+      <main class="chat-area" id="chatArea">
+
+        <!-- Empty / welcome state -->
+        <div class="empty-state" id="emptyState" aria-live="polite">
+          <div class="empty-hero">
+            <div class="empty-logo-mark">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="36" height="36" rx="11" fill="currentColor"/>
+                <path d="M9 11h8a4.5 4.5 0 0 1 0 9H9V11zm0 9h5.5l4.5 6H15L9 20z" fill="white" fill-opacity="0.95"/>
+                <path d="M22.5 25l-2.5-3.5" stroke="white" stroke-opacity="0.95" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h1 class="empty-title">RepReady</h1>
+          </div>
+          <p class="empty-tagline">Ask anything.<br /><em>Know everything.</em></p>
+          <div class="chips-grid" id="chipsGrid" aria-label="Suggested questions">
+            <button class="chip" data-question="What's the pricing for the Growth plan?">What's the pricing for the Growth plan?</button>
+            <button class="chip" data-question="How does RepReady Pro compare to Guru?">How does RepReady Pro compare to Guru?</button>
+            <button class="chip" data-question="What integrations does SignalHQ support?">What integrations does SignalHQ support?</button>
+            <button class="chip" data-question="What is the SLA on the Enterprise tier?">What is the SLA on the Enterprise tier?</button>
+          </div>
+        </div>
+
+        <!-- Message list -->
+        <div class="messages" id="messages" role="log" aria-live="polite" aria-label="Conversation"></div>
+
+      </main>
+
+      <!-- Input area -->
+      <div class="input-area" id="inputArea">
+        <div class="input-shell">
+          <label for="questionInput" class="sr-only">Ask a product question</label>
+          <textarea
+            id="questionInput"
+            class="input-field"
+            placeholder="Ask about pricing, features, integrations…"
+            rows="1"
+            autocomplete="off"
+            spellcheck="true"
+          ></textarea>
+          <button class="send-btn" id="sendBtn" title="Send message" aria-label="Send message" disabled>
+            <svg class="send-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/>
+            </svg>
+            <svg class="spinner-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+            </svg>
+          </button>
+        </div>
+        <p class="input-hint">Press <kbd>Enter</kbd> to send &middot; <kbd>Shift + Enter</kbd> for new line</p>
+      </div>
+
+    </div>
+    <!-- /main-panel -->
+
+    <!-- ── EDIT CONVERSATION MODAL ───────────────────────── -->
+    <div class="modal-overlay hidden" id="editConvModal" role="dialog" aria-modal="true" aria-labelledby="editConvTitle">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <h2 class="modal-title" id="editConvTitle">Edit Conversation</h2>
+          </div>
+          <button class="modal-close" id="editConvModalClose" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-form">
+          <div class="form-group">
+            <label for="editProspectName">Prospect Name <span class="field-required">*</span></label>
+            <input type="text" id="editProspectName" class="form-input" placeholder="e.g. Sarah Johnson" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="editCompanyName">Company <span class="field-optional">(optional)</span></label>
+            <input type="text" id="editCompanyName" class="form-input" placeholder="e.g. Meridian Cloud" autocomplete="off" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-modal-cancel" id="editConvCancelBtn">Cancel</button>
+          <button class="btn-modal-primary" id="editConvSaveBtn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── NEW CONVERSATION MODAL ─────────────────────────── -->
+    <div class="modal-overlay hidden" id="newConvModal" role="dialog" aria-modal="true" aria-labelledby="newConvTitle">
+      <div class="modal">
+        <div class="modal-header">
+          <div class="modal-title-group">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <h2 class="modal-title" id="newConvTitle">New Conversation</h2>
+          </div>
+          <button class="modal-close" id="newConvModalClose" aria-label="Close">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div class="modal-form">
+          <div class="form-group">
+            <label for="convProspectName">Prospect Name <span class="field-required">*</span></label>
+            <input type="text" id="convProspectName" class="form-input" placeholder="e.g. Sarah Johnson" autocomplete="off" />
+          </div>
+          <div class="form-group">
+            <label for="convCompanyName">Company <span class="field-optional">(optional)</span></label>
+            <input type="text" id="convCompanyName" class="form-input" placeholder="e.g. Meridian Cloud" autocomplete="off" />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-modal-cancel" id="newConvCancelBtn">Cancel</button>
+          <button class="btn-modal-primary" id="newConvStartBtn">Start Chat</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

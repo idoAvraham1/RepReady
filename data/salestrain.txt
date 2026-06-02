@@ -1,0 +1,96 @@
+[OVERVIEW]
+SalesTrain is an on-demand sales training and certification platform built for modern revenue teams. It combines structured learning paths with AI-driven role-play simulations, enabling reps to practice objection handling, discovery calls, and product demos in a safe, scored environment before they engage live buyers. SalesTrain tracks skill acquisition from hire through quota attainment and provides managers with visibility into rep readiness at every stage.
+
+[PRICING]
+SalesTrain Pricing (annual billing):
+
+Launch Plan — $39 per seat per month
+  - Up to 15 seats
+  - Access to SalesTrain course library (200+ courses)
+  - Role-play simulator (5 sessions/rep/month)
+  - Basic completion tracking and quiz scores
+  - Manager dashboard (read-only)
+  - Email support
+
+Scale Plan — $72 per seat per month
+  - Up to 100 seats
+  - Full course library + custom course builder
+  - Unlimited role-play simulator sessions
+  - AI-scored role-play with feedback reports
+  - Learning path builder (certifications, onboarding tracks)
+  - CRM activity correlation (skill score vs. quota attainment)
+  - Slack and Teams integration
+  - Priority support
+
+Enterprise Plan — Custom pricing
+  - Unlimited seats
+  - Custom AI persona building for role-play (upload call recordings)
+  - White-label LMS with custom domain
+  - LMS integrations (Workramp, Cornerstone, SAP SuccessFactors)
+  - SCIM and SSO
+  - Dedicated instructional design support
+  - 99.9% uptime SLA
+
+[FEATURES]
+Learning Library:
+- 200+ courses covering: prospecting, discovery, demos, objection handling, negotiation, closing, expansion selling, and sales ops
+- Courses authored by practitioners (former VPs of Sales at Salesforce, HubSpot, Stripe)
+- Bite-sized modules (5–15 minutes each) optimized for mobile
+- Quizzes with spaced repetition for knowledge retention
+- Industry-specific tracks: SaaS, Fintech, Healthcare, Manufacturing
+
+AI Role-Play Simulator:
+- Practice calls with AI-powered buyer personas (CFO, IT Director, Procurement Manager, etc.)
+- Personas push back with realistic objections calibrated to deal stage
+- Scoring dimensions: discovery quality, listening ratio, objection handling, clear next step set
+- Post-session AI feedback report with specific improvement suggestions
+- Custom persona builder: upload real call recordings to train a persona that mimics your buyers
+
+Certification Engine:
+- Design multi-step certification programs (e.g., "Enterprise Account Executive Certification")
+- Requires course completion + minimum role-play score + manager sign-off
+- Shareable certificates with LinkedIn integration
+- Certification expiry and re-certification scheduling
+
+Analytics:
+- Rep readiness score: composite metric from quiz scores, role-play performance, completion rate
+- Time-to-first-deal correlation with training completion rates
+- Skill heatmaps by team, region, and product line
+- Content effectiveness reporting: which courses correlate with higher quota attainment
+
+[INTEGRATIONS]
+- CRM: Salesforce, HubSpot (activity feed, quota correlation)
+- HRIS: Workday, BambooHR (new hire auto-enrollment)
+- LMS: Workramp, Lessonly, Cornerstone, Docebo
+- Conferencing: Zoom, Teams (meeting scheduling for live training sessions)
+- Messaging: Slack (course reminders, completion celebrations), Teams
+- SSO: Okta, Azure AD, Google Workspace
+
+[SLA AND SUPPORT]
+Launch: Email support, 3-day response. Best-effort uptime.
+Scale: Priority chat + email, same-business-day response. 99.5% SLA.
+Enterprise: Dedicated CSM, 24/7 critical incident support, 99.9% SLA, quarterly business reviews.
+
+[ONBOARDING]
+Launch: Self-serve. Library accessible within 1 hour of sign-up.
+Scale: 2-session implementation call. Custom learning path setup. Live in 3–5 business days.
+Enterprise: Full instructional design engagement (4–6 weeks). Includes content migration, custom course development, and admin certification training.
+
+[COMPETITIVE DIFFERENTIATORS]
+vs. Mindtickle: SalesTrain is 30% less expensive and includes the role-play simulator in all paid plans. Mindtickle's AI coaching is an add-on priced separately.
+vs. Highspot (training module): SalesTrain's course library is 4x deeper and built by sales practitioners, not content generalists. SalesTrain also has native role-play simulation; Highspot does not.
+vs. Workramp: SalesTrain is purpose-built for sales teams, while Workramp is a general LMS. SalesTrain's AI role-play and quota-to-training correlation analytics are differentiating.
+vs. Lessonly (Seismic Learning): SalesTrain offers a richer AI persona simulator and is faster to deploy. Seismic Learning requires a professional services engagement for custom content.
+
+[FREQUENTLY ASKED QUESTIONS]
+Q: How realistic are the AI role-play personas?
+A: Personas are trained on anonymized data from 500,000+ sales calls. They adapt their objection intensity based on the rep's performance mid-session, simulating a real buyer who pushes back harder when sensing weakness.
+
+Q: Can we build custom courses?
+A: Scale and Enterprise plans include a drag-and-drop course builder. Upload slides, video, quizzes, and branching scenarios with no coding required.
+
+Q: How does SalesTrain measure ROI?
+A: SalesTrain's Quota Correlation Dashboard tracks the statistical relationship between training completion/scores and quota attainment within your org. Average customers see a 22% reduction in ramp time (source: SalesTrain 2024 Customer Benchmark Report).
+
+Q: Does SalesTrain integrate with our existing LMS?
+A: Enterprise plan supports SCIM-based user sync and SCORM/xAPI content export so courses can run within your existing LMS. Native integrations with Workramp, Lessonly, and Cornerstone are available.

@@ -1,0 +1,104 @@
+[OVERVIEW]
+RepReady Pro is an AI-powered sales enablement platform that gives sales representatives instant, cited answers to any product, pricing, or competitive question directly within their workflow. It combines a retrieval-augmented knowledge base with generative AI to eliminate rep ramp-up time and reduce deal cycles. RepReady Pro is purpose-built for B2B SaaS sales teams of 5 to 500 reps.
+
+[PRICING]
+RepReady Pro Pricing (billed annually):
+
+Starter Plan — $49 per seat per month
+  - Up to 10 seats
+  - 1 knowledge base (up to 500 documents)
+  - AI chat assistant (unlimited queries)
+  - Slack bot integration
+  - Email support
+  - 7-day free trial, no credit card required
+
+Growth Plan — $89 per seat per month
+  - Up to 50 seats
+  - 3 knowledge bases (up to 5,000 documents)
+  - AI coaching mode with call scoring
+  - CRM sync (Salesforce, HubSpot, Pipedrive)
+  - Battle card generator
+  - Priority email + chat support
+  - 99.5% uptime SLA
+
+Enterprise Plan — Custom pricing (contact sales)
+  - Unlimited seats and knowledge bases
+  - Dedicated Customer Success Manager (CSM)
+  - SSO / SAML 2.0 and SCIM provisioning
+  - Audit logs and data residency options
+  - Custom AI model fine-tuning
+  - 99.9% uptime SLA with 4-hour P1 response
+  - Dedicated onboarding specialist
+  - White-labeling and custom branding
+
+Month-to-month pricing available at a 20% premium over annual rates.
+Volume discounts available for 100+ seats on Growth and Enterprise.
+
+[FEATURES]
+Core Features:
+- Real-time AI answer generation from indexed product documentation
+- Competitive intelligence battle cards, auto-updated from market signals
+- Objection-handling playbooks with suggested talk tracks
+- Deal coaching: AI reviews call transcripts and recommends next steps
+- Admin analytics dashboard: query volume, gap detection, rep usage
+- Knowledge gap alerts: questions with low confidence are flagged and logged
+- Content freshness indicators: docs show when they were last updated
+- Mobile-first design with iOS and Android apps
+
+Collaboration Features:
+- Team knowledge collections: curate and share answer sets
+- Manager review queue for AI responses flagged as uncertain
+- Annotation tools: reps can upvote/downvote answers with comments
+- Role-based access control (RBAC) for content permissions
+
+[INTEGRATIONS]
+Native integrations:
+- CRM: Salesforce, HubSpot, Pipedrive, Zoho CRM
+- Communication: Slack (bot + search), Microsoft Teams
+- Sales engagement: Outreach, Salesloft, Apollo
+- Video conferencing: Zoom, Google Meet (live call assist via overlay)
+- Knowledge sources: Confluence, Notion, Google Drive, SharePoint, Zendesk, Intercom
+- Data warehouse: Snowflake (Enterprise only)
+
+API: REST API with webhook support for custom integrations. Full OpenAPI 3.0 spec provided.
+
+[SLA AND SUPPORT]
+Starter SLA: Best-effort uptime. Support via email within 2 business days.
+Growth SLA: 99.5% monthly uptime. Email + chat support during business hours (9am–6pm ET).
+Enterprise SLA: 99.9% monthly uptime. 4-hour response for P1 incidents (24/7). Dedicated Slack channel with CSM.
+
+Downtime credits: 10% service credit for each 1% below the guaranteed uptime, capped at 30% monthly credit.
+
+[SECURITY AND COMPLIANCE]
+- SOC 2 Type II certified
+- GDPR compliant with Data Processing Agreements available
+- HIPAA-compliant configuration available on Enterprise
+- Data encrypted at rest (AES-256) and in transit (TLS 1.3)
+- AWS hosted, US and EU data regions available
+- Penetration testing conducted annually; results shared under NDA on request
+
+[ONBOARDING]
+Starter and Growth: Self-serve onboarding portal. Average time-to-value: 48 hours. Includes documentation wizard and pre-built templates.
+Enterprise: Dedicated 2-week structured onboarding program with a named onboarding specialist. Includes knowledge base migration assistance, SSO configuration, and rep training sessions.
+
+[COMPETITIVE DIFFERENTIATORS]
+vs. Guru: RepReady Pro uses active RAG retrieval at query time instead of static wiki cards, resulting in more accurate and up-to-date answers. RepReady also generates answers in real time vs. surfacing pre-written content.
+vs. Highspot: RepReady is 40% less expensive on a per-seat basis and deploys 3x faster due to its self-serve model. Highspot requires professional services for initial setup.
+vs. Seismic: RepReady is purpose-built for SMB and mid-market, while Seismic targets enterprise. RepReady's AI coaching feature is included in Growth vs. Seismic's add-on pricing.
+vs. Notion AI: RepReady is purpose-built for sales, with competitive intelligence, CRM sync, and objection-handling out of the box. Notion AI is a general-purpose tool without sales-specific workflows.
+
+[FREQUENTLY ASKED QUESTIONS]
+Q: How long does it take to get started?
+A: Starter and Growth customers are typically live within 48 hours using the self-serve setup wizard. Enterprise customers complete a 2-week structured onboarding.
+
+Q: Can we bring our own documents?
+A: Yes. RepReady ingests PDFs, Word docs, Google Docs, Notion pages, Confluence spaces, and plain text. Files are chunked, embedded, and indexed automatically.
+
+Q: Is there a free trial?
+A: Yes. Starter plan includes a 7-day free trial with no credit card required. Growth and Enterprise offer a 14-day POC with a sales engineer.
+
+Q: What happens when a rep asks something the AI doesn't know?
+A: RepReady's gap detection logs the question in the admin dashboard and surfaces it to content owners for documentation. Reps see a transparent "low confidence" indicator.
+
+Q: Can the AI be wrong?
+A: RepReady only generates answers from your indexed documents and always cites its source. Hallucination risk is significantly reduced compared to general LLMs, but we recommend human review for critical compliance or legal questions.

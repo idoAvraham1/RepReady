@@ -1,0 +1,83 @@
+[OVERVIEW]
+CoachAI is an AI-powered sales coaching platform that analyzes call recordings, email threads, and CRM activity to give sales reps and managers real-time coaching recommendations. CoachAI surfaces winning behaviors from top performers and automatically identifies coaching opportunities at scale without requiring managers to manually review every call.
+
+[PRICING]
+CoachAI Pricing (annual billing):
+
+Team Plan — $65 per seat per month
+  - Up to 25 seats
+  - Call recording analysis (up to 500 hours/month)
+  - AI scorecards for calls and emails
+  - Weekly coaching reports per rep
+  - Slack notifications for coaching moments
+  - Salesforce and HubSpot read-only sync
+
+Business Plan — $110 per seat per month
+  - Up to 200 seats
+  - Unlimited call analysis
+  - Live call assist with real-time prompt cards
+  - Manager coaching dashboard and team leaderboard
+  - Custom scorecard templates
+  - CRM bi-directional sync
+  - 99.5% uptime SLA
+
+Enterprise Plan — Custom pricing
+  - Unlimited seats
+  - Custom AI model training on your call library
+  - Revenue intelligence integration (Gong, Clari, Chorus)
+  - Executive dashboards and board-ready reporting
+  - Dedicated CSM + AI coaching strategist
+  - 99.9% uptime SLA
+
+[FEATURES]
+Call Analysis Features:
+- Automatic transcription in 40+ languages
+- Talk time ratio analysis (rep vs. prospect)
+- Filler word detection (um, uh, like, actually)
+- Question analysis: open vs. closed questions asked per call
+- Competitor mention detection with battle card surfacing
+- Sentiment analysis: tracks prospect engagement level
+- Key moment tagging: pricing mention, objection, next step, decision-maker identified
+- AI-generated call summary with CRM auto-population
+
+Coaching Features:
+- Rep benchmark scoring vs. team average and top performers
+- Personalized weekly coaching plans auto-generated for each rep
+- Manager coaching queue: ranked list of highest-impact calls to review
+- Skill progression tracking over time (30/60/90-day trends)
+- Custom coaching playbooks tied to deal stage or product line
+
+[INTEGRATIONS]
+- Call recording: Zoom, Google Meet, Microsoft Teams, Webex, RingCentral, Aircall, Dialpad
+- Revenue intelligence: Gong (sync), Clari, Chorus/ZoomInfo
+- CRM: Salesforce, HubSpot, Pipedrive
+- Messaging: Slack, Microsoft Teams
+- LMS: Workramp, Lessonly, Mindtickle (coaching path integration)
+
+[SLA AND SUPPORT]
+Team Plan: Email support, 2-business-day response. 99% uptime target.
+Business Plan: Priority chat + email. Business hours (8am–8pm ET). 99.5% SLA.
+Enterprise: 24/7 dedicated support channel. 99.9% SLA with 2-hour P1 response.
+
+[ONBOARDING]
+Team: Self-serve with video guides. Live in 24–48 hours.
+Business: 3-session onboarding with a customer success specialist. Typical go-live: 1 week.
+Enterprise: Full discovery and configuration sprint (3–4 weeks). Includes custom scorecard design, call library analysis, and manager training workshops.
+
+[COMPETITIVE DIFFERENTIATORS]
+vs. Gong: CoachAI is 35% less expensive than Gong on an equivalent seat basis and includes AI coaching recommendations in the base price (Gong charges separately for its coaching module). CoachAI deploys without a professional services engagement.
+vs. Salesloft Coaching: CoachAI's scoring AI is trained on 2M+ sales calls across industries, vs. Salesloft's methodology-specific model. CoachAI does not lock customers into a specific sales framework.
+vs. Chorus (ZoomInfo): CoachAI offers real-time live call assist, which Chorus does not. CoachAI's integration footprint is also larger (40+ dialers vs. Chorus's 12).
+
+[FREQUENTLY ASKED QUESTIONS]
+Q: Does CoachAI record calls itself?
+A: No. CoachAI ingests recordings from your existing conferencing tools (Zoom, Teams, etc.) via integration. You control the recording policy.
+
+Q: How accurate is the transcription?
+A: Average WER (word error rate) is under 5% for English calls in standard audio quality environments. Accuracy may vary for heavy accents or low-quality audio.
+
+Q: Can managers customize what the AI scores?
+A: Yes. Business and Enterprise customers can create custom scorecard criteria aligned to their sales methodology (MEDDIC, SPIN, Challenger, etc.).
+
+Q: Does CoachAI store call recordings?
+A: Audio files are stored for 90 days by default (configurable up to 2 years on Enterprise). Transcripts are retained per your data retention policy.
