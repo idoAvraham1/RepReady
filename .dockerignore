@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# Secrets — never bake into the image
+.env
+.env.*
+
+# Git / IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+*.swp
+
+# Local gaps log — mount at runtime on EC2 if persistence is needed
+gaps_log.jsonl
+
+# OS
+.DS_Store
+Thumbs.db

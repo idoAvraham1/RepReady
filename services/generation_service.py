@@ -1,29 +1,27 @@
-import os
+"""
+generation_service.py — LLM response generation via AWS Bedrock.
+
+Single responsibility: take a question, retrieved context chunks, and an
+optional conversation history, then stream Claude Haiku tokens back to
+the caller one at a time.
+"""
+
 import json
 import boto3
-
-AWS_REGION = os.environ.get("AWS_REGION", "us-east-1")
-
-# Cross-region inference profile for Claude Haiku 4.5
-# Override with BEDROCK_MODEL_ID env var if the model ID changes
-MODEL_ID = os.environ.get(
-    "BEDROCK_MODEL_ID",
-    "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-)
-
-MAX_TOKENS = 512
+from config import AWS_REGION, AWS_ACCESS_KEY_ID, AWS_SECRET_KEY, BEDROCK_MODEL_ID, MAX_TOKENS
 
 _client = None
 
 
 def _get_client():
+    """Return a lazily-initialised bedrock-runtime boto3 client."""
     global _client
     if _client is None:
         _client = boto3.client(
             "bedrock-runtime",
             region_name=AWS_REGION,
-            aws_access_key_id=os.environ.get("AWS_ACCESS_KEY_ID"),
-            aws_secret_access_key=os.environ.get("AWS_SECRET_ACCESS_KEY"),
+            aws_access_key_id=AWS_ACCESS_KEY_ID,
+            aws_secret_access_key=AWS_SECRET_KEY,
         )
     return _client
 
@@ -50,17 +48,25 @@ SYSTEM_PROMPT = (
     "11. Do NOT use any Markdown formatting — no asterisks, no underscores, no bold markers, "
     "no italic markers. Plain text only inside every bullet.\n"
     "12. If the context does not contain the answer respond with exactly:\n"
-    "    • I don't have that information in my current knowledge base.\n"
+    "    • I don't have that information in my current knowledge base. "
+    "I've logged this for the team to review.\n"
+    "13. You have access to the recent conversation history. Use it to understand follow-up questions "
+    "in context — especially when the rep's new message relates to a 'Next move:' you previously suggested.\n"
 )
 
-def _build_user_prompt(question: str, chunks: list[dict]) -> str:
-    context_parts = []
-    for i, chunk in enumerate(chunks, 1):
-        context_parts.append(
-            f"[Source {i}: {chunk['source']}]\n{chunk['text'].strip()}"
-        )
-    context = "\n\n".join(context_parts)
 
+def _build_user_prompt(question: str, chunks: list[dict]) -> str:
+    """
+    Assemble the user-turn prompt: retrieved context blocks followed by the question.
+
+    The <context> tags help Claude clearly separate retrieved knowledge from
+    the rep's live question.
+    """
+    context_parts = [
+        f"[Source {i}: {chunk['source']}]\n{chunk['text'].strip()}"
+        for i, chunk in enumerate(chunks, 1)
+    ]
+    context = "\n\n".join(context_parts)
     return (
         f"<context>\n{context}\n</context>\n\n"
         f"<question>{question}</question>\n\n"
@@ -68,24 +74,42 @@ def _build_user_prompt(question: str, chunks: list[dict]) -> str:
     )
 
 
-def generate_stream(question: str, chunks: list[dict]):
+def generate_stream(
+    question: str,
+    chunks: list[dict],
+    history: list[dict] | None = None,
+):
     """
-    Yield text tokens from Claude Haiku 4.5 via Bedrock streaming.
+    Yield text tokens from Claude Haiku via Bedrock streaming.
+
+    Args:
+        question: The rep's current question.
+        chunks:   Retrieved KB chunks (list of {text, score, source}).
+        history:  Optional list of previous messages in {role, content} format
+                  (up to the last 2 exchanges = 4 messages). Prepended to the
+                  Claude messages array so the model understands follow-up context
+                  without significant latency overhead (~150-250 extra tokens).
+
+    Yields:
+        str: Individual text tokens as they stream from the model.
     """
-    client = _get_client()
     prompt = _build_user_prompt(question, chunks)
 
-    body = json.dumps(
-        {
-            "anthropic_version": "bedrock-2023-05-31",
-            "max_tokens": MAX_TOKENS,
-            "system": SYSTEM_PROMPT,
-            "messages": [{"role": "user", "content": prompt}],
-        }
-    )
+    # Build the messages array: history (if any) then the current prompt
+    messages: list[dict] = []
+    if history:
+        messages.extend({"role": m["role"], "content": m["content"]} for m in history)
+    messages.append({"role": "user", "content": prompt})
 
-    response = client.invoke_model_with_response_stream(
-        modelId=MODEL_ID,
+    body = json.dumps({
+        "anthropic_version": "bedrock-2023-05-31",
+        "max_tokens": MAX_TOKENS,
+        "system": SYSTEM_PROMPT,
+        "messages": messages,
+    })
+
+    response = _get_client().invoke_model_with_response_stream(
+        modelId=BEDROCK_MODEL_ID,
         body=body,
         contentType="application/json",
         accept="application/json",
@@ -99,8 +123,7 @@ def generate_stream(question: str, chunks: list[dict]):
         chunk = event.get("chunk")
         if not chunk:
             continue
-        raw = chunk.get("bytes", b"{}")
-        data = json.loads(raw)
+        data = json.loads(chunk.get("bytes", b"{}"))
         if data.get("type") == "content_block_delta":
             delta = data.get("delta", {})
             if delta.get("type") == "text_delta":

@@ -26,10 +26,12 @@
   const activeProductLabel = document.getElementById('activeProductLabel');
 
   // View routing
-  const landingEl   = document.getElementById('landing');
-  const appEl       = document.getElementById('app');
-  const backBtn     = document.getElementById('backBtn');
-  const logoLink    = document.getElementById('logoLink');
+  const landingEl         = document.getElementById('landing');
+  const appEl             = document.getElementById('app');
+  const bestPracticesEl   = document.getElementById('best-practices');
+  const gapsEl            = document.getElementById('gaps');
+  const backBtn           = document.getElementById('backBtn');
+  const logoLink          = document.getElementById('logoLink');
   const newConvModal      = document.getElementById('newConvModal');
   const newConvModalClose = document.getElementById('newConvModalClose');
   const newConvCancelBtn  = document.getElementById('newConvCancelBtn');
@@ -691,12 +693,20 @@
     let firstToken     = true;
 
     try {
+      const conv    = getActiveConv();
+      const allMsgs = conv ? conv.messages : [];
+      // Last 4 messages before the current one = 2 full exchanges (user + assistant each).
+      // saveUserMessage() was already called, so the current message is at allMsgs[-1];
+      // we exclude it and take the 4 preceding messages for history context.
+      const history = allMsgs.slice(-5, -1).map(m => ({ role: m.role, content: m.content }));
+
       const res = await fetch('/chat', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
           question,
-          product: getActiveConv()?.product || 'general',
+          product: conv?.product || 'general',
+          history,
         }),
       });
 
@@ -1028,11 +1038,19 @@
   }
 
   // ============================================================
-  // View Routing — Landing ↔ App
+  // View Routing
+  // Central navigate(hash) dispatcher — add a new page by adding
+  // a section to index.html, CSS rules, and a case here.
   // ============================================================
 
+  const ALL_PAGES = [landingEl, appEl, bestPracticesEl, gapsEl];
+
+  function _hideAll() {
+    ALL_PAGES.forEach((el) => el && el.classList.add('hidden'));
+  }
+
   function showApp() {
-    landingEl.classList.add('hidden');
+    _hideAll();
     appEl.classList.remove('hidden');
     history.replaceState(null, '', '#app');
     updateProductPill();
@@ -1040,26 +1058,132 @@
   }
 
   function showLanding() {
-    appEl.classList.add('hidden');
+    _hideAll();
     landingEl.classList.remove('hidden');
     history.replaceState(null, '', location.pathname);
   }
 
+  function showBestPractices() {
+    _hideAll();
+    bestPracticesEl.classList.remove('hidden');
+    history.replaceState(null, '', '#best-practices');
+    window.scrollTo(0, 0);
+  }
+
+  function showGaps() {
+    _hideAll();
+    gapsEl.classList.remove('hidden');
+    history.replaceState(null, '', '#gaps');
+    window.scrollTo(0, 0);
+    loadGaps();
+  }
+
+  function navigate(hash) {
+    switch (hash) {
+      case 'app':            showApp();           break;
+      case 'best-practices': showBestPractices(); break;
+      case 'gaps':           showGaps();          break;
+      default:               showLanding();       break;
+    }
+  }
+
+  // ── Gaps data loader ─────────────────────────────────────
+  async function loadGaps() {
+    const container = document.getElementById('gapsContent');
+    const loading   = document.getElementById('gapsLoading');
+    if (loading) loading.style.display = 'block';
+
+    try {
+      const res  = await fetch('/gaps');
+      const data = await res.json();
+      renderGaps(container, data);
+    } catch (err) {
+      container.innerHTML = '<p class="gaps-loading">Failed to load gaps. Make sure the server is running.</p>';
+    }
+  }
+
+  function renderGaps(container, data) {
+    const products = Object.keys(data);
+
+    if (products.length === 0) {
+      container.innerHTML = `
+        <div class="gaps-empty">
+          <div class="gaps-empty-icon">✅</div>
+          <h3 class="gaps-empty-title">No gaps logged yet</h3>
+          <p class="gaps-empty-desc">RepReady will log questions it can't confidently answer here.</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = products.map((product) => {
+      const items = data[product];
+      const name  = product.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+      const rows  = items.map((item) => {
+        const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '';
+        return `
+          <li class="gap-item">
+            <div class="gap-item-dot"></div>
+            <div class="gap-item-body">
+              <p class="gap-item-question">${escapeHtml(item.question)}</p>
+              <span class="gap-item-meta">${date}${item.max_score != null ? ` · score ${item.max_score}` : ''}</span>
+            </div>
+          </li>`;
+      }).join('');
+      return `
+        <div class="gap-product-group">
+          <div class="gap-product-header">
+            <span class="gap-product-name">${name}</span>
+            <span class="gap-count-badge">${items.length} gap${items.length !== 1 ? 's' : ''}</span>
+          </div>
+          <ul class="gap-list">${rows}</ul>
+        </div>`;
+    }).join('');
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  // ── Event wiring ─────────────────────────────────────────
+
   // "Open App" / "Open Chats" buttons on landing page
   document.querySelectorAll('.js-open-app').forEach((btn) => {
-    btn.addEventListener('click', showApp);
+    btn.addEventListener('click', () => navigate('app'));
+  });
+
+  // "Best Practices" landing nav button
+  document.querySelectorAll('.js-nav-best-practices').forEach((btn) => {
+    btn.addEventListener('click', () => navigate('best-practices'));
+  });
+
+  // "Knowledge Gaps" landing nav button
+  document.querySelectorAll('.js-nav-gaps').forEach((btn) => {
+    btn.addEventListener('click', () => navigate('gaps'));
+  });
+
+  // "Back" buttons on info pages go back to landing
+  document.querySelectorAll('.js-nav-landing').forEach((btn) => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      navigate('landing');
+    });
   });
 
   // Back button in app topbar
-  backBtn.addEventListener('click', showLanding);
+  backBtn.addEventListener('click', () => navigate('landing'));
 
   // Logo in app topbar goes back to landing
   logoLink.addEventListener('click', (e) => {
     e.preventDefault();
-    showLanding();
+    navigate('landing');
   });
 
-  // Deep-link: if page loaded with #app hash, skip landing
-  if (window.location.hash === '#app') showApp();
+  // Deep-link: if page loaded with a hash, navigate to it
+  const initialHash = window.location.hash.replace('#', '');
+  if (initialHash) navigate(initialHash);
 
 })();
