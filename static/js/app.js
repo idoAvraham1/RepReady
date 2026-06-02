@@ -21,6 +21,10 @@
   const convList          = document.getElementById('convList');
   const convSectionLabel  = document.getElementById('convSectionLabel');
 
+  // Product pill
+  const activeProductPill  = document.getElementById('activeProductPill');
+  const activeProductLabel = document.getElementById('activeProductLabel');
+
   // View routing
   const landingEl   = document.getElementById('landing');
   const appEl       = document.getElementById('app');
@@ -52,6 +56,15 @@
   let hasStarted     = false;
   let openDropdownEl = null; // currently open floating dropdown
 
+  const PRODUCTS = [
+    { id: 'general',      label: 'All Products',  dot: '#8b8fa8' },
+    { id: 'repready_pro', label: 'RepReady Pro',   dot: '#6366f1' },
+    { id: 'coachai',      label: 'CoachAI',        dot: '#22c55e' },
+    { id: 'salestrain',   label: 'SalesTrain',     dot: '#f59e0b' },
+    { id: 'signalhq',     label: 'SignalHQ',       dot: '#ef4444' },
+    { id: 'dealdesk',     label: 'DealDesk',       dot: '#a78bfa' },
+  ];
+
   // ============================================================
   // localStorage — Load / Save
   // ============================================================
@@ -79,11 +92,12 @@
   // Conversation CRUD
   // ============================================================
 
-  function createConversation(name, company) {
+  function createConversation(name, company, product) {
     const conv = {
       id:        generateId(),
       name:      name.trim(),
       company:   (company || '').trim(),
+      product:   product || 'general',
       status:    'progress',
       createdAt: new Date().toISOString(),
       messages:  [],
@@ -256,6 +270,74 @@
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') closeStatusDropdown();
   });
+
+  // ============================================================
+  // Product Pill — display + switch dropdown
+  // ============================================================
+
+  function updateProductPill() {
+    const conv = getActiveConv();
+    const pid  = conv?.product || 'general';
+    const p    = PRODUCTS.find((x) => x.id === pid) || PRODUCTS[0];
+    activeProductLabel.textContent = p.label;
+    const dot = activeProductPill.querySelector('.active-product-dot');
+    if (dot) dot.style.background = p.dot;
+    activeProductPill.dataset.product = pid;
+  }
+
+  function showProductSwitchDropdown() {
+    closeStatusDropdown();
+    const rect = activeProductPill.getBoundingClientRect();
+    const menu = document.createElement('div');
+    menu.className = 'status-dropdown-float';
+    menu.setAttribute('role', 'menu');
+    menu.style.cssText = `
+      position:fixed;
+      left:${rect.left}px;
+      bottom:${window.innerHeight - rect.top + 6}px;
+      min-width:${rect.width}px;
+    `;
+
+    const conv = getActiveConv();
+    const currentPid = conv?.product || 'general';
+
+    PRODUCTS.forEach(({ id, label, dot }) => {
+      const btn = document.createElement('button');
+      btn.className = 'status-opt' + (id === currentPid ? ' status-opt-active' : '');
+      btn.setAttribute('role', 'menuitem');
+      btn.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${dot};flex-shrink:0;margin-right:10px;display:inline-block"></span>${label}`;
+      btn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        closeStatusDropdown();
+        if (conv && id !== currentPid) {
+          const prevProduct = conv.product;
+          conv.product = id;
+          saveConversations();
+          updateProductPill();
+          if (hasStarted) appendProductDivider(label);
+        }
+      });
+      menu.appendChild(btn);
+    });
+
+    document.body.appendChild(menu);
+    openDropdownEl = menu;
+  }
+
+  activeProductPill.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (openDropdownEl) { closeStatusDropdown(); return; }
+    showProductSwitchDropdown();
+  });
+
+  function appendProductDivider(productLabel) {
+    const div = document.createElement('div');
+    div.className = 'product-switch-divider';
+    div.setAttribute('aria-label', `Switched to ${productLabel}`);
+    div.innerHTML = `<span>Switched to ${productLabel}</span>`;
+    messagesEl.appendChild(div);
+    scrollBottom();
+  }
 
   // ============================================================
   // Conv Action Menu (Edit / Delete)
@@ -437,6 +519,7 @@
   function switchConversation(id) {
     activeConvId = id;
     updateSidebarActive();
+    updateProductPill();
 
     const conv = getActiveConv();
     const msgs = conv ? conv.messages : [];
@@ -468,10 +551,34 @@
   // New Conversation Modal
   // ============================================================
 
+  function renderProductChips(containerId, activeId) {
+    const container = document.getElementById(containerId);
+    if (!container) return;
+    container.innerHTML = '';
+    PRODUCTS.forEach(({ id, label, dot }) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'product-chip' + (id === activeId ? ' active' : '');
+      btn.dataset.product = id;
+      btn.setAttribute('aria-pressed', String(id === activeId));
+      btn.innerHTML = `<span class="product-chip-dot" style="background:${dot}" aria-hidden="true"></span>${label}`;
+      btn.addEventListener('click', () => {
+        container.querySelectorAll('.product-chip').forEach((c) => {
+          c.classList.remove('active');
+          c.setAttribute('aria-pressed', 'false');
+        });
+        btn.classList.add('active');
+        btn.setAttribute('aria-pressed', 'true');
+      });
+      container.appendChild(btn);
+    });
+  }
+
   function openNewConvModal() {
     convProspectInput.value = '';
     convCompanyInput.value  = '';
     newConvStartBtn.disabled = true;
+    renderProductChips('newConvProductSelector', 'general');
     newConvModal.classList.remove('hidden');
     convProspectInput.focus();
   }
@@ -497,8 +604,10 @@
   function tryStartConv() {
     const name = convProspectInput.value.trim();
     if (!name) return;
+    const activeChip = document.querySelector('#newConvProductSelector .product-chip.active');
+    const product = activeChip ? activeChip.dataset.product : 'general';
     closeNewConvModal();
-    createConversation(name, convCompanyInput.value);
+    createConversation(name, convCompanyInput.value, product);
   }
 
   newConvStartBtn.addEventListener('click', tryStartConv);
@@ -585,7 +694,10 @@
       const res = await fetch('/chat', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
-        body:    JSON.stringify({ question }),
+        body:    JSON.stringify({
+          question,
+          product: getActiveConv()?.product || 'general',
+        }),
       });
 
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -792,6 +904,8 @@
   // ============================================================
 
   function renderMarkdown(text) {
+    // If "Next move:" appears mid-bullet (not at line start), split it into its own bullet
+    text = text.replace(/([^\n])\s+Next move:/gi, '$1\n• Next move:');
     const lines = text.replace(/\r\n/g, '\n').split('\n').filter((l) => l.trim() !== '');
     const items = [];
     let currentBullet = null;
@@ -817,7 +931,7 @@
     const wrapped = items.map((item) => {
       if (typeof item === 'string') {
         hasBullets = true;
-        return `<li>${formatInline(item)}</li>`;
+        return `<li><span>${formatInline(item)}</span></li>`;
       }
       return `<p>${formatInline(item.text)}</p>`;
     });
@@ -843,10 +957,9 @@
 
   function formatInline(text) {
     const escaped = escapeHtml(text);
-    return escaped.replace(
-      /\(([a-zA-Z0-9_\s]+)\)/g,
-      '<span class="source-inline">($1)</span>'
-    );
+    return escaped
+      .replace(/Next move:/gi, '<strong class="next-move-label">Next move:</strong>')
+      .replace(/\(([a-zA-Z0-9_\s]+)\)/g, '<span class="source-inline">($1)</span>');
   }
 
   // ============================================================
@@ -922,6 +1035,7 @@
     landingEl.classList.add('hidden');
     appEl.classList.remove('hidden');
     history.replaceState(null, '', '#app');
+    updateProductPill();
     questionInput.focus();
   }
 

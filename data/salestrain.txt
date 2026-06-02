@@ -1,96 +1,150 @@
+=====================================
+PRODUCT: SalesTrain
+COMPANY: NorthStar Software
+CATEGORY: AI-Powered Sales Training & Simulation
+VERSION: 1.8
+LAST UPDATED: Q1 2025
+=====================================
+
 [OVERVIEW]
-SalesTrain is an on-demand sales training and certification platform built for modern revenue teams. It combines structured learning paths with AI-driven role-play simulations, enabling reps to practice objection handling, discovery calls, and product demos in a safe, scored environment before they engage live buyers. SalesTrain tracks skill acquisition from hire through quota attainment and provides managers with visibility into rep readiness at every stage.
-
-[PRICING]
-SalesTrain Pricing (annual billing):
-
-Launch Plan — $39 per seat per month
-  - Up to 15 seats
-  - Access to SalesTrain course library (200+ courses)
-  - Role-play simulator (5 sessions/rep/month)
-  - Basic completion tracking and quiz scores
-  - Manager dashboard (read-only)
-  - Email support
-
-Scale Plan — $72 per seat per month
-  - Up to 100 seats
-  - Full course library + custom course builder
-  - Unlimited role-play simulator sessions
-  - AI-scored role-play with feedback reports
-  - Learning path builder (certifications, onboarding tracks)
-  - CRM activity correlation (skill score vs. quota attainment)
-  - Slack and Teams integration
-  - Priority support
-
-Enterprise Plan — Custom pricing
-  - Unlimited seats
-  - Custom AI persona building for role-play (upload call recordings)
-  - White-label LMS with custom domain
-  - LMS integrations (Workramp, Cornerstone, SAP SuccessFactors)
-  - SCIM and SSO
-  - Dedicated instructional design support
-  - 99.9% uptime SLA
+SalesTrain is NorthStar Software's AI-powered sales training platform. It lets sales reps practice real conversations before they happen — through simulated prospect personas, mock discovery calls, objection drills, and full deal scenario walkthroughs. The AI plays the role of a prospect with a configurable personality, industry, and buying stage. After every simulation, the rep receives a detailed performance report with specific coaching notes, missed opportunities, and a confidence score. SalesTrain turns practice into a repeatable, measurable, scalable process — not something that only happens when a manager has free time.
 
 [FEATURES]
-Learning Library:
-- 200+ courses covering: prospecting, discovery, demos, objection handling, negotiation, closing, expansion selling, and sales ops
-- Courses authored by practitioners (former VPs of Sales at Salesforce, HubSpot, Stripe)
-- Bite-sized modules (5–15 minutes each) optimized for mobile
-- Quizzes with spaced repetition for knowledge retention
-- Industry-specific tracks: SaaS, Fintech, Healthcare, Manufacturing
+- AI prospect simulator with configurable persona, industry, budget, and pain points
+- Full mock call simulations (discovery, demo, pricing, negotiation, close)
+- Objection drill mode — focused 5-minute sessions on specific objection types
+- Scenario library with 50+ pre-built sales scenarios across industries
+- Custom scenario builder — managers create scenarios based on real deals
+- Performance scorecard after every session (confidence score, objection handling, questioning quality, pacing)
+- Side-by-side comparison: rep's response vs ideal response
+- Leaderboard and team progress tracking for managers
+- Certification tracks — reps complete a structured path to earn product or methodology certification
+- Spaced repetition scheduling — SalesTrain schedules practice sessions based on rep performance gaps
+- Video response mode — reps record themselves for review by managers
+- Integration with RepReady Pro — simulations pull product facts from the connected knowledge base
+- Mobile app available for iOS and Android (practice on the go)
 
-AI Role-Play Simulator:
-- Practice calls with AI-powered buyer personas (CFO, IT Director, Procurement Manager, etc.)
-- Personas push back with realistic objections calibrated to deal stage
-- Scoring dimensions: discovery quality, listening ratio, objection handling, clear next step set
-- Post-session AI feedback report with specific improvement suggestions
-- Custom persona builder: upload real call recordings to train a persona that mimics your buyers
+[TECHNICAL DETAILS]
+- AI persona engine: LLM-powered prospect simulator with multi-turn conversation memory
+- Supported input modes: text, voice (via browser microphone), video
+- Voice processing latency: under 1.2 seconds
+- Scenario response realism score: 4.3/5 average across 10,000+ user ratings
+- Supported languages: English, Spanish, French
+- Authentication: SSO (SAML 2.0), Google OAuth, Microsoft Entra
+- Compliance: SOC2 Type II, GDPR compliant
+- Integrations: RepReady Pro (NorthStar), Salesforce, HubSpot, Slack (progress notifications)
+- Uptime SLA: 99.9%
+- Mobile: iOS 15+ and Android 10+ supported
+- Data retention: session recordings stored 12 months, configurable on Enterprise
 
-Certification Engine:
-- Design multi-step certification programs (e.g., "Enterprise Account Executive Certification")
-- Requires course completion + minimum role-play score + manager sign-off
-- Shareable certificates with LinkedIn integration
-- Certification expiry and re-certification scheduling
+[PRICING]
+- Starter: $39/user/month — up to 10 users, 20 pre-built scenarios, objection drill mode, performance scorecard
+- Growth: $89/user/month — unlimited users, full scenario library (50+ scenarios), custom scenario builder, certification tracks, leaderboard, spaced repetition
+- Enterprise: Custom pricing — custom AI persona fine-tuning, custom certification programs, dedicated CSM, LMS integration, advanced analytics
+- Annual billing discount: 20% off Starter and Growth
+- Free 14-day trial on Starter
+- Minimum 2 seats
+- Bundle discount: 15% off SalesTrain when purchased with RepReady Pro or CoachAI
 
-Analytics:
-- Rep readiness score: composite metric from quiz scores, role-play performance, completion rate
-- Time-to-first-deal correlation with training completion rates
-- Skill heatmaps by team, region, and product line
-- Content effectiveness reporting: which courses correlate with higher quota attainment
+[ONBOARDING & SETUP]
+- Starter: self-serve, average setup time under 2 hours
+- Pre-built scenario library available immediately on sign-up — no configuration required to start practicing
+- Custom scenario creation: managers build a scenario in 15-30 minutes using the scenario builder wizard
+- RepReady Pro integration setup: 20 minutes, requires admin access to both products
+- Rep onboarding: 20-minute guided walkthrough, first simulation available immediately after
+- Enterprise: dedicated implementation engineer, average go-live in 3 business days
+- Custom AI persona fine-tuning on Enterprise: 3-4 week process
 
-[INTEGRATIONS]
-- CRM: Salesforce, HubSpot (activity feed, quota correlation)
-- HRIS: Workday, BambooHR (new hire auto-enrollment)
-- LMS: Workramp, Lessonly, Cornerstone, Docebo
-- Conferencing: Zoom, Teams (meeting scheduling for live training sessions)
-- Messaging: Slack (course reminders, completion celebrations), Teams
-- SSO: Okta, Azure AD, Google Workspace
+[USE CASES]
+Use Case 1 — New Rep Certification:
+A SaaS company with 3 new reps per month needed a scalable way to certify product knowledge before reps got on their first call. SalesTrain certification tracks replaced the manual role-play process. Managers went from spending 4 hours per new hire to 45 minutes — SalesTrain handled the practice, managers only reviewed the final certification attempt.
 
-[SLA AND SUPPORT]
-Launch: Email support, 3-day response. Best-effort uptime.
-Scale: Priority chat + email, same-business-day response. 99.5% SLA.
-Enterprise: Dedicated CSM, 24/7 critical incident support, 99.9% SLA, quarterly business reviews.
+Use Case 2 — Objection Drilling:
+A cybersecurity company identified that reps consistently lost deals when the prospect raised a specific security objection about data residency. The enablement team built a focused objection drill in SalesTrain. After 2 weeks of daily 5-minute drills, the close rate on deals with that objection improved by 28%.
 
-[ONBOARDING]
-Launch: Self-serve. Library accessible within 1 hour of sign-up.
-Scale: 2-session implementation call. Custom learning path setup. Live in 3–5 business days.
-Enterprise: Full instructional design engagement (4–6 weeks). Includes content migration, custom course development, and admin certification training.
+Use Case 3 — Scenario-Based Territory Prep:
+Before entering a new vertical (healthcare), a sales team used SalesTrain's custom scenario builder to simulate healthcare buyer personas — IT directors, compliance officers, CFOs — with industry-specific pain points. Reps completed 10 simulations per vertical before making their first real call.
 
-[COMPETITIVE DIFFERENTIATORS]
-vs. Mindtickle: SalesTrain is 30% less expensive and includes the role-play simulator in all paid plans. Mindtickle's AI coaching is an add-on priced separately.
-vs. Highspot (training module): SalesTrain's course library is 4x deeper and built by sales practitioners, not content generalists. SalesTrain also has native role-play simulation; Highspot does not.
-vs. Workramp: SalesTrain is purpose-built for sales teams, while Workramp is a general LMS. SalesTrain's AI role-play and quota-to-training correlation analytics are differentiating.
-vs. Lessonly (Seismic Learning): SalesTrain offers a richer AI persona simulator and is faster to deploy. Seismic Learning requires a professional services engagement for custom content.
+Use Case 4 — Ongoing Skill Maintenance:
+A 50-person sales team used spaced repetition to keep skills sharp. SalesTrain automatically assigned 10-minute practice sessions to reps based on their historical performance gaps. Reps with low discovery call scores were assigned discovery scenarios; reps with pricing objection weaknesses were assigned pricing drills.
 
-[FREQUENTLY ASKED QUESTIONS]
-Q: How realistic are the AI role-play personas?
-A: Personas are trained on anonymized data from 500,000+ sales calls. They adapt their objection intensity based on the rep's performance mid-session, simulating a real buyer who pushes back harder when sensing weakness.
+[CUSTOMER SUPPORT]
+- Starter: Email support, help center, 8-hour response time
+- Growth: Priority email, live chat, 4-hour response time
+- Enterprise: Dedicated CSM, 1-hour SLA, phone support, quarterly reviews
+- Help center: docs.northstarsoftware.com/salestrain
+- Status page: status.northstarsoftware.com
 
-Q: Can we build custom courses?
-A: Scale and Enterprise plans include a drag-and-drop course builder. Upload slides, video, quizzes, and branching scenarios with no coding required.
+[LIMITATIONS]
+- AI prospect simulator is highly realistic but cannot perfectly replicate every human nuance — experienced reps should treat simulations as preparation, not a substitute for real call experience
+- Voice mode requires a quiet environment for accurate processing — noisy environments reduce response accuracy
+- Custom AI persona fine-tuning available on Enterprise only
+- Video response mode requires manager review — no automated video analysis currently
+- LMS integration (Workday Learning, Cornerstone) available on Enterprise only
+- French and Spanish support is in beta — occasional translation quality issues in complex scenarios
+- Mobile app supports text mode only — voice and video modes require desktop
 
-Q: How does SalesTrain measure ROI?
-A: SalesTrain's Quota Correlation Dashboard tracks the statistical relationship between training completion/scores and quota attainment within your org. Average customers see a 22% reduction in ramp time (source: SalesTrain 2024 Customer Benchmark Report).
+[FAQ]
+Q: How realistic is the AI prospect?
+A: The AI persona is rated 4.3/5 for realism across user surveys. It handles multi-turn conversations, remembers what was said earlier in the session, pushes back on weak answers, and adapts its tone based on how the rep handles the conversation. It is not identical to a human — experienced reps will notice it is AI — but it is realistic enough to be a meaningful practice environment.
 
-Q: Does SalesTrain integrate with our existing LMS?
-A: Enterprise plan supports SCIM-based user sync and SCORM/xAPI content export so courses can run within your existing LMS. Native integrations with Workramp, Lessonly, and Cornerstone are available.
+Q: Can managers create scenarios based on real prospect situations?
+A: Yes. The custom scenario builder on Growth and Enterprise lets managers define the prospect's industry, company size, role, pain points, budget range, objections, and buying stage. Managers often build scenarios based on actual lost deals to help reps prepare for similar situations.
+
+Q: Does SalesTrain integrate with RepReady Pro?
+A: Yes. When both products are connected, the AI prospect in SalesTrain can ask product-specific questions that the rep answers in real time using RepReady Pro. This simulates the actual call experience where the rep uses both tools together.
+
+Q: Can we use SalesTrain for onboarding only, or is it also for ongoing training?
+A: Both. Many customers use it for new hire onboarding and certification, and separately use spaced repetition on Growth and Enterprise for ongoing skill maintenance across the whole team.
+
+Q: Is there a mobile app?
+A: Yes, iOS and Android apps are available. Text mode is fully supported on mobile. Voice and video modes require desktop.
+
+Q: How does scoring work?
+A: After each simulation, SalesTrain scores the rep across five dimensions: discovery questioning quality, objection handling, product knowledge accuracy, pacing and talk ratio, and close attempt quality. Each dimension is scored 0-100. An overall confidence score is calculated as a weighted average.
+
+Q: Can reps see how they compare to teammates?
+A: Yes, on Growth and Enterprise. The leaderboard shows team rankings by overall score, improvement rate, and sessions completed. Managers can choose to make the leaderboard visible to reps or keep it manager-only.
+
+[OBJECTION HANDLING]
+Objection: "We already do role-plays with managers."
+Response: Manager-led role-plays are valuable but hard to scale — a manager can do 2-3 role-plays per rep per week at best. SalesTrain lets reps practice as many times as they want, at any hour, without taking up manager time. Managers spend their time on high-value coaching, not running the same scenario for the tenth time that week.
+
+Objection: "Our product is too complex for AI to simulate accurately."
+Response: SalesTrain's Enterprise tier includes custom AI persona fine-tuning using your actual product documentation, historical call recordings, and common objection sets. The more context you give it, the more accurate it becomes. We have customers in highly technical industries including cybersecurity, fintech, and enterprise infrastructure.
+
+Objection: "Reps won't engage with training tools."
+Response: SalesTrain is built around short, focused sessions — 5-10 minutes for an objection drill, 20-30 for a full simulation. It also has a leaderboard and certification system that creates genuine competition and achievement. Average session completion rate across our customer base is 84%, which is significantly above industry average for training tools.
+
+Objection: "We use an LMS already — why do we need another tool?"
+Response: LMS platforms are great for static content — videos, quizzes, documents. They don't offer interactive practice. SalesTrain fills the gap between learning content and real calls. On Enterprise, SalesTrain integrates directly with major LMS platforms so it appears within your existing learning environment.
+
+[COMPETITION]
+Primary competitors: Rehearsal (formerly Ramp), Mindtickle, Allego, Second Nature AI
+
+SalesTrain vs Mindtickle:
+Mindtickle is a comprehensive sales readiness platform with strong content management features, but is priced for large enterprises and typically requires a 12-month minimum contract. SalesTrain is available from $39/user/month with no annual commitment on Starter, making it accessible for mid-market teams.
+
+SalesTrain vs Second Nature AI:
+Second Nature is a direct competitor in AI sales simulation. SalesTrain differentiates through its native integration with RepReady Pro (allowing product-grounded simulations), its spaced repetition engine, and its bundle pricing when purchased with other NorthStar products.
+
+SalesTrain vs Allego:
+Allego focuses heavily on video coaching and content sharing. SalesTrain focuses on interactive AI simulation and practice. Teams that need both video review and AI practice sometimes use both, but SalesTrain's text and voice simulation modes cover most practice use cases without requiring video recording.
+
+[CASE STUDIES]
+Customer: Nexus Cloud (35-person SDR team)
+Challenge: SDR call quality was inconsistent — top reps booked 3x more meetings than average reps. Management couldn't identify why.
+Solution: Deployed SalesTrain with custom cold call and discovery scenarios. Used scoring data to identify the specific skills where low performers differed from top performers (discovery questioning and handling the "not interested" objection).
+Results: Average rep's meeting booking rate improved by 41% in 90 days. Bottom quartile reps improved by 67%.
+
+Customer: PrimeEdge Security (20-person enterprise sales team)
+Challenge: Complex security product with 6-month sales cycles. New reps took 5 months to close their first deal.
+Solution: SalesTrain certification track with 8 scenarios covering the full PrimeEdge sales cycle, from cold outreach to security review to executive presentation.
+Results: Time to first close reduced from 5 months to 2.5 months for new reps completing the full certification track.
+
+[RECENT UPDATES]
+v1.8 (Q1 2025): Launched spaced repetition engine. Added Spanish language beta support.
+v1.7 (Q4 2024): RepReady Pro integration launched. Mobile app released for iOS and Android.
+v1.6 (Q3 2024): Custom scenario builder launched on Growth tier. Leaderboard added.
+v1.5 (Q2 2024): Voice mode launched. Certification tracks introduced.
+=====================================

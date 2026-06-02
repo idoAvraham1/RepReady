@@ -8,6 +8,14 @@ TOP_K = 5
 _client = None
 
 
+PRODUCT_IDS = {
+    "repready_pro": ["repready pro", "repready"],
+    "coachai":      ["coachai", "coach ai"],
+    "salestrain":   ["salestrain", "sales train"],
+    "signalhq":     ["signalhq", "signal hq"],
+    "dealdesk":     ["dealdesk", "deal desk"],
+}
+
 def _get_client():
     global _client
     if _client is None:
@@ -19,18 +27,49 @@ def _get_client():
         )
     return _client
 
+def _build_retrieval_context(question: str, selected_product: str | None):
+    """Returns (augmented_query, filter_config | None)"""
+    q = question.lower()
+    # No product selected → General mode, no filter
+    if not selected_product or selected_product == "general":
+        return question, None
+    # Detect other product names explicitly mentioned in the query
+    mentioned = {
+        pid for pid, aliases in PRODUCT_IDS.items()
+        if any(alias in q for alias in aliases)
+    }
+    involved = mentioned | {selected_product}
+    # Augment the query with product context
+    label = " vs ".join(p.replace("_", " ").title() for p in involved)
+    augmented = f"{label} — {question}"
+    # # Single product → hard filter
+    # if len(involved) == 1:
+    #     retrieval_filter = {
+    #         "equals": {"key": "product", "value": selected_product}
+    #     }
+    # # Multiple products → OR filter
+    # else:
+    #     retrieval_filter = {
+    #         "orAll": [
+    #             {"equals": {"key": "product", "value": p}}
+    #             for p in involved
+    #         ]
+    #     }
+    return augmented, None
 
-def retrieve_chunks(query: str) -> list[dict]:
-    """
-    Query the Bedrock Knowledge Base and return the top-K chunks
-    with their source document name and relevance score.
-    """
-    client = _get_client()
-    response = client.retrieve(
+    
+def retrieve_chunks(question: str, selected_product: str = None):
+    augmented_query, retrieval_filter = _build_retrieval_context(
+        question, selected_product
+    )
+    vector_config = {"numberOfResults": TOP_K}
+    if retrieval_filter:
+        vector_config["filter"] = retrieval_filter
+    response = _get_client().retrieve(
         knowledgeBaseId=KNOWLEDGE_BASE_ID,
-        retrievalQuery={"text": query},
+        retrievalQuery={"text": augmented_query},
         retrievalConfiguration={
-            "vectorSearchConfiguration": {"numberOfResults": TOP_K}
+            "vectorSearchConfiguration": vector_config
         },
     )
 

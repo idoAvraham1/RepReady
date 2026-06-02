@@ -1,105 +1,152 @@
+=====================================
+PRODUCT: DealDesk
+COMPANY: NorthStar Software
+CATEGORY: CPQ / Quote & Proposal Automation
+VERSION: 3.0
+LAST UPDATED: Q1 2025
+=====================================
+
 [OVERVIEW]
-DealDesk is a collaborative deal-room and proposal automation platform that helps sales teams close enterprise deals faster. Reps create a branded, interactive deal room for each opportunity — a shared digital workspace where prospects can review proposals, pricing, case studies, and contract documents. DealDesk tracks prospect engagement (who viewed what and for how long), sends real-time rep alerts on buyer activity, and automates proposal generation from CRM data using AI.
-
-[PRICING]
-DealDesk Pricing (annual billing):
-
-Starter Plan — $55 per seat per month
-  - Up to 10 seats
-  - 50 active deal rooms
-  - AI proposal generator (basic templates)
-  - Proposal viewing analytics (page-by-page heatmap)
-  - E-signature (up to 20 signers/month)
-  - Salesforce and HubSpot read integration
-  - Email support
-
-Pro Plan — $95 per seat per month
-  - Up to 75 seats
-  - Unlimited active deal rooms
-  - Advanced AI proposal generator (pull live CRM data, custom pricing tables)
-  - Full engagement analytics (video views, document download tracking)
-  - Real-time rep alerts via Slack and email
-  - Mutual Action Plan (MAP) templates
-  - E-signature (unlimited)
-  - Bi-directional CRM sync (auto-updates opportunity stage on key buyer actions)
-  - Priority support + CSM
-
-Enterprise Plan — Custom pricing
-  - Unlimited seats and deal rooms
-  - Custom AI model trained on your winning proposals
-  - Brand governance tools (approved asset libraries, compliance checks)
-  - Advanced contract management and redline tracking
-  - Revenue recognition tagging
-  - API + webhooks
-  - Legal and security review portal (external NDA, DPA, MSA sharing)
-  - 99.9% uptime SLA, dedicated CSM
+DealDesk is NorthStar Software's CPQ (Configure, Price, Quote) and proposal automation platform. It gives sales reps the tools to build accurate, branded proposals and quotes in minutes — not hours. DealDesk enforces pricing rules and discount guardrails automatically, so reps can never send a quote with an unauthorized discount or a misconfigured product bundle. Every quote is tracked, versioned, and linked to your CRM. When the prospect is ready, they can sign the proposal digitally without leaving the document. DealDesk eliminates the back-and-forth between reps, managers, and finance that slows down the final stage of every deal.
 
 [FEATURES]
-Deal Room Features:
-- Branded microsites with custom domain (e.g., deals.yourcompany.com/acme)
-- Password-protected or open-access rooms
-- Content blocks: embed video, PDF, pricing tables, ROI calculators, case studies, testimonials
-- Mutual Action Plan (MAP) builder: shared timeline with rep and buyer task ownership
-- Stakeholder mapping: add multiple buyer contacts with tracked individual engagement
-- Champion enablement kit: package materials for your internal champion to sell upward
+- Drag-and-drop proposal builder with branded templates
+- Product catalog with configurable pricing rules and bundle logic
+- Discount guardrails — reps can only apply discounts within their authorized tier; approvals triggered automatically above threshold
+- Multi-tier approval workflow — configurable by deal size, discount level, or product type
+- Digital signature — prospects sign directly in the proposal document (no DocuSign required)
+- Proposal analytics — track when a prospect opens, reads, and how much time they spend on each section
+- Version history — full audit trail of every change to a quote
+- CRM sync — quotes automatically linked to the Salesforce or HubSpot opportunity
+- Expiry dates — proposals automatically expire after a configurable period
+- Side-by-side comparison tables for multi-option proposals (Good/Better/Best)
+- Contract generation — pull signed proposals into a contract template automatically
+- Mutual action plans — reps and prospects agree on next steps within the proposal document
+- E-signature audit trail for legal compliance
+- Slack and email notifications when a proposal is opened, commented on, or signed
 
-AI Proposal Generator:
-- Pulls deal data from CRM (company name, deal size, products, contacts) automatically
-- Populates proposal template with relevant case studies (matched by industry and use case)
-- Generates executive summary, ROI section, and timeline automatically
-- Pricing table builder with optional volume discount configurator
-- A/B tested proposal structures: AI recommends which template wins in similar deals
+[TECHNICAL DETAILS]
+- Deployment: web application, mobile responsive
+- Supported browsers: Chrome, Edge, Firefox, Safari
+- CRM integrations: Salesforce, HubSpot, Pipedrive, Microsoft Dynamics
+- E-signature compliance: eIDAS (EU), ESIGN and UETA (US), legally binding in 50+ countries
+- Authentication: SSO (SAML 2.0), Google OAuth, Microsoft Entra
+- Compliance: SOC2 Type II, GDPR, HIPAA ready on Enterprise
+- Document formats: proposals generated as web-native documents (best experience) or exported to PDF
+- API: available on Growth and Enterprise for custom integrations
+- Uptime SLA: 99.9%
+- Encryption: AES-256 at rest, TLS 1.3 in transit
+- Storage: unlimited proposal storage on all plans
 
-Engagement Intelligence:
-- Real-time notifications: "Acme's VP of Finance just spent 8 minutes on the pricing page"
-- Proposal heat maps: time-on-page per section across all viewers
-- Stakeholder activity feed: chronological log of all buyer interactions
-- Stale deal alerts: no buyer activity in 7+ days triggers rep notification
-- Deal risk scoring: AI flags deals with low engagement or one-sided communication
+[PRICING]
+- Starter: $49/user/month — up to 5 users, 3 proposal templates, basic product catalog (up to 50 products), email notifications, PDF export
+- Growth: $99/user/month — unlimited users, unlimited templates, unlimited product catalog, approval workflows, proposal analytics, digital signature, CRM sync, Slack notifications
+- Enterprise: Custom pricing — custom contract generation, mutual action plans, advanced approval logic, dedicated CSM, API access, custom e-signature branding
+- Annual billing discount: 20% off Starter and Growth
+- Free 14-day trial on Starter
+- Minimum 2 seats
+- Bundle discount: 15% off DealDesk when purchased with RepReady Pro or CoachAI
 
-E-Signature and Contract:
-- Native e-signature compliant with eIDAS, UETA, ESIGN
-- Signature audit trail with IP, timestamp, and geolocation
-- Bulk send for order forms and MSAs
-- Contract redline viewer (Enterprise): tracked changes with inline comments
-- CRM auto-update on signature completion (close date, contract value)
+[ONBOARDING & SETUP]
+- Product catalog import: upload via CSV or sync from CRM product library, average 2 hours
+- Template setup: use pre-built NorthStar templates or import existing proposals, customized in 1-3 hours
+- Pricing rules and discount guardrails: configured by admin, average 1-2 hours
+- CRM connection: 30-45 minutes
+- Rep training: 30-minute session — reps are productive on day one
+- Admin and manager training: 1.5-hour session covering approvals, analytics, and catalog management
+- Enterprise: dedicated implementation engineer, go-live average 5-7 business days
+- Template design service available for Enterprise customers who need fully custom branded designs
 
-[INTEGRATIONS]
-- CRM: Salesforce (native managed package), HubSpot, Pipedrive, Dynamics 365
-- Sales engagement: Outreach, Salesloft (send deal room link directly from sequence)
-- Messaging: Slack (engagement alerts), Teams
-- Content management: Highspot, Seismic, Showpad (pull pre-approved assets)
-- E-signature: DocuSign (fallback), Adobe Sign
-- Analytics: Salesforce Reports, Tableau, Looker
+[USE CASES]
+Use Case 1 — Eliminating Rogue Discounting:
+A software company discovered that reps were offering inconsistent discounts — some giving 30% without approval to close a deal, others sticking to 5%. DealDesk's discount guardrails capped rep-level discounts at 10% and automatically triggered a manager approval for anything above. Average deal discount rate dropped from 18% to 9% within 60 days.
 
-[SLA AND SUPPORT]
-Starter: Email support. Best-effort uptime.
-Pro: Priority chat + email, business hours. 99.5% uptime SLA. CSM assigned at 25+ seats.
-Enterprise: Dedicated CSM + technical account manager. 99.9% uptime. SLA credits apply.
+Use Case 2 — Faster Time to Close:
+A consulting firm's close process involved emailing a Word document quote, waiting for the prospect to print, sign, scan, and email back. Average time from proposal sent to signed was 8 days. After deploying DealDesk with digital signature, average time to signature dropped to 1.4 days.
 
-[ONBOARDING]
-Starter: Self-serve. Functional in 30 minutes.
-Pro: 3-session onboarding (CRM connection, template setup, rep training). Live in 1 week.
-Enterprise: 4–6 week implementation including brand kit configuration, content library migration, custom AI proposal model training, and manager enablement sessions.
+Use Case 3 — Multi-Option Proposals:
+A cloud infrastructure company switched from single-option quotes to Good/Better/Best proposals using DealDesk's comparison tables. Upsell rate (prospects choosing Best over Good) increased from 12% to 31%. Average deal size increased by 22%.
 
-[COMPETITIVE DIFFERENTIATORS]
-vs. Proposify: DealDesk includes real-time buyer engagement intelligence and Mutual Action Plans, which Proposify does not. DealDesk's AI proposal generation is superior — Proposify requires manual template population.
-vs. PandaDoc: DealDesk is more focused on multi-stakeholder enterprise deals with its stakeholder mapping and deal room concept. PandaDoc is stronger for high-volume, simple document workflows. DealDesk's engagement analytics are significantly deeper.
-vs. Dock: DealDesk offers a more mature AI proposal generator and deeper CRM sync. Dock has a cleaner UX for simple use cases but lacks DealDesk's engagement risk scoring and contract management.
-vs. Salesforce CPQ: DealDesk is not a CPQ replacement — it complements CPQ with the buyer-facing experience layer and proposal intelligence. DealDesk integrates with Salesforce CPQ to pull approved pricing and generate deal rooms automatically.
+Use Case 4 — Proposal Intelligence:
+A SaaS company used DealDesk's proposal analytics to identify that proposals where prospects spent less than 2 minutes on the pricing section had a 70% lower close rate. Sales managers used this data to coach reps to book a pricing walkthrough call before sending proposals, rather than sending cold.
 
-[FREQUENTLY ASKED QUESTIONS]
-Q: Can prospects download documents from a deal room?
-A: Yes, reps can enable or disable download on a per-document basis. All downloads are tracked and attributed to the specific stakeholder.
+[CUSTOMER SUPPORT]
+- Starter: Email support, help center, 8-hour response time
+- Growth: Priority email, live chat, 4-hour response time
+- Enterprise: Dedicated CSM, 1-hour SLA, phone support, quarterly reviews, template design service
+- Help center: docs.northstarsoftware.com/dealdesk
+- Status page: status.northstarsoftware.com
 
+[LIMITATIONS]
+- DealDesk generates web-native proposals and PDFs — it does not generate editable Word or PowerPoint files
+- Advanced contract generation (pulling signed proposals into a full legal contract) available on Enterprise only
+- Mutual action plans available on Enterprise only
+- API access available on Growth and Enterprise; Starter has no API
+- Product catalog limited to 50 products on Starter; unlimited on Growth and Enterprise
+- Template design service is an Enterprise add-on — Starter and Growth customers use self-serve templates
+- DealDesk does not replace a full contract lifecycle management (CLM) system — for complex multi-party contracts, an Enterprise customer should integrate with their existing CLM
+
+[FAQ]
 Q: Does DealDesk replace DocuSign?
-A: DealDesk includes native e-signature for most use cases. Customers who require DocuSign for compliance reasons (regulated industries) can route signatures through DocuSign via our integration while keeping all analytics in DealDesk.
+A: For most use cases, yes. DealDesk includes native e-signature that is legally binding in 50+ countries under eIDAS, ESIGN, and UETA. Customers who require advanced DocuSign-specific features (complex routing, wet signature workflows) can integrate DocuSign on Enterprise. For standard sales proposals and agreements, DealDesk's built-in signature covers everything needed.
 
-Q: How does the AI proposal generator get better over time?
-A: Enterprise customers can enable the "Winning Proposals" model, which trains on your closed-won deals (anonymized) to identify the content patterns, structure, and language associated with your highest win rates.
+Q: Can prospects negotiate or comment on a proposal?
+A: Yes. Prospects can add comments to specific sections of a proposal, and reps receive a notification. The rep can respond or create a new version. Full version history is maintained. On Enterprise, mutual action plans allow both parties to agree on next steps within the document.
 
-Q: What happens to deal rooms after a deal closes?
-A: Rooms can be archived, converted into customer onboarding portals, or retained for reference. Archived rooms preserve all engagement data for analysis.
+Q: What happens when a proposal expires?
+A: The prospect receives an automated email notification 48 hours before expiry. When the proposal expires, it is locked for viewing but cannot be signed. The rep is notified and can extend the expiry or create a new version.
 
-Q: Is there a character limit on deal room content?
-A: No. Deal rooms support unlimited content blocks. For performance, DealDesk lazy-loads content so large rooms remain fast for buyers.
+Q: Can we have different templates for different product lines or regions?
+A: Yes, on Growth and Enterprise. You can create unlimited templates and assign them to specific product lines, regions, or rep roles. Templates can include regional legal disclaimers, different branding for business units, or different product catalog sections.
+
+Q: Is the digital signature legally binding?
+A: Yes. DealDesk's e-signature is compliant with eIDAS in the EU, ESIGN and UETA in the US, and legally recognized in 50+ countries. A full audit trail is maintained for every signature event including IP address, timestamp, and email verification. This is sufficient for the vast majority of commercial sales agreements.
+
+Q: Can we track whether the prospect has read the proposal?
+A: Yes. Proposal analytics on Growth and Enterprise show you when the prospect opened the proposal, how many times they viewed it, how long they spent on each section, and whether they forwarded it to another stakeholder. This intelligence helps reps time their follow-up.
+
+Q: Does DealDesk work for recurring subscription deals?
+A: Yes. DealDesk supports one-time, recurring monthly, and recurring annual pricing. Multi-year deals with year-over-year price escalation are supported. Custom pricing structures are available on Enterprise.
+
+[OBJECTION HANDLING]
+Objection: "Our reps already use a Word/Excel template for quotes."
+Response: Word and Excel quotes have no tracking, no version control, no approval enforcement, and no digital signature. Reps can change numbers without authorization and there is no audit trail. DealDesk solves all of that. Setup takes a few hours and most customers see ROI within the first week from reduced approval back-and-forth alone.
+
+Objection: "We already have DocuSign for signatures."
+Response: DocuSign handles signatures but not the proposal building, pricing rules, approval workflows, or analytics. DealDesk combines all of those in one workflow. For simple signature needs, DealDesk's built-in e-signature replaces DocuSign. For customers with complex DocuSign workflows, we offer a native integration on Enterprise.
+
+Objection: "Our deals are too complex and custom for a template tool."
+Response: DealDesk is designed for exactly that scenario. The Enterprise tier supports fully custom templates, complex multi-product configurations, and approval logic that handles exceptions. Many of our customers have highly customized deal structures — the product is built to handle complexity, not hide it behind rigid templates.
+
+Objection: "Finance needs to approve every deal — this will just slow that down."
+Response: The opposite — DealDesk's approval workflows make the process faster, not slower. Instead of email chains and missed replies, approval requests are routed automatically, approvers get a Slack or email notification with the deal details, and can approve with one click. Most approvals are completed in under 30 minutes vs days for email-based processes.
+
+[COMPETITION]
+Primary competitors: Salesforce CPQ, PandaDoc, Proposify, DealHub, Conga
+
+DealDesk vs Salesforce CPQ:
+Salesforce CPQ is extremely powerful but also extremely complex and expensive — typical implementation costs $30,000-$100,000+ and takes 3-6 months. DealDesk is set up in days, costs a fraction of the price, and covers 90% of what sales teams actually need from a CPQ tool. For teams already on Salesforce but not using Salesforce CPQ, DealDesk is a faster, more affordable path to quote automation.
+
+DealDesk vs PandaDoc:
+PandaDoc is a strong competitor, particularly at the SMB level. DealDesk differentiates with tighter CRM integration, more sophisticated approval workflows, and — for NorthStar customers — native integration with RepReady Pro, CoachAI, and SalesTrain. DealDesk's proposal analytics are also more detailed than PandaDoc's.
+
+DealDesk vs Proposify:
+Proposify focuses heavily on proposal aesthetics and design flexibility. DealDesk focuses on the sales workflow — approval guardrails, CRM sync, analytics, and speed to close. Teams that prioritize beautiful proposals may prefer Proposify's design tools; teams that prioritize deal control and process efficiency prefer DealDesk.
+
+[CASE STUDIES]
+Customer: Keystone Software (55-person sales team)
+Challenge: Average time from verbal yes to signed contract was 11 days due to back-and-forth on pricing approvals and DocuSign routing.
+Solution: Deployed DealDesk Growth with automated approval workflows and built-in e-signature.
+Results: Average time to signed contract dropped from 11 days to 2.3 days. Finance team reduced time spent on approval requests by 70%. Rep satisfaction with the close process improved significantly.
+
+Customer: Meridian Cloud (22-person SMB sales team)
+Challenge: Reps were building quotes in Excel with no pricing controls. Audit revealed 40% of closed deals had unauthorized discounts above policy.
+Solution: DealDesk Starter deployed with product catalog and 15% discount guardrail.
+Results: Unauthorized discounts dropped to 0% within 30 days. Average deal margin improved by 11 percentage points. Finance team's monthly reconciliation time cut in half.
+
+[RECENT UPDATES]
+v3.0 (Q1 2025): Launched mutual action plans on Enterprise. Redesigned proposal analytics dashboard.
+v2.9 (Q4 2024): Added Good/Better/Best comparison table template. Microsoft Dynamics integration.
+v2.8 (Q3 2024): Digital signature launched natively — DocuSign no longer required for standard deals.
+v2.5 (Q1 2024): Approval workflow engine rebuilt. Slack notifications added.
+=====================================

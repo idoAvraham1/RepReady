@@ -20,13 +20,14 @@ def index():
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    data = request.get_json(force=True)
+    data = request.get_json()
     question = (data.get("question") or "").strip()
+    selected_product = (data.get("product"))
     if not question:
         return {"error": "Empty question"}, 400
 
     try:
-        chunks = retrieve_chunks(question)
+        chunks = retrieve_chunks(question, selected_product)
     except Exception as e:
         print(f"\n[RepReady ERROR] retrieve_chunks failed:\n{traceback.format_exc()}")
         return {"error": "Retrieval failed", "detail": str(e)}, 500

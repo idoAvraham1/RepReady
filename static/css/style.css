@@ -366,8 +366,8 @@ textarea { font-family: inherit; resize: none; }
   transition: color var(--t-fast);
 }
 .conv-company {
-  font-size: var(--fs-xs);
-  color: var(--text-faint);
+  font-size: 12px;
+  color: var(--text-secondary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -408,7 +408,6 @@ textarea { font-family: inherit; resize: none; }
   max-width: 100%;
   box-shadow: var(--shadow-xl);
   animation: modalIn 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
-  overflow: hidden;
 }
 
 @keyframes modalIn {
@@ -772,6 +771,13 @@ textarea { font-family: inherit; resize: none; }
 /* Hide inline citations — source pills below the card handle attribution */
 .bubble-bot .source-inline { display: none; }
 
+/* "Next move:" bold prefix inside answer bullets */
+.next-move-label {
+  font-weight: 700;
+  color: var(--accent);
+  font-style: normal;
+}
+
 .bubble-error {
   color: #fca5a5;
   background: rgba(239, 68, 68, 0.1);
@@ -879,6 +885,8 @@ textarea { font-family: inherit; resize: none; }
   padding: var(--sp-3) var(--sp-6) var(--sp-4);
   background: var(--bg-base);
   border-top: 1px solid var(--bg-border);
+  position: relative;
+  z-index: 10;
 }
 
 .input-shell {
@@ -980,6 +988,117 @@ textarea { font-family: inherit; resize: none; }
   border-radius: 4px;
   padding: 1px 5px;
   color: var(--text-secondary);
+}
+
+/* --- Product Selector (New Chat Modal) ------------------- */
+.product-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.product-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ff-body);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1.5px solid var(--bg-border);
+  border-radius: var(--r-pill);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+.product-chip:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+.product-chip.active {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+  color: var(--text-primary);
+}
+.product-chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* --- Active Product Pill (Input Bar) --------------------- */
+.product-pill-bar {
+  display: flex;
+  align-items: center;
+  max-width: var(--chat-max-w);
+  margin: 0 auto var(--sp-2);
+  padding-left: var(--sp-5);
+}
+
+.product-pill-label {
+  font-family: var(--ff-body);
+  font-size: var(--fs-lg);
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.2px;
+  white-space: nowrap;
+}
+
+.active-product-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--bg-border);
+  border-radius: var(--r-pill);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.active-product-pill:hover {
+  color: var(--text-primary);
+  border-color: var(--accent);
+  background: var(--accent-muted);
+}
+.active-product-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  background: var(--text-faint);
+}
+
+/* active state for current product in switch dropdown */
+.status-opt-active {
+  color: var(--accent) !important;
+  background: var(--accent-muted) !important;
+}
+
+/* --- Product Switch Divider (Chat) ----------------------- */
+.product-switch-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-align: center;
+  margin: var(--sp-2) 0;
+  max-width: var(--msg-max-w);
+}
+.product-switch-divider::before,
+.product-switch-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--bg-border);
 }
 
 /* --- Conv Item Menu Button (···) ------------------------- */
