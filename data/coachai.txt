@@ -6,26 +6,31 @@ VERSION: 2.4
 LAST UPDATED: Q1 2025
 =====================================
 
-[OVERVIEW]
+[COACHAI — OVERVIEW]
 CoachAI is NorthStar Software's real-time call coaching platform. It listens to live sales calls and surfaces instant guidance — battle cards, objection responses, competitor mentions, and talk-track suggestions — exactly when the rep needs them, without interrupting the conversation. After every call, CoachAI delivers a full performance scorecard with coaching notes, talk-to-listen ratio, sentiment analysis, and next-step recommendations. CoachAI turns every call into a coaching opportunity, not just the ones a manager happens to sit in on.
 
-[FEATURES]
+[COACHAI — FEATURES: LIVE COACHING]
+CoachAI live coaching features:
 - Real-time call listening via browser extension or softphone integration
 - Live battle card surfacing when competitor names are detected
 - Objection detection and instant response suggestions
 - Talk-to-listen ratio tracking in real time
 - Keyword and topic alerts (pricing, contract, churn risk, competitor mentions)
+- Whisper mode — manager can coach rep live without the prospect hearing
+
+[COACHAI — FEATURES: POST-CALL & MANAGEMENT]
+CoachAI post-call and management features:
 - Post-call scorecard with performance breakdown
 - Sentiment analysis on prospect tone throughout the call
 - Automated call transcription and summary
 - Manager dashboard for team-wide call performance
 - Coaching comments directly on call transcript timestamps
 - CRM auto-logging — pushes call summary and next steps to Salesforce or HubSpot
-- Whisper mode — manager can coach rep live without the prospect hearing
 - Call library — searchable archive of recorded calls for training
 - Playlist feature — managers curate best/worst call examples for team review
 
-[TECHNICAL DETAILS]
+[COACHAI — TECHNICAL: PLATFORM]
+CoachAI technical platform details:
 - Deployment: browser extension (Chrome, Edge) + native integrations with Zoom, Microsoft Teams, Google Meet, RingCentral, Dialpad
 - Real-time processing latency: under 800ms from spoken word to on-screen guidance
 - Transcription accuracy: 94% average across supported languages
@@ -33,13 +38,17 @@ CoachAI is NorthStar Software's real-time call coaching platform. It listens to 
 - AI model: fine-tuned LLM for sales conversation analysis
 - CRM integrations: Salesforce, HubSpot, Pipedrive, Microsoft Dynamics
 - Authentication: SSO (SAML 2.0), Google OAuth, Microsoft Entra
+
+[COACHAI — TECHNICAL: SECURITY & SLA]
+CoachAI security, compliance, and SLA:
 - Compliance: SOC2 Type II, GDPR, CCPA compliant. Call recording consent banners configurable per jurisdiction.
 - Data retention: transcripts stored for 12 months by default, configurable on Enterprise
 - API: available on Enterprise tier for custom integrations
 - Uptime SLA: 99.9%
 - Encryption: AES-256 at rest, TLS 1.3 in transit
 
-[PRICING]
+[COACHAI — PRICING]
+CoachAI pricing plans:
 - Starter: $79/user/month — up to 10 users, real-time coaching, post-call scorecard, 90-day call archive
 - Growth: $129/user/month — unlimited users, manager dashboard, whisper mode, CRM auto-logging, 12-month call archive
 - Enterprise: Custom pricing — custom AI model fine-tuning, dedicated CSM, advanced analytics, unlimited archive, SLA guarantees
@@ -48,7 +57,8 @@ CoachAI is NorthStar Software's real-time call coaching platform. It listens to 
 - Minimum 3 seats on Starter, 5 seats on Growth
 - Volume discount: 10% off for 25+ seats, 20% off for 100+ seats on Growth
 
-[ONBOARDING & SETUP]
+[COACHAI — ONBOARDING & SETUP]
+CoachAI onboarding and setup:
 - Browser extension install takes under 5 minutes
 - Softphone and video platform integrations configured by admin in under 1 hour
 - CRM connection setup: 30 minutes average
@@ -58,27 +68,32 @@ CoachAI is NorthStar Software's real-time call coaching platform. It listens to 
 - Enterprise: dedicated implementation engineer, average go-live in 5 business days
 - Custom AI fine-tuning on Enterprise: 2-3 week process using customer's historical call data
 
-[USE CASES]
-Use Case 1 — Competitive Displacement:
+[COACHAI — USE CASE: COMPETITIVE DISPLACEMENT]
+CoachAI use case — Competitive Displacement:
 A software company competing against a well-funded competitor found reps going silent when the competitor was mentioned. After deploying CoachAI with competitor battle cards, reps received instant talking points the moment a competitor name appeared. Win rate on competitive deals increased by 24% within 90 days.
 
-Use Case 2 — New Rep Confidence:
+[COACHAI — USE CASE: NEW REP CONFIDENCE]
+CoachAI use case — New Rep Confidence:
 A fintech company's new reps were struggling on pricing objections, often over-discounting to close. CoachAI surfaced objection handling scripts when pricing hesitation was detected in the prospect's tone. Discount rate among new reps dropped by 31%.
 
-Use Case 3 — Manager Coaching at Scale:
+[COACHAI — USE CASE: MANAGER COACHING AT SCALE]
+CoachAI use case — Manager Coaching at Scale:
 A 60-person sales team had 4 managers who could only listen to 2-3 calls per rep per month. With CoachAI's scoring and call library, managers reviewed scorecards for all calls and only joined or reviewed recordings of calls flagged as needing attention. Manager coaching coverage effectively increased by 10x.
 
-Use Case 4 — Remote Sales Team Consistency:
+[COACHAI — USE CASE: REMOTE TEAM CONSISTENCY]
+CoachAI use case — Remote Sales Team Consistency:
 A fully remote sales team across 8 time zones used CoachAI's call library and playlists to standardize messaging. Managers curated monthly "best call" playlists. New hires studied real examples instead of role-play scripts.
 
-[CUSTOMER SUPPORT]
+[COACHAI — CUSTOMER SUPPORT]
+CoachAI customer support by plan:
 - Starter: Email support, 8-hour response time, help center access
 - Growth: Priority email, live chat, 4-hour response time
 - Enterprise: Dedicated CSM, 1-hour SLA, phone support, quarterly business reviews
 - Help center: docs.northstarsoftware.com/coachai
 - Status page: status.northstarsoftware.com
 
-[LIMITATIONS]
+[COACHAI — LIMITATIONS]
+CoachAI limitations:
 - Real-time coaching requires a stable internet connection of at least 5Mbps; degraded performance on poor connections
 - Transcription accuracy drops in noisy environments or with heavy accents — 94% is an average, not a guarantee
 - Whisper mode available on Growth and Enterprise only
@@ -87,7 +102,8 @@ A fully remote sales team across 8 time zones used CoachAI's call library and pl
 - Minimum seat requirements apply: 3 seats on Starter, 5 seats on Growth
 - CoachAI does not integrate with traditional landline phone systems; VoIP or softphone required
 
-[FAQ]
+[COACHAI — FAQ: RECORDING & PRIVACY]
+CoachAI FAQ — recording and privacy:
 Q: Does CoachAI record calls automatically?
 A: CoachAI can be configured to record automatically or to require the rep to start recording manually. Consent banners are configurable to meet local legal requirements.
 
@@ -97,6 +113,8 @@ A: No. The coaching interface is visible only on the rep's screen. Whisper mode 
 Q: How does CoachAI know when a competitor is mentioned?
 A: Admins configure a list of competitor names and keywords in the portal. When CoachAI detects these in the live transcript, it surfaces the relevant battle card within 800ms.
 
+[COACHAI — FAQ: INTEGRATIONS & DATA]
+CoachAI FAQ — integrations and data:
 Q: Can we use our own call recordings to train the AI?
 A: Yes, on the Enterprise tier. NorthStar's AI team works with you over 2-3 weeks to fine-tune the model on your specific industry, product vocabulary, and sales methodology.
 
@@ -106,49 +124,56 @@ A: CoachAI supports Zoom, Microsoft Teams, Google Meet, RingCentral, and Dialpad
 Q: How long are call recordings stored?
 A: 90 days on Starter, 12 months on Growth, configurable (up to unlimited) on Enterprise.
 
+[COACHAI — FAQ: COACHING WORKFLOW]
+CoachAI FAQ — coaching workflow:
 Q: Can managers leave feedback on specific moments in a call?
 A: Yes. Managers can click any timestamp in the transcript to leave a comment. Reps receive a notification and can review the feedback in their coaching inbox.
 
 Q: What happens if our internet drops during a call?
 A: Real-time coaching pauses, but the call continues normally. If the call is being recorded, CoachAI will attempt to recover the transcript from the audio buffer on reconnect. Post-call features remain fully functional.
 
-[OBJECTION HANDLING]
-Objection: "We don't want to record calls — legal and compliance concerns."
+[COACHAI — OBJECTION: RECORDING COMPLIANCE]
+CoachAI objection — "We don't want to record calls — legal and compliance concerns."
 Response: CoachAI can operate in transcript-only mode without storing audio recordings. Consent banners are fully configurable per jurisdiction. We have customers operating in highly regulated industries including fintech and healthcare. We can share our compliance documentation and connect you with our legal team if needed.
 
-Objection: "Our reps will feel micromanaged."
+[COACHAI — OBJECTION: MICROMANAGEMENT]
+CoachAI objection — "Our reps will feel micromanaged."
 Response: CoachAI is designed to support reps, not surveil them. Reps see their own scorecards first — managers only see aggregate team data by default. Most reps report feeling more confident, not more watched, because they have guidance available when they need it. Adoption rates are highest when reps are involved in the rollout conversation.
 
-Objection: "We already have Gong or Chorus."
+[COACHAI — OBJECTION: GONG OR CHORUS]
+CoachAI objection — "We already have Gong or Chorus."
 Response: Gong and Chorus are primarily post-call analytics tools — they analyze what happened after the call ends. CoachAI's differentiator is real-time guidance during the call, when it can actually change the outcome. Many customers use both: Gong for revenue intelligence, CoachAI for in-the-moment coaching.
 
-Objection: "Our team is too experienced to need coaching."
+[COACHAI — OBJECTION: EXPERIENCED TEAM]
+CoachAI objection — "Our team is too experienced to need coaching."
 Response: CoachAI isn't just for new reps. For experienced reps, it's about consistency and coverage — surfacing the right data point at the right moment even for your best performers. And for managers, the call library and scoring gives visibility into the whole team, not just the reps they have time to shadow.
 
-[COMPETITION]
-Primary competitors: Gong, Chorus (ZoomInfo), Salesloft Conversations, Outreach Kaia
-
+[COACHAI — COMPETITION: GONG]
 CoachAI vs Gong:
 Gong is the market leader in post-call revenue intelligence and is priced accordingly — typically $100-$200+ per user per month with significant minimum commitments. CoachAI's core differentiator is real-time in-call guidance, which Gong does not offer. CoachAI Starter at $79/user/month provides real-time coaching at a significantly lower entry point.
 
+[COACHAI — COMPETITION: CHORUS]
 CoachAI vs Chorus:
 Chorus (now part of ZoomInfo) focuses on post-call analysis and is bundled into ZoomInfo's broader sales intelligence platform. It is not available as a standalone product, making pricing complex. CoachAI is a standalone product with transparent per-seat pricing and does not require purchasing a broader data platform.
 
+[COACHAI — COMPETITION: SALESLOFT & OUTREACH]
 CoachAI vs Salesloft Conversations and Outreach Kaia:
 Both are bundled features within their respective sales engagement platforms. Customers who already use Salesloft or Outreach get basic call recording and analysis. CoachAI offers deeper real-time coaching, custom AI fine-tuning, and is platform-agnostic — it works regardless of your sales engagement stack.
 
-[CASE STUDIES]
-Customer: Vertex SaaS (80-person sales team)
+[COACHAI — CASE STUDY: VERTEX SAAS]
+CoachAI case study — Vertex SaaS (80-person sales team):
 Challenge: Win rate on competitive deals was 19% — reps lacked confidence when prospects brought up the main competitor.
 Solution: Deployed CoachAI with custom battle cards for 3 primary competitors.
 Results: Competitive win rate increased to 43% within 6 months. Average call score improved from 61/100 to 78/100.
 
-Customer: Clearpath Lending (25-person mortgage sales team)
+[COACHAI — CASE STUDY: CLEARPATH LENDING]
+CoachAI case study — Clearpath Lending (25-person mortgage sales team):
 Challenge: Compliance violations on recorded calls were creating legal risk. Managers couldn't review enough calls manually.
 Solution: CoachAI configured with compliance keyword alerts to flag prohibited language in real time.
 Results: Compliance violations dropped by 89% in 60 days. Manager review time reduced by 60% due to automated flagging.
 
-[RECENT UPDATES]
+[COACHAI — RECENT UPDATES]
+CoachAI recent updates:
 v2.4 (Q1 2025): Added Portuguese language support. Launched playlist feature for call libraries.
 v2.3 (Q4 2024): Whisper mode launched on Growth tier. Improved sentiment analysis model.
 v2.2 (Q3 2024): CRM auto-logging launched for HubSpot and Pipedrive. Post-call summary improvements.

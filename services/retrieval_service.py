@@ -4,10 +4,9 @@ retrieval_service.py — Bedrock Knowledge Base retrieval.
 Single responsibility: query the AWS Bedrock KB and return a ranked list
 of text chunks with source names and relevance scores.
 
-Query augmentation is used to improve retrieval accuracy when a product is
-selected (e.g. "RepReady Pro — client says pricing is too high").
-Metadata filtering is intentionally disabled until KB metadata tagging is
-confirmed via the Bedrock API; augmentation alone provides sufficient signal.
+Query augmentation strengthens semantic search when a product is selected.
+Metadata filtering scopes retrieval to the selected product's documents via
+Bedrock KB sidecar metadata (product attribute on each S3 document).
 """
 
 import boto3
@@ -65,13 +64,13 @@ def _build_retrieval_context(
     label = " vs ".join(p.replace("_", " ").title() for p in involved)
     augmented = f"{label} — {question}"
 
-    # Metadata filter is disabled until KB tagging is confirmed via API test.
-    # Uncomment and adapt the block below once metadata is verified:
-    # if len(involved) == 1:
-    #     retrieval_filter = {"equals": {"key": "product", "value": selected_product}}
-    # else:
-    #     retrieval_filter = {"orAll": [{"equals": {"key": "product", "value": p}} for p in involved]}
-    return augmented, None
+    if len(involved) == 1:
+        retrieval_filter = {"equals": {"key": "product", "value": selected_product}}
+    else:
+        retrieval_filter = {
+            "orAll": [{"equals": {"key": "product", "value": p}} for p in sorted(involved)]
+        }
+    return augmented, retrieval_filter
 
 
 def retrieve_chunks(question: str, selected_product: str | None = None) -> list[dict]:

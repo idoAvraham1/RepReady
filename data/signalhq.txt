@@ -6,15 +6,19 @@ VERSION: 2.1
 LAST UPDATED: Q1 2025
 =====================================
 
-[OVERVIEW]
+[SIGNALHQ — OVERVIEW]
 SignalHQ is NorthStar Software's prospect intelligence platform. It monitors thousands of data sources in real time and alerts sales reps the moment a prospect shows a buying signal — a new funding round, a key hire, a product launch, a technology change, a competitor contract expiry, or a news mention suggesting a relevant pain point. SignalHQ turns cold outreach into warm, timely conversations. Instead of guessing when to reach out, reps know exactly when a prospect is likely ready to buy — and exactly what to say when they do.
 
-[FEATURES]
+[SIGNALHQ — FEATURES: MONITORING]
+SignalHQ signal monitoring features:
 - Real-time monitoring of 12,000+ data sources including news, LinkedIn, SEC filings, job boards, technology databases, and press releases
 - Signal types: funding rounds, executive hires and departures, technology installs and removals, competitor contract signals, company expansions, layoffs, earnings calls, regulatory filings, product launches
 - AI-generated outreach suggestions — SignalHQ drafts a personalized first line based on the detected signal
 - Account scoring — each prospect is scored daily based on signal strength and recency
 - Territory management — assign accounts to reps and route signals automatically
+
+[SIGNALHQ — FEATURES: INTEGRATIONS]
+SignalHQ integration features:
 - CRM sync — signals and account scores push to Salesforce, HubSpot, or Pipedrive automatically
 - Slack and email alerts — reps notified the moment a signal fires for their accounts
 - Competitor tracking — monitor when target accounts are actively evaluating competitors
@@ -24,7 +28,8 @@ SignalHQ is NorthStar Software's prospect intelligence platform. It monitors tho
 - CSV import for bulk account upload
 - API access on Enterprise for custom signal sources
 
-[TECHNICAL DETAILS]
+[SIGNALHQ — TECHNICAL DETAILS]
+SignalHQ technical details:
 - Data sources monitored: 12,000+ including web, news, LinkedIn public data, SEC EDGAR, Crunchbase, Builtwith, job boards, G2, TrustRadius, Bombora
 - Signal processing latency: most signals surfaced within 4 hours of occurrence; funding and news signals within 30 minutes
 - Account database: 40 million+ companies globally
@@ -36,7 +41,8 @@ SignalHQ is NorthStar Software's prospect intelligence platform. It monitors tho
 - Uptime SLA: 99.9%
 - Chrome extension: Chrome and Edge supported
 
-[PRICING]
+[SIGNALHQ — PRICING]
+SignalHQ pricing plans:
 - Starter: $59/user/month — up to 5 users, 500 monitored accounts, 5 signal types, email alerts, CRM sync
 - Growth: $119/user/month — unlimited users, 5,000 monitored accounts, all signal types, Slack integration, intent data, territory management, AI outreach suggestions
 - Enterprise: Custom pricing — unlimited accounts, custom signal sources, API access, dedicated CSM, Bombora full intent suite, advanced territory management
@@ -45,7 +51,8 @@ SignalHQ is NorthStar Software's prospect intelligence platform. It monitors tho
 - No minimum seat requirement on Starter
 - Bundle discount: 15% off SignalHQ when purchased with RepReady Pro
 
-[ONBOARDING & SETUP]
+[SIGNALHQ — ONBOARDING & SETUP]
+SignalHQ onboarding and setup:
 - CRM connection: 30-45 minutes, pulls existing account list automatically
 - Territory assignment: admin assigns accounts to reps in bulk via CRM sync or CSV upload
 - Signal configuration: default signal types are pre-enabled; customization takes 30 minutes
@@ -54,27 +61,32 @@ SignalHQ is NorthStar Software's prospect intelligence platform. It monitors tho
 - Enterprise: dedicated implementation engineer, average go-live in 5 business days
 - Typical time from signup to first signal alert: under 24 hours
 
-[USE CASES]
-Use Case 1 — Funding Round Outreach:
+[SIGNALHQ — USE CASE: FUNDING ROUND OUTREACH]
+SignalHQ use case — Funding Round Outreach:
 A B2B SaaS company used SignalHQ to monitor Series A and B funding announcements for companies in their target segment. Reps received an alert within 30 minutes of a funding announcement, with an AI-drafted first line referencing the raise. Outreach sent within 24 hours of a funding announcement had 3x the reply rate of standard cold outreach.
 
-Use Case 2 — Technology Change Signals:
+[SIGNALHQ — USE CASE: TECHNOLOGY CHANGE]
+SignalHQ use case — Technology Change Signals:
 An IT security company used SignalHQ to detect when prospect accounts removed a competitor technology from their stack. This signal indicated the account had gone through a vendor change and might be open to new options. Pipeline generated from technology removal signals had a 28% higher close rate than outbound average.
 
-Use Case 3 — Executive Hire Monitoring:
+[SIGNALHQ — USE CASE: EXECUTIVE HIRE MONITORING]
+SignalHQ use case — Executive Hire Monitoring:
 A sales enablement company knew that a new VP of Sales at a target account was a strong buying signal. SignalHQ monitored for VP of Sales and CRO hires at 2,000 target accounts. Reps received alerts within hours of a LinkedIn profile update. Response rates on "congrats on the new role" outreach were 4x higher than standard cold email.
 
-Use Case 4 — Competitor Contract Expiry Intelligence:
+[SIGNALHQ — USE CASE: COMPETITOR CONTRACT EXPIRY]
+SignalHQ use case — Competitor Contract Expiry Intelligence:
 An enterprise software company estimated competitor contract lengths at 2-3 years. SignalHQ tracked when competitor contracts were likely approaching renewal based on implementation date signals in job postings and case studies. Reps began outreach 90 days before estimated renewal windows. Win rate on these accounts was 34% vs 12% for cold outreach.
 
-[CUSTOMER SUPPORT]
+[SIGNALHQ — CUSTOMER SUPPORT]
+SignalHQ customer support by plan:
 - Starter: Email support, help center, 8-hour response time
 - Growth: Priority email, live chat, 4-hour response time
 - Enterprise: Dedicated CSM, 1-hour SLA, phone support, quarterly reviews
 - Help center: docs.northstarsoftware.com/signalhq
 - Status page: status.northstarsoftware.com
 
-[LIMITATIONS]
+[SIGNALHQ — LIMITATIONS]
+SignalHQ limitations:
 - Signal processing is not instantaneous — most signals surface within 4 hours, not in real time
 - LinkedIn data is limited to publicly available profile information; SignalHQ does not access private LinkedIn data
 - Starter plan limited to 500 monitored accounts — teams with large territories should consider Growth
@@ -84,62 +96,72 @@ An enterprise software company estimated competitor contract lengths at 2-3 year
 - Custom signal sources (e.g. proprietary databases, internal CRM events) available on Enterprise only
 - Chrome extension is available for Chrome and Edge only; Firefox not supported
 
-[FAQ]
+[SIGNALHQ — FAQ: SIGNALS & DATA ACCURACY]
+SignalHQ FAQ — signals and data accuracy:
 Q: What counts as a "signal"?
 A: A signal is any event or data point that suggests a prospect may be ready to buy or worth reaching out to. Examples include: company raises funding, a new executive joins who is a likely buyer, the company posts a job that suggests a relevant pain point, the company removes a competitor technology, the company is mentioned in news related to a challenge your product solves, or the company shows intent activity on relevant review sites.
 
 Q: How accurate is the contact data?
 A: Email accuracy averages 87% globally, with higher rates in the US (92%) and UK (90%). Phone number accuracy averages 74%. All emails are verified before delivery to reduce bounce rates. SignalHQ includes a data guarantee — if an email bounces, the credit is returned.
 
+[SIGNALHQ — FAQ: COVERAGE & ACCOUNTS]
+SignalHQ FAQ — coverage and accounts:
 Q: Does SignalHQ work for accounts outside the US?
 A: Yes. SignalHQ monitors global data sources and has strong coverage in the US, UK, EU, Canada, and Australia. Coverage is more limited in some markets in Southeast Asia and Latin America. Contact our team for a coverage assessment for your specific target markets.
 
 Q: Can we add our own accounts, or does SignalHQ provide a list?
 A: Both. You can import your existing account list from your CRM or via CSV. You can also use SignalHQ's account database (40M+ companies) to discover new target accounts that match your ideal customer profile.
 
+[SIGNALHQ — FAQ: AI OUTREACH & COMPLIANCE]
+SignalHQ FAQ — AI outreach and compliance:
 Q: How does the AI outreach suggestion work?
 A: When a signal fires, SignalHQ generates a personalized first line or short opening paragraph based on the signal context. For example, if a funding round is detected: "Congratulations on the Series B — with that level of investment, scaling your sales team efficiently is likely top of mind. We help teams like [company] do exactly that." Reps can edit or use as-is.
 
 Q: Is the data GDPR compliant?
 A: Yes. SignalHQ sources all data from publicly available sources. For EU prospects, contact data processing follows GDPR requirements including data minimization and the right to erasure. SignalHQ is SOC2 Type II certified and GDPR compliant.
 
-[OBJECTION HANDLING]
-Objection: "We already use ZoomInfo / Apollo for prospecting data."
+[SIGNALHQ — OBJECTION: ZOOMINFO / APOLLO]
+SignalHQ objection — "We already use ZoomInfo / Apollo for prospecting data."
 Response: ZoomInfo and Apollo are primarily static contact databases — they give you a list of contacts and some firmographic data. SignalHQ is a real-time signal monitoring platform — it tells you which of those contacts to call today and why. Most of our customers use both: their existing data platform for lists, SignalHQ for timing and context. The two are complementary, not competing.
 
-Objection: "Our reps already research accounts manually."
+[SIGNALHQ — OBJECTION: MANUAL RESEARCH]
+SignalHQ objection — "Our reps already research accounts manually."
 Response: Manual research averages 20-30 minutes per account and reps can only check accounts they think to check. SignalHQ monitors all your accounts simultaneously, 24/7, and surfaces the signal the moment it happens. A funding round announced at 6am on a Tuesday doesn't get acted on until Monday if reps only check manually.
 
-Objection: "500 accounts is not enough for our team."
+[SIGNALHQ — OBJECTION: ACCOUNT LIMITS]
+SignalHQ objection — "500 accounts is not enough for our team."
 Response: The Growth plan supports 5,000 monitored accounts, which covers most sales teams. Enterprise supports unlimited accounts. We can also discuss what the right coverage looks like — many teams find that focusing signals on their top 500 ICP accounts produces more pipeline than spreading thin across thousands of lower-fit accounts.
 
-Objection: "How do we know the signals are accurate?"
+[SIGNALHQ — OBJECTION: SIGNAL ACCURACY]
+SignalHQ objection — "How do we know the signals are accurate?"
 Response: SignalHQ sources from 12,000+ verified data providers and cross-references signals across multiple sources before surfacing them. Our signal accuracy rate is 91% measured against ground truth outcomes. We also include a feedback loop — reps can mark signals as irrelevant, which improves accuracy for their specific territory over time.
 
-[COMPETITION]
-Primary competitors: ZoomInfo, Apollo.io, Bombora, 6sense, Demandbase
-
+[SIGNALHQ — COMPETITION: ZOOMINFO]
 SignalHQ vs ZoomInfo:
 ZoomInfo is primarily a contact and company data provider with recently added intent features. It is priced at $15,000-$30,000+ per year for most teams. SignalHQ starts at $59/user/month with no annual minimum on Starter, making it significantly more accessible. SignalHQ's core strength is real-time event-based signals, which ZoomInfo's static database approach does not match.
 
+[SIGNALHQ — COMPETITION: 6SENSE & DEMANDBASE]
 SignalHQ vs 6sense and Demandbase:
 Both are enterprise ABM platforms that combine intent data with account orchestration. They are designed for large marketing and sales ops teams with significant technical resources and typically cost $50,000-$200,000+ per year. SignalHQ is designed for sales reps and managers — it is simpler, rep-facing, and accessible at a fraction of the cost.
 
+[SIGNALHQ — COMPETITION: APOLLO.IO]
 SignalHQ vs Apollo.io:
 Apollo is a strong outbound sequencing and contact data platform. It includes some intent signals but signal monitoring depth is limited. SignalHQ offers significantly more signal types, real-time monitoring, and AI outreach suggestions. Many teams use Apollo for sequencing and SignalHQ for signal intelligence.
 
-[CASE STUDIES]
-Customer: Stratum Analytics (18-person sales team)
+[SIGNALHQ — CASE STUDY: STRATUM ANALYTICS]
+SignalHQ case study — Stratum Analytics (18-person sales team):
 Challenge: Cold outreach reply rates were below 2%. Reps had no context on why a prospect might be ready to buy now.
 Solution: Deployed SignalHQ on Growth plan, monitoring 1,200 target accounts across 8 signal types.
 Results: Outreach triggered by signals achieved 8.4% reply rate vs 1.9% for standard cold outreach. Pipeline from signal-triggered outreach represented 61% of new pipeline within 6 months despite being 30% of outreach volume.
 
-Customer: Orbit Infrastructure (40-person enterprise sales team)
+[SIGNALHQ — CASE STUDY: ORBIT INFRASTRUCTURE]
+SignalHQ case study — Orbit Infrastructure (40-person enterprise sales team):
 Challenge: Long sales cycles (9-12 months) made it hard to know when to re-engage dormant accounts.
 Solution: Used SignalHQ to monitor 3,000 dormant accounts for re-engagement signals — leadership changes, budget announcements, technology changes.
 Results: 23% of re-engaged accounts converted to active pipeline within 90 days of signal-triggered outreach. 4 closed deals directly attributed to funding round signals in the first quarter.
 
-[RECENT UPDATES]
+[SIGNALHQ — RECENT UPDATES]
+SignalHQ recent updates:
 v2.1 (Q1 2025): Launched AI outreach suggestion feature. Added TrustRadius intent data integration.
 v2.0 (Q4 2024): Full Bombora intent data integration on Growth. Territory management redesign.
 v1.9 (Q3 2024): Expanded contact database to 200M+. Chrome extension launched.
