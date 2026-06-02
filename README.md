@@ -10,10 +10,11 @@ Single Flask app — backend and frontend ship in one Docker image.
 
 - **RAG answers** — Retrieves from a Bedrock Knowledge Base, generates responses with source citations
 - **Live streaming** — Server-Sent Events (SSE) for token-by-token replies
-- **Product context** — Select a product per conversation; queries are augmented for sharper retrieval
-- **Conversation memory** — Last 2 exchanges sent to the LLM for follow-up continuity
+- **Product scoping** — Select a product per conversation; retrieval is metadata-filtered to that product's docs
+- **Cross-product comparisons** — In All Products mode, queries naming 2+ products trigger per-product retrieval so answers cite each product fairly
+- **Conversation memory** — Last 2 exchanges (4 messages) sent to the LLM for follow-up continuity
 - **Knowledge gaps** — Unanswered questions logged when the model uses the fallback phrase; viewable on the Gaps page
-- **SPA frontend** — Landing page, chat UI, Best Practices guide, and Gaps dashboard (hash routing, no separate FE build)
+- **SPA frontend** — Landing page, chat UI, Best Practices guide, and scrollable Gaps dashboard (hash routing, no separate FE build)
 
 ---
 
@@ -22,14 +23,15 @@ Single Flask app — backend and frontend ship in one Docker image.
 ```
 Browser  →  Flask (app.py)
               ├── retrieval_service  →  Bedrock KB retrieve()
+              │                         (metadata filter + comparison mode)
               ├── generation_service →  Bedrock Claude Haiku (stream)
               └── gap_service        →  gaps_log.jsonl
 ```
 
 | Layer | Role |
 |-------|------|
-| `app.py` | HTTP routes, SSE orchestration |
-| `config.py` | All environment variables (single source of truth) |
+| `app.py` | HTTP routes, SSE orchestration, comparison_mode wiring |
+| `config.py` | Environment variables and retrieval constants |
 | `services/` | Retrieval, generation, gap logging |
 | `templates/` + `static/` | Vanilla HTML/CSS/JS UI served by Flask |
 
@@ -41,6 +43,14 @@ Browser  →  Flask (app.py)
 | `POST` | `/chat` | Chat (SSE). Body: `{ question, product, history? }` |
 | `GET` | `/gaps` | Knowledge gaps grouped by product (JSON) |
 
+**SSE events from `/chat`**
+
+| Event | Payload | When |
+|-------|---------|------|
+| `sources` | JSON array of source filenames | Before tokens stream |
+| (default) | Escaped text token | During generation |
+| (default) | `[DONE]` | Stream complete |
+
 ---
 
 ## Prerequisites
@@ -48,7 +58,7 @@ Browser  →  Flask (app.py)
 - Python 3.11+ (local development)
 - Docker (container deployment)
 - AWS account with:
-  - Bedrock Knowledge Base (synced with your product docs)
+  - Bedrock Knowledge Base synced from S3 product docs **with metadata sidecars**
   - Access to Claude Haiku 4.5 (cross-region inference profile)
   - IAM permissions for `bedrock-agent-runtime:Retrieve` and `bedrock-runtime:InvokeModelWithResponseStream`
 
@@ -72,6 +82,14 @@ copy .env.example .env # Windows
 | `BEDROCK_MODEL_ID` | No | Haiku inference profile ID | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
 
 \*On EC2, prefer an **IAM instance role** with Bedrock permissions and omit access keys from `.env`. Boto3 picks up role credentials automatically.
+
+Retrieval tuning lives in `config.py` (not env vars):
+
+| Constant | Default | Purpose |
+|----------|---------|---------|
+| `RETRIEVAL_TOP_K` | `5` | Chunks returned for single-product / general queries |
+| `COMPARISON_CHUNKS_PER_PRODUCT` | `3` | Chunks per product in All Products comparison mode |
+| `MAX_TOKENS` | `512` | Max LLM output tokens |
 
 `.env` is gitignored and excluded from Docker builds (see `.dockerignore`). Pass credentials at runtime only.
 
@@ -186,9 +204,11 @@ Hash-based routing in a single `index.html`:
 | (none) | Landing page |
 | `#app` | Chat interface |
 | `#best-practices` | Usage guide for reps |
-| `#gaps` | Knowledge gaps dashboard |
+| `#gaps` | Knowledge gaps dashboard (scrollable list) |
 
 Conversations are stored in the browser (`localStorage`); only gap logs persist on the server.
+
+**Product selector** — Set at New Chat or switch mid-conversation via the active pill. Values map to `product` in the `/chat` request body (`general` = All Products).
 
 ---
 
@@ -198,19 +218,51 @@ A gap is logged **after** the LLM finishes streaming, when the response contains
 
 > I don't have that information in my current knowledge base.
 
-Entries are appended to `gaps_log.jsonl` with question, product, timestamp, and optional retrieval score. The **Knowledge Gaps** page (`#gaps`) reads `/gaps` and groups them by product.
+Entries are appended to `gaps_log.jsonl` with question, product, timestamp, and optional retrieval `max_score`. The **Knowledge Gaps** page (`#gaps`) reads `/gaps` and groups them by product.
 
 This is tied to the system prompt in `services/generation_service.py` (rule 12). Do not change the fallback phrase without updating `GAP_FALLBACK_PHRASE` in `services/gap_service.py`.
 
 ---
 
-## RAG and product context
+## RAG, metadata filtering, and product context
 
-- **Product pill / New Chat selector** — When a product is selected, the retrieval query is augmented (e.g. `Repready Pro — client says pricing is too high`).
-- **All Products** — No augmentation; top-K chunks come from the full KB.
-- **Metadata filtering** — Prepared in `retrieval_service.py` but disabled until KB document metadata is verified via the Bedrock API. Enable the commented filter block after tagging docs with a `product` attribute and re-syncing the KB.
+### Knowledge base documents
 
-For best retrieval quality: select the active product in the UI rather than relying on spelling in the question text.
+Each product has a `.txt` file in `data/` plus a Bedrock metadata sidecar uploaded alongside it on S3:
+
+```
+coachai.txt
+coachai.txt.metadata.json   →  { "metadataAttributes": { "product": "coachai" } }
+```
+
+Sidecar filenames must match the document name exactly (e.g. `dealdesk.txt.metadata.json`, not a typo). After any S3 or metadata change, **re-sync the Bedrock Knowledge Base**.
+
+Documents are structured as self-contained blocks (e.g. `[COACHAI — PRICING]`) so Bedrock's default ~300-token chunking keeps related facts together — pricing, features, and objections stay in retrievable units.
+
+### Retrieval modes
+
+Implemented in `services/retrieval_service.py`:
+
+| UI selection | Query pattern | Behavior |
+|--------------|---------------|----------|
+| **Single product** (e.g. RepReady Pro) | Any question | Query augmented with product label; metadata filter `product = <id>`; top **5** chunks |
+| **Single product + other product named** | e.g. "CoachAI vs us" with RepReady Pro selected | Augmented query; `orAll` filter across involved products |
+| **All Products** | General question | No metadata filter; top **5** chunks from full KB |
+| **All Products** | 2+ product names in question | **Comparison mode**: separate retrieve per product (**3** chunks each), merged for generation; LLM prompted to cite each product |
+
+Product name detection uses aliases in `PRODUCT_IDS` (e.g. `repready pro`, `coach ai`, `deal desk`). Comparison mode only runs when the pill is **All Products** (`general`) and at least two products are detected in the question.
+
+### Products in the demo KB
+
+| ID | Label |
+|----|-------|
+| `repready_pro` | RepReady Pro |
+| `coachai` | CoachAI |
+| `salestrain` | SalesTrain |
+| `signalhq` | SignalHQ |
+| `dealdesk` | DealDesk |
+
+**Best practice:** Select the active product in the UI for single-product calls. Use **All Products** when comparing offerings and name both products in the question (e.g. *"debating between repready_pro and coachai on pricing"*).
 
 ---
 
@@ -226,9 +278,9 @@ repready-chatbot/
 ├── gaps_log.jsonl         # Runtime gap log (gitignored; volume on EC2)
 │
 ├── services/
-│   ├── retrieval_service.py
-│   ├── generation_service.py
-│   └── gap_service.py
+│   ├── retrieval_service.py   # KB retrieve, metadata filter, comparison mode
+│   ├── generation_service.py  # Claude Haiku streaming + system prompt
+│   └── gap_service.py         # Gap detection and JSONL logging
 │
 ├── templates/
 │   └── index.html
@@ -237,22 +289,28 @@ repready-chatbot/
 │   ├── css/style.css
 │   └── js/app.js
 │
-└── data/                  # Sample docs (upload to S3/KB for production)
+└── data/                  # Sample docs + metadata sidecars (upload to S3/KB)
     ├── repready_pro.txt
+    ├── repready_pro.txt.metadata.json
     ├── coachai.txt
+    ├── coachai.txt.metadata.json
     ├── salestrain.txt
+    ├── salestrain.txt.metadata.json
     ├── signalhq.txt
-    └── dealdesk.txt
+    ├── signalhq.txt.metadata.json
+    ├── dealdesk.txt
+    └── dealdesk.txt.metadata.json
 ```
 
 ---
 
 ## Adding a new product
 
-1. Add documentation to S3 and sync the Bedrock Knowledge Base (with `product` metadata when filtering is enabled).
-2. Add the product ID and aliases to `PRODUCT_IDS` in `services/retrieval_service.py`.
-3. Add an entry to the `PRODUCTS` array in `static/js/app.js` (label and dot color).
-4. Re-sync the knowledge base.
+1. Add `<product_id>.txt` to `data/`, structured as self-contained `[PRODUCT — TOPIC]` blocks (~250 tokens each).
+2. Add `<product_id>.txt.metadata.json` with `"product": "<product_id>"` in `metadataAttributes`.
+3. Upload both files to the KB's S3 data source (matching filenames) and re-sync the Knowledge Base.
+4. Add the product ID and aliases to `PRODUCT_IDS` in `services/retrieval_service.py`.
+5. Add an entry to the `PRODUCTS` array in `static/js/app.js` (label and dot color).
 
 ---
 
@@ -262,6 +320,10 @@ repready-chatbot/
 |-------|--------|
 | Retrieval failed | `BEDROCK_KB_ID`, region, IAM permissions, KB sync status |
 | Model error | `BEDROCK_MODEL_ID` — use the Haiku 4.5 inference profile for your region |
+| Wrong product in sources | Product pill selection; metadata sidecar filename and `product` value; KB re-sync after S3 changes |
+| Comparison only shows one product | Pill must be **All Products**; question must name 2+ products (see `PRODUCT_IDS` aliases) |
+| Pricing/facts missing from chunks | Doc may span chunk boundaries — restructure into self-contained blocks and re-upload |
 | Empty gaps page | Ask a question outside the KB; confirm fallback phrase in response |
 | Gaps lost after redeploy | Mount `gaps_log.jsonl` as a Docker volume |
 | Docker build includes secrets | Ensure `.env` is listed in `.dockerignore` |
+| Stale code after edits | Kill all `python app.py` processes; only one Flask instance should listen on port 5000 |

@@ -55,7 +55,7 @@ SYSTEM_PROMPT = (
 )
 
 
-def _build_user_prompt(question: str, chunks: list[dict]) -> str:
+def _build_user_prompt(question: str, chunks: list[dict], comparison_mode: bool = False) -> str:
     """
     Assemble the user-turn prompt: retrieved context blocks followed by the question.
 
@@ -67,10 +67,18 @@ def _build_user_prompt(question: str, chunks: list[dict]) -> str:
         for i, chunk in enumerate(chunks, 1)
     ]
     context = "\n\n".join(context_parts)
+    instruction = (
+        "Respond in bullet points only (max 4). Cite the source name in parentheses after each bullet."
+    )
+    if comparison_mode:
+        instruction += (
+            " Context spans multiple NorthStar products — address each product relevant to the "
+            "question and cite the correct source for every bullet."
+        )
     return (
         f"<context>\n{context}\n</context>\n\n"
         f"<question>{question}</question>\n\n"
-        "Respond in bullet points only (max 4). Cite the source name in parentheses after each bullet."
+        f"{instruction}"
     )
 
 
@@ -78,6 +86,7 @@ def generate_stream(
     question: str,
     chunks: list[dict],
     history: list[dict] | None = None,
+    comparison_mode: bool = False,
 ):
     """
     Yield text tokens from Claude Haiku via Bedrock streaming.
@@ -89,11 +98,13 @@ def generate_stream(
                   (up to the last 2 exchanges = 4 messages). Prepended to the
                   Claude messages array so the model understands follow-up context
                   without significant latency overhead (~150-250 extra tokens).
+        comparison_mode: When True, instruct the model to cover and cite each
+                  product present in the retrieved context (All Products compare).
 
     Yields:
         str: Individual text tokens as they stream from the model.
     """
-    prompt = _build_user_prompt(question, chunks)
+    prompt = _build_user_prompt(question, chunks, comparison_mode=comparison_mode)
 
     # Build the messages array: history (if any) then the current prompt
     messages: list[dict] = []

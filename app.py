@@ -10,7 +10,7 @@ import json
 import logging
 from flask import Flask, render_template, request, Response, stream_with_context
 
-from services.retrieval_service import retrieve_chunks
+from services.retrieval_service import retrieve_chunks, is_comparison_retrieval
 from services.generation_service import generate_stream
 from services.gap_service import log_gap_from_response
 from config import GAP_LOG_PATH
@@ -54,6 +54,8 @@ def chat():
     if not question:
         return {"error": "Empty question"}, 400
 
+    comparison_mode = is_comparison_retrieval(question, selected_product)
+
     try:
         chunks = retrieve_chunks(question, selected_product)
     except Exception:
@@ -68,7 +70,9 @@ def chat():
         full_text = ""
         try:
             yield f"event: sources\ndata: {json.dumps(sources)}\n\n"
-            for token in generate_stream(question, chunks, history):
+            for token in generate_stream(
+                question, chunks, history, comparison_mode=comparison_mode
+            ):
                 full_text += token
                 escaped = token.replace("\n", "\\n")
                 yield f"data: {escaped}\n\n"

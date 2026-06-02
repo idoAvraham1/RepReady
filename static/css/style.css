@@ -1552,7 +1552,8 @@ textarea { font-family: inherit; resize: none; }
    Shared layout — full-screen dark page with a top nav bar
    ============================================================ */
 .info-page {
-  min-height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
   background: var(--bg-base);
   display: flex;
   flex-direction: column;
@@ -1600,10 +1601,22 @@ textarea { font-family: inherit; resize: none; }
 
 /* Page content wrapper */
 .info-page-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
   max-width: 860px;
   margin: 0 auto;
   padding: var(--sp-6) var(--sp-8) var(--sp-10);
   width: 100%;
+}
+
+.info-page-content::-webkit-scrollbar { width: 6px; }
+.info-page-content::-webkit-scrollbar-track { background: transparent; }
+.info-page-content::-webkit-scrollbar-thumb {
+  background: var(--bg-elevated);
+  border-radius: var(--r-pill);
 }
 
 /* Page header */

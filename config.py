@@ -28,6 +28,8 @@ MAX_TOKENS = 512
 
 # --- Retrieval ----------------------------------------------------------
 RETRIEVAL_TOP_K = 5
+# Chunks retrieved per product when All Products mode detects a 2+ product comparison.
+COMPARISON_CHUNKS_PER_PRODUCT = 3
 
 # --- File paths ---------------------------------------------------------
 # Absolute path to the JSONL file where knowledge gaps are logged.
