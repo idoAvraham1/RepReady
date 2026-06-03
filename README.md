@@ -1,171 +1,103 @@
 # RepReady
 
-> *"Know everything on the call."*
+> *"Always know your next move."*
 
-A sales-assist chat app for live calls. Reps ask product questions in plain language and get streamed, cited coaching bullets — every answer grounded in your approved docs via **AWS Bedrock**, not model memory.
+RepReady is a real-time sales coach powered by your own product docs. It's built for two moments: **warming up before a call** and **rescuing you mid-call** when a hard objection or forgotten detail catches you off guard.
 
-Single Flask app — backend and UI ship in one Docker image.
+Unlike static battle cards or cheat sheets that give you facts, RepReady generates coached responses — what to say right now, and what your next move is. Every answer is grounded in your approved knowledge base via **AWS Bedrock**, not model memory.
+
+---
+
+## Two ways to use it
+
+**Before the call — warm up**
+Open a chat, select your product, and run through the objections you expect. Pricing pushback? Competitor comparison? Onboarding concerns? Get the coached answer in advance so it's already in your head when it matters.
+
+**During the call**
+When an objection you haven't heard before lands, or a technical detail slips your mind, type a quick 3–5 word query while the prospect is still talking. The answer streams back before you need to respond.
+
+---
+
+## How it works
+
+```
+Your question  (+ product context, optional history)
+      │
+      ▼
+  app.py  /chat
+      │
+      ├── retrieval_service  ──►  Bedrock KB  (metadata-filtered retrieve)
+      ├── generation_service ──►  Claude Haiku 4.5  (streamed bullets)
+      └── gap_service        ──►  gaps_log.jsonl
+      │
+      ▼
+  SSE stream  →  coached bullets  +  "Next move:"  +  source citations
+```
+
+Every response follows the same format: up to 4 coaching bullets written for someone speaking out loud right now, ending with a **Next move:** the rep can act on immediately.
 
 ---
 
 ## Features
 
-- **Bedrock-grounded answers** — Retrieves from a Knowledge Base, generates responses with source citations
-- **Live streaming** — Server-Sent Events (SSE) for token-by-token replies
-- **Product scoping** — Metadata-filtered retrieval per product conversation
-- **Cross-product comparisons** — All Products mode + 2+ product names triggers fair per-product retrieval
-- **Conversation memory** — Last 2 exchanges (4 messages) sent to the LLM for follow-ups
-- **Knowledge gaps** — Questions the model can't answer are logged automatically for review
-- **Docker-ready** — One image, env-based config, optional volume for gap persistence
+| | |
+|---|---|
+| ⚡ **Live streaming** | Token-by-token via SSE — first bullet appears in under a second |
+| 🎯 **Product scoping** | Metadata-filtered retrieval per product conversation |
+| 🔄 **Comparison mode** | All Products + 2 product names → fair per-product retrieval |
+| 🧠 **Conversation memory** | Last 2 exchanges sent to the LLM — follow-ups just work |
+| 🕳️ **Gap detection** | Questions the KB can't answer are auto-logged for your content team |
 
 ---
 
-## Data Sources
-
-The `data/` folder in this repo holds **sample product docs for quick start only**. They mirror the shape of real content but are not what the running app reads at query time.
-
-| Product | Sample file |
-|---------|-------------|
-| RepReady Pro | `repready_pro.txt` |
-| CoachAI | `coachai.txt` |
-| SalesTrain | `salestrain.txt` |
-| SignalHQ | `signalhq.txt` |
-| DealDesk | `dealdesk.txt` |
-
-Each `.txt` file has a matching Bedrock metadata sidecar (e.g. `coachai.txt.metadata.json` with `"product": "coachai"`).
-
-> **Production:** Upload documents and sidecars to the **S3 bucket** configured as your Bedrock Knowledge Base data source, then **re-sync the KB**. The app never reads `data/` directly — Bedrock retrieves from the synced index.
-
----
-
-## AWS Bedrock Integration
-
-```
-User Question  (+ product context, optional history)
-       │
-       ▼
-  app.py  /chat
-       │
-       ├── retrieval_service  ──►  Bedrock Agent Runtime
-       │                            retrieve() on Knowledge Base
-       │                            (metadata filter · comparison mode)
-       │
-       ├── generation_service ──►  Bedrock Runtime
-       │                            Claude Haiku 4.5 (stream)
-       │
-       └── gap_service        ──►  gaps_log.jsonl
-       │
-       ▼
-  SSE stream  →  cited answer  +  source filenames
-```
-
-### How a question becomes an answer
-
-1. The client sends `POST /chat` with `question`, `product`, and optional `history`.
-2. `retrieval_service.py` calls **Bedrock KB `retrieve()`** — with metadata filters scoped to the selected product, or comparison-mode retrieves when All Products is active and the question names multiple offerings.
-3. `generation_service.py` builds a prompt from retrieved chunks and streams **Claude Haiku** via `InvokeModelWithResponseStream`.
-4. The model is instructed to cite sources, stay concise, and use a fixed fallback phrase when the KB doesn't cover the topic.
-5. `gap_service.py` logs unanswered questions when that fallback phrase appears in the response.
-
-### Retrieval modes
-
-| Product context | Query pattern | Bedrock behavior |
-|-----------------|---------------|------------------|
-| Single product | Any question | Metadata filter `product = <id>`; top **5** chunks |
-| Single product | Question names another product too | `orAll` filter across involved products |
-| All Products | General question | No filter; top **5** chunks |
-| All Products | 2+ products in question | **Comparison mode**: **3** chunks per product, merged |
-
-Product detection uses aliases in `PRODUCT_IDS` inside `services/retrieval_service.py`. After any S3 or metadata change, re-sync the Knowledge Base.
-
-### Document format
-
-Structure S3 docs as self-contained blocks (e.g. `[COACHAI — PRICING]`) so Bedrock's default chunking keeps related facts together. Sidecar filenames must match the document exactly (`dealdesk.txt.metadata.json`, not a typo).
-
----
-
-## Tech Stack
+## Tech stack
 
 | Layer | Technology |
-|-------|------------|
+|-------|-----------|
 | Backend | Flask, boto3 |
 | Retrieval | Amazon Bedrock Knowledge Base (`bedrock-agent-runtime`) |
-| LLM | Amazon Bedrock — Claude Haiku 4.5 (cross-region inference profile) |
-| Frontend | Vanilla HTML, CSS, JavaScript (served by Flask) |
+| LLM | Claude Haiku 4.5 via Amazon Bedrock (cross-region inference profile) |
+| Frontend | Vanilla HTML / CSS / JS |
 | Deployment | Docker |
 
 ---
 
-## Project Structure
+## Setup
 
-```
-repready-chatbot/
-├── app.py                      # Flask routes, SSE orchestration
-├── config.py                   # Environment variables and constants
-├── services/
-│   ├── retrieval_service.py    # Bedrock KB retrieve, filters, comparison mode
-│   ├── generation_service.py   # Claude streaming + system prompt
-│   └── gap_service.py          # Gap detection and JSONL logging
-├── templates/                  # HTML
-├── static/                     # CSS and JavaScript
-├── data/                       # Sample docs + sidecars (not used at runtime)
-├── Dockerfile
-└── requirements.txt
-```
-
-**API routes:** `GET /` · `POST /chat` (SSE) · `GET /gaps`
-
----
-
-## Prerequisites
+### Prerequisites
 
 - Python 3.11+ or Docker
-- AWS account with:
-  - Bedrock Knowledge Base synced from **S3** (docs + metadata sidecars)
-  - Access to Claude Haiku 4.5 (inference profile for your region)
-  - IAM: `bedrock-agent-runtime:Retrieve` and `bedrock-runtime:InvokeModelWithResponseStream`
+- AWS account with a synced Bedrock Knowledge Base
+- IAM permissions: `bedrock-agent-runtime:Retrieve` + `bedrock-runtime:InvokeModelWithResponseStream`
 
----
-
-## Configuration
+### Configuration
 
 ```bash
-cp .env.example .env   # Linux/macOS
-copy .env.example .env # Windows
+cp .env.example .env
 ```
 
-| Variable | Required | Description | Default |
-|----------|----------|-------------|---------|
-| `AWS_REGION` | Yes | Bedrock / KB region | `us-east-1` |
-| `AWS_ACCESS_KEY_ID` | Yes* | AWS access key | — |
-| `AWS_SECRET_ACCESS_KEY` | Yes* | AWS secret key | — |
-| `BEDROCK_KB_ID` | Yes | Knowledge Base ID | — |
-| `BEDROCK_MODEL_ID` | No | Haiku inference profile | `us.anthropic.claude-haiku-4-5-20251001-v1:0` |
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `AWS_REGION` | ✅ | Bedrock / KB region (default `us-east-1`) |
+| `AWS_ACCESS_KEY_ID` | ✅ * | AWS access key |
+| `AWS_SECRET_ACCESS_KEY` | ✅ * | AWS secret key |
+| `BEDROCK_KB_ID` | ✅ | Your Knowledge Base ID |
+| `BEDROCK_MODEL_ID` | — | Haiku inference profile (has a default) |
 
-\*On EC2, use an **IAM instance role** instead of access keys in `.env`.
+*On EC2, use an IAM instance role instead of keys in `.env`.
 
-Tuning in `config.py`: `RETRIEVAL_TOP_K` (5), `COMPARISON_CHUNKS_PER_PRODUCT` (3), `MAX_TOKENS` (512).
+Fine-tuning in `config.py`: `RETRIEVAL_TOP_K` (5), `COMPARISON_CHUNKS_PER_PRODUCT` (3), `MAX_TOKENS` (512).
 
-`.env` is gitignored and excluded from Docker builds — pass credentials at runtime only.
-
----
-
-## Setup & Running Locally
+### Run locally
 
 ```bash
-cd repready-chatbot
-python -m venv venv
-source venv/bin/activate          # Linux/macOS
-# venv\Scripts\activate           # Windows
+python -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 python app.py
+# → http://localhost:5000
 ```
 
-Open [http://localhost:5000](http://localhost:5000).
-
----
-
-## Docker
+### Docker
 
 ```bash
 docker build -t repready .
@@ -173,7 +105,6 @@ docker run -p 5000:5000 --env-file .env repready
 ```
 
 **Persist knowledge gaps across restarts:**
-
 ```bash
 mkdir -p ~/repready-data && touch ~/repready-data/gaps_log.jsonl
 
@@ -185,51 +116,71 @@ docker run -d --name repready --restart unless-stopped \
 
 ---
 
-## Deploy to EC2 (summary)
+## Project structure
 
-1. Launch a `t3.small`+ instance; security group allows HTTP (80) and SSH.
-2. Install Docker, copy the project and `.env` to the instance.
-3. Attach an IAM role with Bedrock retrieve + invoke permissions (omit access keys from `.env`).
-4. Build and run on port 80 → 5000, with the gaps volume mounted (same as Docker example above).
+```
+repready/
+├── app.py                      # Flask routes, SSE orchestration
+├── config.py                   # Env vars and tuning constants
+├── services/
+│   ├── retrieval_service.py    # Bedrock KB retrieve, filters, comparison mode
+│   ├── generation_service.py   # Prompt building + Claude streaming
+│   └── gap_service.py          # Gap detection and JSONL logging
+├── templates/                  # HTML
+├── static/                     # CSS and JS
+├── data/                       # Sample docs + metadata sidecars (not used at runtime)
+├── Dockerfile
+└── requirements.txt
+```
 
-Add HTTPS via ALB + ACM or an Nginx reverse proxy for production.
+**Routes:** `GET /` · `POST /chat` (SSE) · `GET /gaps`
 
 ---
 
-## Knowledge Gaps
+## Adding a product
 
-When the model can't answer from the KB, it responds with:
-
-> I don't have that information in my current knowledge base.
-
-Matching responses are appended to `gaps_log.jsonl` (question, product, timestamp, retrieval score). View them via `GET /gaps`. Keep `GAP_FALLBACK_PHRASE` in `gap_service.py` in sync with rule 12 in `generation_service.py`.
+1. Write `<product_id>.txt` using `[PRODUCT — TOPIC]` section blocks — Bedrock's chunker keeps them together.
+2. Add a sidecar `<product_id>.txt.metadata.json` with `"product": "<product_id>"`.
+3. Upload both to your S3 data source and re-sync the Knowledge Base.
+4. Add aliases to `PRODUCT_IDS` in `retrieval_service.py`.
+5. Add the product to `PRODUCTS` in `static/js/app.js`.
 
 ---
 
-## Adding a New Product
+## Knowledge gaps
 
-1. Write `<product_id>.txt` as self-contained `[PRODUCT — TOPIC]` blocks; add `<product_id>.txt.metadata.json` with `"product": "<product_id>"`.
-2. Upload both to your **S3 data source** and re-sync the Knowledge Base.
-3. Add aliases to `PRODUCT_IDS` in `services/retrieval_service.py`.
-4. Add the product to the `PRODUCTS` array in `static/js/app.js`.
+When the KB can't answer, RepReady responds with a fixed fallback phrase and logs the question to `gaps_log.jsonl` (question, product, timestamp, retrieval score). Review them at `GET /gaps` and use them to improve your knowledge base over time.
+
+Keep `GAP_FALLBACK_PHRASE` in `gap_service.py` in sync with rule 12 in `generation_service.py`.
+
+---
+
+## Deploy to EC2
+
+1. Launch `t3.small`+, open HTTP (80) and SSH in the security group.
+2. Install Docker, copy the project and `.env`.
+3. Attach an IAM role with Bedrock permissions (skip access keys in `.env`).
+4. Build and run on port 80 → 5000 with the gaps volume mounted.
+
+For production: add HTTPS via ALB + ACM or an Nginx reverse proxy.
 
 ---
 
 ## Troubleshooting
 
 | Issue | Check |
-|-------|--------|
+|-------|-------|
 | Retrieval failed | `BEDROCK_KB_ID`, region, IAM, KB sync status |
 | Model error | `BEDROCK_MODEL_ID` — correct Haiku inference profile for your region |
-| Wrong sources / product | Metadata sidecar filename and `product` value; re-sync after S3 changes |
-| Comparison missing a product | All Products mode; question must name 2+ products (`PRODUCT_IDS` aliases) |
+| Wrong product in answer | Metadata sidecar filename and `product` value; re-sync after S3 changes |
+| Comparison missing a product | All Products mode; question must name 2+ products (check `PRODUCT_IDS` aliases) |
 | Gaps lost on redeploy | Mount `gaps_log.jsonl` as a Docker volume |
 
 ---
 
-## Future Improvements
+## What's next
 
 - **Stronger model** — swap Haiku for a larger Claude profile where latency allows
 - **Auth & rate limits** — protect `/chat` before external deployment
-- **Feedback loop** — wire thumbs-up/down to log quality signals
+- **Feedback loop** — thumbs-up/down to log quality signals per answer
 - **Section-aware metadata** — tag chunks with doc section for finer citations

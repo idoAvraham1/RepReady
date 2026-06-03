@@ -27,8 +27,8 @@
   const activeProductPill  = document.getElementById('activeProductPill');
   const activeProductLabel = document.getElementById('activeProductLabel');
 
-  const INPUT_PLACEHOLDER_ACTIVE = 'Ask about pricing, features, integrations…';
-  const INPUT_PLACEHOLDER_IDLE   = 'Select or create a chat to start';
+  const INPUT_PLACEHOLDER_ACTIVE = "What's happening on the call right now?";
+  const INPUT_PLACEHOLDER_IDLE   = 'Select or create a chat first';
 
   // View routing
   const landingEl         = document.getElementById('landing');
