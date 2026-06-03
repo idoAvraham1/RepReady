@@ -11,19 +11,24 @@
   // ============================================================
 
   const chatArea          = document.getElementById('chatArea');
-  const emptyState        = document.getElementById('emptyState');
+  const noChatState       = document.getElementById('noChatState');
+  const welcomeState      = document.getElementById('welcomeState');
   const messagesEl        = document.getElementById('messages');
   const questionInput     = document.getElementById('questionInput');
   const sendBtn           = document.getElementById('sendBtn');
+  const inputArea         = document.getElementById('inputArea');
   const newChatBtn        = document.getElementById('newChatBtn');
   const sidebarNewChatBtn = document.getElementById('sidebarNewChatBtn');
-  const chipsGrid         = document.getElementById('chipsGrid');
+  const noChatNewBtn      = document.getElementById('noChatNewBtn');
   const convList          = document.getElementById('convList');
   const convSectionLabel  = document.getElementById('convSectionLabel');
 
   // Product pill
   const activeProductPill  = document.getElementById('activeProductPill');
   const activeProductLabel = document.getElementById('activeProductLabel');
+
+  const INPUT_PLACEHOLDER_ACTIVE = 'Ask about pricing, features, integrations…';
+  const INPUT_PLACEHOLDER_IDLE   = 'Select or create a chat to start';
 
   // View routing
   const landingEl         = document.getElementById('landing');
@@ -139,10 +144,60 @@
     saveConversations();
   }
 
-  // If no active conversation when user sends, auto-create one
-  function ensureActiveConversation() {
-    if (activeConvId && conversations.find((c) => c.id === activeConvId)) return;
-    createConversation('New Conversation', '');
+  // ============================================================
+  // Main Panel + Input State
+  // ============================================================
+
+  function updateInputAvailability() {
+    const enabled = !!activeConvId;
+    questionInput.disabled = !enabled;
+    activeProductPill.disabled = !enabled;
+    questionInput.placeholder = enabled ? INPUT_PLACEHOLDER_ACTIVE : INPUT_PLACEHOLDER_IDLE;
+
+    if (enabled) {
+      inputArea.classList.remove('input-area--disabled');
+      sendBtn.disabled = questionInput.value.trim() === '' || isStreaming;
+    } else {
+      inputArea.classList.add('input-area--disabled');
+      sendBtn.disabled = true;
+    }
+  }
+
+  function renderMainPanel() {
+    messagesEl.innerHTML = '';
+    clearInput();
+
+    if (!activeConvId) {
+      hasStarted = false;
+      noChatState.classList.remove('hidden');
+      welcomeState.classList.add('hidden');
+      updateInputAvailability();
+      return;
+    }
+
+    const conv = getActiveConv();
+    const msgs = conv ? conv.messages : [];
+
+    if (msgs.length === 0) {
+      hasStarted = false;
+      noChatState.classList.add('hidden');
+      welcomeState.classList.remove('hidden');
+    } else {
+      hasStarted = true;
+      noChatState.classList.add('hidden');
+      welcomeState.classList.add('hidden');
+      msgs.forEach((msg) => {
+        if (msg.role === 'user') {
+          appendUserBubble(msg.content);
+        } else {
+          appendStoredBotBubble(msg.content);
+        }
+      });
+      scrollBottom();
+    }
+
+    updateInputAvailability();
+    if (activeConvId) questionInput.focus();
   }
 
   // ============================================================
@@ -327,6 +382,7 @@
   }
 
   activeProductPill.addEventListener('click', (e) => {
+    if (activeProductPill.disabled) return;
     e.stopPropagation();
     if (openDropdownEl) { closeStatusDropdown(); return; }
     showProductSwitchDropdown();
@@ -453,9 +509,7 @@
         switchConversation(conversations[0].id);
       } else {
         activeConvId = null;
-        messagesEl.innerHTML = '';
-        hasStarted = false;
-        emptyState.classList.remove('hidden');
+        renderMainPanel();
       }
     }
   }
@@ -522,31 +576,7 @@
     activeConvId = id;
     updateSidebarActive();
     updateProductPill();
-
-    const conv = getActiveConv();
-    const msgs = conv ? conv.messages : [];
-
-    // Clear chat area
-    messagesEl.innerHTML = '';
-    clearInput();
-
-    if (msgs.length === 0) {
-      hasStarted = false;
-      emptyState.classList.remove('hidden');
-    } else {
-      hasStarted = true;
-      emptyState.classList.add('hidden');
-      msgs.forEach((msg) => {
-        if (msg.role === 'user') {
-          appendUserBubble(msg.content);
-        } else {
-          appendStoredBotBubble(msg.content);
-        }
-      });
-      scrollBottom();
-    }
-
-    questionInput.focus();
+    renderMainPanel();
   }
 
   // ============================================================
@@ -631,7 +661,9 @@
 
   questionInput.addEventListener('input', () => {
     autoResize(questionInput);
-    sendBtn.disabled = questionInput.value.trim() === '';
+    if (!questionInput.disabled) {
+      sendBtn.disabled = questionInput.value.trim() === '' || isStreaming;
+    }
   });
 
   questionInput.addEventListener('keydown', (e) => {
@@ -645,20 +677,10 @@
     if (!isStreaming && questionInput.value.trim()) sendMessage();
   });
 
-  // Both New Chat buttons open the creation modal
+  // New Chat buttons open the creation modal
   newChatBtn.addEventListener('click', openNewConvModal);
   sidebarNewChatBtn.addEventListener('click', openNewConvModal);
-
-  // Chip clicks
-  chipsGrid.addEventListener('click', (e) => {
-    const chip = e.target.closest('.chip');
-    if (!chip) return;
-    const q = chip.dataset.question || chip.textContent.trim();
-    questionInput.value = q;
-    autoResize(questionInput);
-    sendBtn.disabled = false;
-    sendMessage();
-  });
+  noChatNewBtn.addEventListener('click', openNewConvModal);
 
   // ============================================================
   // Core Send Flow
@@ -666,14 +688,12 @@
 
   function sendMessage() {
     const question = questionInput.value.trim();
-    if (!question || isStreaming) return;
-
-    // Ensure a conversation exists to hold the messages
-    ensureActiveConversation();
+    if (!question || isStreaming || !activeConvId) return;
 
     if (!hasStarted) {
       hasStarted = true;
-      emptyState.classList.add('hidden');
+      noChatState.classList.add('hidden');
+      welcomeState.classList.add('hidden');
     }
 
     clearInput();
@@ -984,9 +1004,13 @@
 
   function setLoading(on) {
     sendBtn.classList.toggle('loading', on);
-    sendBtn.disabled = on;
-    questionInput.disabled = on;
     questionInput.setAttribute('aria-busy', String(on));
+    if (on) {
+      sendBtn.disabled = true;
+      questionInput.disabled = true;
+    } else {
+      updateInputAvailability();
+    }
   }
 
   function autoResize(el) {
@@ -1031,11 +1055,7 @@
   loadConversations();
   renderSidebar();
   updateStats();
-
-  // Restore the most recent conversation on load (if any)
-  if (conversations.length > 0) {
-    switchConversation(conversations[0].id);
-  }
+  renderMainPanel();
 
   // ============================================================
   // View Routing
@@ -1054,7 +1074,7 @@
     appEl.classList.remove('hidden');
     history.replaceState(null, '', '#app');
     updateProductPill();
-    questionInput.focus();
+    renderMainPanel();
   }
 
   function showLanding() {

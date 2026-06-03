@@ -154,8 +154,29 @@
       <!-- Chat area -->
       <main class="chat-area" id="chatArea">
 
-        <!-- Empty / welcome state -->
-        <div class="empty-state" id="emptyState" aria-live="polite">
+        <!-- No chat selected -->
+        <div class="empty-state" id="noChatState" aria-live="polite">
+          <div class="empty-hero">
+            <div class="empty-logo-mark">
+              <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect width="36" height="36" rx="11" fill="currentColor"/>
+                <path d="M9 11h8a4.5 4.5 0 0 1 0 9H9V11zm0 9h5.5l4.5 6H15L9 20z" fill="white" fill-opacity="0.95"/>
+                <path d="M22.5 25l-2.5-3.5" stroke="white" stroke-opacity="0.95" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h1 class="empty-title">Create or select a chat</h1>
+          </div>
+          <p class="empty-tagline no-chat-desc">Pick a conversation from the sidebar, or start a new one to begin asking product questions.</p>
+          <button class="no-chat-cta" id="noChatNewBtn" type="button">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Chat
+          </button>
+        </div>
+
+        <!-- Welcome state (active conversation, no messages yet) -->
+        <div class="empty-state hidden" id="welcomeState" aria-live="polite">
           <div class="empty-hero">
             <div class="empty-logo-mark">
               <svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -167,11 +188,9 @@
             <h1 class="empty-title">RepReady</h1>
           </div>
           <p class="empty-tagline">Ask anything.<br /><em>Know everything.</em></p>
-          <div class="chips-grid" id="chipsGrid" aria-label="Suggested questions">
-            <button class="chip" data-question="What's the pricing for the Growth plan?">What's the pricing for the Growth plan?</button>
-            <button class="chip" data-question="How does RepReady Pro compare to Guru?">How does RepReady Pro compare to Guru?</button>
-            <button class="chip" data-question="What integrations does SignalHQ support?">What integrations does SignalHQ support?</button>
-            <button class="chip" data-question="What is the SLA on the Enterprise tier?">What is the SLA on the Enterprise tier?</button>
+          <div class="hints-grid" aria-label="Getting started">
+            <p class="hint-chip">Select the product you are selling</p>
+            <p class="hint-chip">For general questions about products, select All Products</p>
           </div>
         </div>
 
