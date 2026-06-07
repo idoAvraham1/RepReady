@@ -1,0 +1,1 @@
+Answer product and pricing questions from this KB. Cite source in parentheses. Search customer notes by prospect name or company for call prep.

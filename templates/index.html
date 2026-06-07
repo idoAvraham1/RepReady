@@ -43,8 +43,9 @@
           <span class="landing-badge-dot" aria-hidden="true"></span>
           Always Know How to Respond
         </div>
+        <!-- CHANGE 1: "Hard." wrapped in .headline-mark for gradient text -->
         <h1 class="landing-headline">
-          The Call Just Got Hard.<br>RepReady Has Your Move.
+          The Call Just Got <mark class="headline-mark">Hard.</mark><br>RepReady Has Your Move.
         </h1>
         <p class="landing-sub">
           Cheat sheets give you facts. RepReady gives you what to say right now—and your next move—when an objection lands, a detail slips, or a competitor you weren't ready for shows up.
@@ -68,21 +69,41 @@
 
     <!-- Feature highlights -->
     <section class="landing-features" aria-label="Key features">
+
+      <!-- CHANGE 2: SVG icon containers replace emoji spans -->
       <div class="feature-card">
-        <span class="feature-icon" aria-hidden="true">⚡</span>
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+          </svg>
+        </div>
         <h3 class="feature-title">Coached in seconds</h3>
         <p class="feature-desc">Spoken-word bullets and a Next move—streamed while you're still on the call</p>
       </div>
+
       <div class="feature-card">
-        <span class="feature-icon" aria-hidden="true">📄</span>
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="9" y1="13" x2="15" y2="13"/>
+            <line x1="9" y1="17" x2="13" y2="17"/>
+          </svg>
+        </div>
         <h3 class="feature-title">The move, sourced</h3>
         <p class="feature-desc">Not a doc dump. Every coaching line ties back to your approved product knowledge</p>
       </div>
+
       <div class="feature-card">
-        <span class="feature-icon" aria-hidden="true">🎯</span>
+        <div class="feature-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
         <h3 class="feature-title">Don't know what to say?</h3>
         <p class="feature-desc">RepReady saves the day—coached bullets and a Next move the moment you're stuck</p>
       </div>
+
     </section>
 
   </div>
@@ -98,32 +119,38 @@
     <aside class="sidebar" id="sidebar" aria-label="Conversations">
 
       <div class="sidebar-header">
-        <div class="sidebar-stats" id="sidebarStats" aria-label="Pipeline summary">
-          <span class="stat-chip won">0 Won</span>
-          <span class="stat-chip progress">0 Active</span>
-          <span class="stat-chip lost">0 Lost</span>
+        <div class="sidebar-phase sidebar-phase--idle" id="sidebarPhaseIndicator" aria-live="polite" aria-label="Current call phase" hidden>
+          <span class="sidebar-phase-dot" aria-hidden="true"></span>
+          <div class="sidebar-phase-copy">
+            <span class="sidebar-phase-label" id="sidebarPhaseLabel">Prep</span>
+            <span class="sidebar-phase-sub" id="sidebarPhaseSub">Time to ask questions</span>
+          </div>
         </div>
       </div>
 
       <div class="sidebar-body">
-        <button class="sidebar-new-btn" id="sidebarNewChatBtn" aria-label="Start a new conversation">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-          </svg>
-          New Chat
-        </button>
 
-        <div class="conv-section-label" id="convSectionLabel" style="display:none">Recent</div>
-        <div class="conv-list" id="convList" role="listbox" aria-label="Conversations"></div>
+        <!-- PROSPECT CHATS section -->
+        <div class="sidebar-section">
+          <div class="sidebar-section-label">PROSPECT CHATS</div>
+          <button class="sidebar-new-btn" id="sidebarNewProspectBtn" aria-label="Start a new prospect chat">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New Prospect Chat
+          </button>
+          <div class="conv-list" id="convList" role="listbox" aria-label="Prospect conversations"></div>
+        </div>
+
       </div>
 
     </aside>
 
     <!-- ── RIGHT: MAIN PANEL ─────────────────────────────── -->
-    <div class="main-panel">
+    <div class="main-panel" id="mainPanel">
 
       <!-- Top bar -->
-      <header class="topbar">
+      <header class="topbar" id="topbar">
         <div class="topbar-left">
           <button class="btn-back" id="backBtn" aria-label="Back to home">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -143,13 +170,19 @@
           </a>
         </div>
 
-        <button class="btn-new-chat" id="newChatBtn" title="Start a new conversation">
+        <button class="btn-new-chat" id="newChatBtn" title="Start a new prospect chat">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
           </svg>
-          New Chat
+          New Prospect Chat
         </button>
       </header>
+
+      <div class="phase-banner phase-banner--live hidden" id="phaseLiveBanner" aria-live="polite">
+        <span class="phase-banner-dot" aria-hidden="true"></span>
+        <span class="phase-banner-label">LIVE ON CALL</span>
+        <span class="phase-banner-text">This is the money time — win the moment</span>
+      </div>
 
       <!-- Chat area -->
       <main class="chat-area" id="chatArea">
@@ -171,7 +204,7 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
             </svg>
-            New Chat
+            New Prospect Chat
           </button>
         </div>
 
@@ -187,11 +220,19 @@
             </div>
             <h1 class="empty-title">RepReady</h1>
           </div>
-          <p class="empty-tagline">Not a search bar.<br /><em>Your live coach for the hard stuff.</em></p>
-          <div class="hints-grid" aria-label="Mid-call examples">
-            <p class="hint-chip">Prospect says we're 40% more than [competitor]—help me respond</p>
-            <p class="hint-chip">They asked a technical detail I blanked on mid-call</p>
-            <p class="hint-chip">Set your product first—then describe what's happening on the call</p>
+          <p class="empty-tagline empty-tagline--prep" id="welcomeTagline">Time to ask questions — notes, objections, what to expect.</p>
+          <div class="welcome-starter-panel" aria-label="Suggested prompts">
+            <div class="welcome-section hidden" id="liveExamplesSection">
+              <span class="welcome-section-label">Live on call — try these</span>
+              <div class="hints-grid" aria-label="Live on call examples">
+                <p class="hint-chip">Prospect says we're 40% more than [competitor]—help me respond</p>
+                <p class="hint-chip">They asked a technical detail I blanked on mid-call</p>
+              </div>
+            </div>
+            <div class="welcome-section hidden" id="prospectPrepSection">
+              <span class="welcome-section-label" id="prospectPrepLabel">Prep for this call</span>
+              <div id="prospectChipsContainer" class="prospect-chips-container"></div>
+            </div>
           </div>
         </div>
 
@@ -211,6 +252,13 @@
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
+          <div class="session-phase-toggle" id="sessionPhaseToggle" role="group" aria-label="Call phase" hidden>
+            <button type="button" class="phase-btn" id="phasePrepBtn" data-phase="prep" aria-pressed="true">Prep</button>
+            <button type="button" class="phase-btn phase-btn--live" id="phaseLiveBtn" data-phase="live" aria-pressed="false">
+              <span class="phase-live-dot" aria-hidden="true"></span>
+              Live on call
+            </button>
+          </div>
         </div>
         <div class="input-shell">
           <label for="questionInput" class="sr-only">Describe what's happening on the call</label>
@@ -279,7 +327,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
-            <h2 class="modal-title" id="newConvTitle">New Conversation</h2>
+            <h2 class="modal-title" id="newConvTitle">New Prospect Chat</h2>
           </div>
           <button class="modal-close" id="newConvModalClose" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -295,10 +343,6 @@
           <div class="form-group">
             <label for="convCompanyName">Company <span class="field-optional">(optional)</span></label>
             <input type="text" id="convCompanyName" class="form-input" placeholder="e.g. Meridian Cloud" autocomplete="off" />
-          </div>
-          <div class="form-group">
-            <label>Select the product you're discussing <span class="field-optional">(optional)</span></label>
-            <div class="product-selector" id="newConvProductSelector" role="group" aria-label="Select product context"></div>
           </div>
         </div>
         <div class="modal-footer">

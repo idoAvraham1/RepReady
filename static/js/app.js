@@ -10,25 +10,34 @@
   // DOM Refs
   // ============================================================
 
-  const chatArea          = document.getElementById('chatArea');
-  const noChatState       = document.getElementById('noChatState');
-  const welcomeState      = document.getElementById('welcomeState');
-  const messagesEl        = document.getElementById('messages');
-  const questionInput     = document.getElementById('questionInput');
-  const sendBtn           = document.getElementById('sendBtn');
-  const inputArea         = document.getElementById('inputArea');
-  const newChatBtn        = document.getElementById('newChatBtn');
-  const sidebarNewChatBtn = document.getElementById('sidebarNewChatBtn');
-  const noChatNewBtn      = document.getElementById('noChatNewBtn');
-  const convList          = document.getElementById('convList');
-  const convSectionLabel  = document.getElementById('convSectionLabel');
+  const chatArea              = document.getElementById('chatArea');
+  const noChatState           = document.getElementById('noChatState');
+  const welcomeState          = document.getElementById('welcomeState');
+  const messagesEl            = document.getElementById('messages');
+  const questionInput         = document.getElementById('questionInput');
+  const sendBtn               = document.getElementById('sendBtn');
+  const inputArea             = document.getElementById('inputArea');
+  const newChatBtn            = document.getElementById('newChatBtn');
+  const sidebarNewProspectBtn = document.getElementById('sidebarNewProspectBtn');
+  const noChatNewBtn          = document.getElementById('noChatNewBtn');
+  const convList              = document.getElementById('convList');
+  const productPillBar        = document.getElementById('productPillBar');
+  const sessionPhaseToggle    = document.getElementById('sessionPhaseToggle');
+  const phasePrepBtn          = document.getElementById('phasePrepBtn');
+  const phaseLiveBtn          = document.getElementById('phaseLiveBtn');
+  const mainPanel             = document.getElementById('mainPanel');
+  const phaseLiveBanner       = document.getElementById('phaseLiveBanner');
+  const sidebarPhaseIndicator = document.getElementById('sidebarPhaseIndicator');
+  const sidebarPhaseLabel     = document.getElementById('sidebarPhaseLabel');
+  const sidebarPhaseSub       = document.getElementById('sidebarPhaseSub');
 
   // Product pill
   const activeProductPill  = document.getElementById('activeProductPill');
   const activeProductLabel = document.getElementById('activeProductLabel');
 
-  const INPUT_PLACEHOLDER_ACTIVE = "What's happening on the call right now?";
-  const INPUT_PLACEHOLDER_IDLE   = 'Select or create a chat first';
+  const INPUT_PLACEHOLDER_LIVE = "What's happening on the call right now?";
+  const INPUT_PLACEHOLDER_PREP = 'Prep question — objections, background, what to expect…';
+  const INPUT_PLACEHOLDER_IDLE = 'Select or create a chat first';
 
   // View routing
   const landingEl         = document.getElementById('landing');
@@ -55,13 +64,14 @@
   // State
   // ============================================================
 
+  const LEGACY_ASSISTANT_ID = '__assistant__';
   const STORAGE_KEY  = 'repready_conversations';
   let conversations  = [];
   let activeConvId   = null;
   let editingConvId  = null;
   let isStreaming    = false;
   let hasStarted     = false;
-  let openDropdownEl = null; // currently open floating dropdown
+  let openDropdownEl = null;
 
   const PRODUCTS = [
     { id: 'general',      label: 'All Products',  dot: '#8b8fa8' },
@@ -71,6 +81,120 @@
     { id: 'signalhq',     label: 'SignalHQ',       dot: '#ef4444' },
     { id: 'dealdesk',     label: 'DealDesk',       dot: '#a78bfa' },
   ];
+
+  // ============================================================
+  // Mode
+  // ============================================================
+
+  function newSessionId() {
+    return typeof crypto.randomUUID === 'function'
+      ? crypto.randomUUID()
+      : 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+          const r = Math.random() * 16 | 0;
+          return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+        });
+  }
+
+  function getChatMode() {
+    const conv = getActiveConv();
+    return conv?.sessionPhase === 'live' ? 'live' : 'prep';
+  }
+
+  function setSessionPhase(phase) {
+    const conv = getActiveConv();
+    if (!conv) return;
+    const next = phase === 'live' ? 'live' : 'prep';
+    if (next === 'live' && conv.sessionPhase !== 'live') {
+      conv.sessionId = newSessionId();
+    }
+    conv.sessionPhase = next;
+    saveConversations();
+    updateSessionPhaseUI();
+    updateInputAvailability();
+    renderSidebar();
+  }
+
+  function getConvPhase(conv) {
+    return conv?.sessionPhase === 'live' ? 'live' : 'prep';
+  }
+
+  function applyPhaseAtmosphere() {
+    const conv = getActiveConv();
+    const phase = getConvPhase(conv);
+    const hasConv = !!activeConvId;
+
+    if (mainPanel) {
+      mainPanel.classList.remove('main-panel--prep', 'main-panel--live');
+      if (hasConv) mainPanel.classList.add(`main-panel--${phase}`);
+    }
+    if (phaseLiveBanner) {
+      phaseLiveBanner.classList.toggle('hidden', !hasConv || phase !== 'live');
+    }
+    if (inputArea) {
+      inputArea.classList.remove('input-area--prep', 'input-area--live');
+      if (hasConv) inputArea.classList.add(`input-area--${phase}`);
+    }
+    if (chatArea) {
+      chatArea.classList.remove('chat-area--prep', 'chat-area--live');
+      if (hasConv) chatArea.classList.add(`chat-area--${phase}`);
+    }
+  }
+
+  function updateSessionPhaseUI() {
+    if (sessionPhaseToggle) sessionPhaseToggle.hidden = !activeConvId;
+
+    const phase = getConvPhase(getActiveConv());
+
+    if (phasePrepBtn) {
+      phasePrepBtn.classList.toggle('active', phase === 'prep');
+      phasePrepBtn.setAttribute('aria-pressed', String(phase === 'prep'));
+    }
+    if (phaseLiveBtn) {
+      phaseLiveBtn.classList.toggle('active', phase === 'live');
+      phaseLiveBtn.setAttribute('aria-pressed', String(phase === 'live'));
+    }
+
+    const liveSection = document.getElementById('liveExamplesSection');
+    if (liveSection) liveSection.classList.toggle('hidden', phase !== 'live');
+
+    const welcomeTagline = document.getElementById('welcomeTagline');
+    if (welcomeTagline) {
+      if (phase === 'live') {
+        welcomeTagline.className = 'empty-tagline empty-tagline--live';
+        welcomeTagline.innerHTML = 'You\'re on the call. <strong>Type what just happened</strong> — win this moment.';
+      } else {
+        welcomeTagline.className = 'empty-tagline empty-tagline--prep';
+        welcomeTagline.innerHTML = 'Time to ask questions — notes, objections, what to expect.';
+      }
+    }
+
+    applyPhaseAtmosphere();
+    updateSidebarPhaseIndicator();
+  }
+
+  function updateSidebarPhaseIndicator() {
+    if (!sidebarPhaseIndicator) return;
+
+    const hasConv = !!activeConvId;
+    const phase = getConvPhase(getActiveConv());
+
+    sidebarPhaseIndicator.hidden = !hasConv;
+    sidebarPhaseIndicator.classList.remove('sidebar-phase--idle', 'sidebar-phase--prep', 'sidebar-phase--live');
+    if (!hasConv) {
+      sidebarPhaseIndicator.classList.add('sidebar-phase--idle');
+      return;
+    }
+
+    sidebarPhaseIndicator.classList.add(`sidebar-phase--${phase}`);
+
+    if (phase === 'live') {
+      if (sidebarPhaseLabel) sidebarPhaseLabel.textContent = 'LIVE CALL';
+      if (sidebarPhaseSub) sidebarPhaseSub.textContent = 'Win this moment';
+    } else {
+      if (sidebarPhaseLabel) sidebarPhaseLabel.textContent = 'Prep mode';
+      if (sidebarPhaseSub) sidebarPhaseSub.textContent = 'Time to ask questions';
+    }
+  }
 
   // ============================================================
   // localStorage — Load / Save
@@ -83,6 +207,22 @@
     } catch (_) {
       conversations = [];
     }
+    let migrated = false;
+    const before = conversations.length;
+    conversations = conversations.filter((c) => c.id !== LEGACY_ASSISTANT_ID);
+    if (conversations.length !== before) migrated = true;
+
+    conversations.forEach((c) => {
+      if (!c.sessionId) {
+        c.sessionId = newSessionId();
+        migrated = true;
+      }
+      if (!c.sessionPhase) {
+        c.sessionPhase = 'prep';
+        migrated = true;
+      }
+    });
+    if (migrated) saveConversations();
   }
 
   function saveConversations() {
@@ -101,33 +241,24 @@
 
   function createConversation(name, company, product) {
     const conv = {
-      id:        generateId(),
-      name:      name.trim(),
-      company:   (company || '').trim(),
-      product:   product || 'general',
-      status:    'progress',
-      createdAt: new Date().toISOString(),
-      messages:  [],
+      id:           generateId(),
+      sessionId:    newSessionId(),
+      sessionPhase: 'prep',
+      name:         name.trim(),
+      company:      (company || '').trim(),
+      product:      product || 'general',
+      createdAt:    new Date().toISOString(),
+      messages:     [],
     };
     conversations.unshift(conv);
     saveConversations();
     renderSidebar();
-    updateStats();
     switchConversation(conv.id);
     return conv;
   }
 
   function getActiveConv() {
     return conversations.find((c) => c.id === activeConvId) || null;
-  }
-
-  function updateConvStatus(id, status) {
-    const conv = conversations.find((c) => c.id === id);
-    if (!conv) return;
-    conv.status = status;
-    saveConversations();
-    renderSidebar();
-    updateStats();
   }
 
   function saveUserMessage(content) {
@@ -137,27 +268,29 @@
     saveConversations();
   }
 
-  function saveAssistantMessage(content) {
-    const conv = getActiveConv();
-    if (!conv) return;
-    conv.messages.push({ role: 'assistant', content });
-    saveConversations();
-  }
-
   // ============================================================
   // Main Panel + Input State
   // ============================================================
+
+  function updateProductPillVisibility() {
+    productPillBar.style.display = activeConvId ? '' : 'none';
+    updateSessionPhaseUI();
+  }
 
   function updateInputAvailability() {
     const enabled = !!activeConvId;
     questionInput.disabled = !enabled;
     activeProductPill.disabled = !enabled;
-    questionInput.placeholder = enabled ? INPUT_PLACEHOLDER_ACTIVE : INPUT_PLACEHOLDER_IDLE;
 
     if (enabled) {
+      const conv = getActiveConv();
+      questionInput.placeholder = conv?.sessionPhase === 'live'
+        ? INPUT_PLACEHOLDER_LIVE
+        : INPUT_PLACEHOLDER_PREP;
       inputArea.classList.remove('input-area--disabled');
       sendBtn.disabled = questionInput.value.trim() === '' || isStreaming;
     } else {
+      questionInput.placeholder = INPUT_PLACEHOLDER_IDLE;
       inputArea.classList.add('input-area--disabled');
       sendBtn.disabled = true;
     }
@@ -166,6 +299,8 @@
   function renderMainPanel() {
     messagesEl.innerHTML = '';
     clearInput();
+    removeSuggestionChips();
+    updateProductPillVisibility();
 
     if (!activeConvId) {
       hasStarted = false;
@@ -182,6 +317,8 @@
       hasStarted = false;
       noChatState.classList.add('hidden');
       welcomeState.classList.remove('hidden');
+      if (conv) showProspectChips(conv.name, conv.company);
+      else hideProspectPrep();
     } else {
       hasStarted = true;
       noChatState.classList.add('hidden');
@@ -206,26 +343,19 @@
 
   function renderSidebar() {
     convList.innerHTML = '';
-    const hasConvs = conversations.length > 0;
-    convSectionLabel.style.display = hasConvs ? '' : 'none';
-
-    conversations.forEach((conv) => {
-      convList.appendChild(buildConvItem(conv));
-    });
+    conversations.forEach((conv) => convList.appendChild(buildConvItem(conv)));
     updateSidebarActive();
   }
 
   function buildConvItem(conv) {
+    const phase = getConvPhase(conv);
     const item = document.createElement('div');
-    item.className = `conv-item status-${conv.status}`;
+    item.className = `conv-item phase-${phase}`;
     item.setAttribute('role', 'option');
     item.setAttribute('aria-selected', 'false');
     item.dataset.id = conv.id;
 
     item.innerHTML = `
-      <div class="status-dot-wrap" title="Change status">
-        <span class="status-dot"></span>
-      </div>
       <div class="conv-avatar" aria-hidden="true">${initials(conv.name)}</div>
       <div class="conv-meta">
         <span class="conv-name">${escapeHtml(conv.name)}</span>
@@ -239,20 +369,11 @@
       </button>
     `;
 
-    // Click on item body → switch conversation
     item.addEventListener('click', (e) => {
-      if (e.target.closest('.status-dot-wrap') || e.target.closest('.conv-menu-btn')) return;
+      if (e.target.closest('.conv-menu-btn')) return;
       switchConversation(conv.id);
     });
 
-    // Status dot click → status dropdown
-    const dotWrap = item.querySelector('.status-dot-wrap');
-    dotWrap.addEventListener('click', (e) => {
-      e.stopPropagation();
-      showStatusDropdown(dotWrap, conv.id);
-    });
-
-    // ··· button click → conv action menu
     const menuBtn = item.querySelector('.conv-menu-btn');
     menuBtn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -270,51 +391,6 @@
     });
   }
 
-  function updateStats() {
-    const chips = document.querySelectorAll('.sidebar-stats .stat-chip');
-    const won      = conversations.filter((c) => c.status === 'won').length;
-    const progress = conversations.filter((c) => c.status === 'progress').length;
-    const lost     = conversations.filter((c) => c.status === 'lost').length;
-    chips[0].textContent = `${won} Won`;
-    chips[1].textContent = `${progress} Active`;
-    chips[2].textContent = `${lost} Lost`;
-  }
-
-  // ============================================================
-  // Status Dropdown (floating, fixed-position to avoid clip)
-  // ============================================================
-
-  function showStatusDropdown(dotEl, convId) {
-    closeStatusDropdown();
-
-    const rect = dotEl.getBoundingClientRect();
-    const menu = document.createElement('div');
-    menu.className = 'status-dropdown-float';
-    menu.setAttribute('role', 'menu');
-    menu.style.cssText = `left:${rect.right + 8}px;top:${rect.top - 4}px;`;
-
-    const opts = [
-      { status: 'won',      label: '🟢 Mark as Won' },
-      { status: 'progress', label: '🟡 In Progress' },
-      { status: 'lost',     label: '🔴 Mark as Lost' },
-    ];
-    opts.forEach(({ status, label }) => {
-      const btn = document.createElement('button');
-      btn.className = 'status-opt';
-      btn.setAttribute('role', 'menuitem');
-      btn.textContent = label;
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        updateConvStatus(convId, status);
-        closeStatusDropdown();
-      });
-      menu.appendChild(btn);
-    });
-
-    document.body.appendChild(menu);
-    openDropdownEl = menu;
-  }
-
   function closeStatusDropdown() {
     if (openDropdownEl) {
       openDropdownEl._anchorItem && openDropdownEl._anchorItem.classList.remove('menu-open');
@@ -324,12 +400,10 @@
   }
 
   document.addEventListener('click', () => closeStatusDropdown());
-  document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeStatusDropdown();
-  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeStatusDropdown(); });
 
   // ============================================================
-  // Product Pill — display + switch dropdown
+  // Product Pill
   // ============================================================
 
   function updateProductPill() {
@@ -355,7 +429,7 @@
       min-width:${rect.width}px;
     `;
 
-    const conv = getActiveConv();
+    const conv       = getActiveConv();
     const currentPid = conv?.product || 'general';
 
     PRODUCTS.forEach(({ id, label, dot }) => {
@@ -367,7 +441,6 @@
         e.stopPropagation();
         closeStatusDropdown();
         if (conv && id !== currentPid) {
-          const prevProduct = conv.product;
           conv.product = id;
           saveConversations();
           updateProductPill();
@@ -410,8 +483,6 @@
     menu.className = 'status-dropdown-float';
     menu.setAttribute('role', 'menu');
     menu._anchorItem = itemEl;
-
-    // Right-align to the button, appear below it
     menu.style.cssText = `
       position:fixed;
       right:${window.innerWidth - rect.right}px;
@@ -450,10 +521,7 @@
           <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
           <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
         </svg>Delete`;
-      delBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        renderConfirm();
-      });
+      delBtn.addEventListener('click', (e) => { e.stopPropagation(); renderConfirm(); });
 
       menu.append(editBtn, sep, delBtn);
     }
@@ -479,10 +547,7 @@
       noBtn.className = 'status-opt';
       noBtn.setAttribute('role', 'menuitem');
       noBtn.textContent = 'Cancel';
-      noBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        renderMain();
-      });
+      noBtn.addEventListener('click', (e) => { e.stopPropagation(); renderMain(); });
 
       menu.append(label, yesBtn, noBtn);
     }
@@ -502,15 +567,9 @@
     conversations.splice(idx, 1);
     saveConversations();
     renderSidebar();
-    updateStats();
 
     if (activeConvId === convId) {
-      if (conversations.length > 0) {
-        switchConversation(conversations[0].id);
-      } else {
-        activeConvId = null;
-        renderMainPanel();
-      }
+      switchConversation(conversations[0]?.id ?? null);
     }
   }
 
@@ -522,8 +581,8 @@
     const conv = conversations.find((c) => c.id === convId);
     if (!conv) return;
     editingConvId = convId;
-    editProspectInput.value = conv.name;
-    editCompanyInput.value  = conv.company || '';
+    editProspectInput.value  = conv.name;
+    editCompanyInput.value   = conv.company || '';
     editConvSaveBtn.disabled = false;
     editConvModal.classList.remove('hidden');
     editProspectInput.focus();
@@ -550,23 +609,18 @@
   editProspectInput.addEventListener('input', () => {
     editConvSaveBtn.disabled = editProspectInput.value.trim() === '';
   });
-
   editProspectInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); saveEditConv(); }
+    if (e.key === 'Enter')  { e.preventDefault(); saveEditConv(); }
     if (e.key === 'Escape') closeEditModal();
   });
-
   editCompanyInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); saveEditConv(); }
+    if (e.key === 'Enter')  { e.preventDefault(); saveEditConv(); }
     if (e.key === 'Escape') closeEditModal();
   });
-
   editConvSaveBtn.addEventListener('click', saveEditConv);
   editConvCancelBtn.addEventListener('click', closeEditModal);
   editConvModalClose.addEventListener('click', closeEditModal);
-  editConvModal.addEventListener('click', (e) => {
-    if (e.target === editConvModal) closeEditModal();
-  });
+  editConvModal.addEventListener('click', (e) => { if (e.target === editConvModal) closeEditModal(); });
 
   // ============================================================
   // Switching Conversations
@@ -580,37 +634,13 @@
   }
 
   // ============================================================
-  // New Conversation Modal
+  // New Prospect Chat Modal
   // ============================================================
 
-  function renderProductChips(containerId, activeId) {
-    const container = document.getElementById(containerId);
-    if (!container) return;
-    container.innerHTML = '';
-    PRODUCTS.forEach(({ id, label, dot }) => {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.className = 'product-chip' + (id === activeId ? ' active' : '');
-      btn.dataset.product = id;
-      btn.setAttribute('aria-pressed', String(id === activeId));
-      btn.innerHTML = `<span class="product-chip-dot" style="background:${dot}" aria-hidden="true"></span>${label}`;
-      btn.addEventListener('click', () => {
-        container.querySelectorAll('.product-chip').forEach((c) => {
-          c.classList.remove('active');
-          c.setAttribute('aria-pressed', 'false');
-        });
-        btn.classList.add('active');
-        btn.setAttribute('aria-pressed', 'true');
-      });
-      container.appendChild(btn);
-    });
-  }
-
   function openNewConvModal() {
-    convProspectInput.value = '';
-    convCompanyInput.value  = '';
+    convProspectInput.value  = '';
+    convCompanyInput.value   = '';
     newConvStartBtn.disabled = true;
-    renderProductChips('newConvProductSelector', 'general');
     newConvModal.classList.remove('hidden');
     convProspectInput.focus();
   }
@@ -622,32 +652,27 @@
   convProspectInput.addEventListener('input', () => {
     newConvStartBtn.disabled = convProspectInput.value.trim() === '';
   });
-
   convProspectInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); tryStartConv(); }
+    if (e.key === 'Enter')  { e.preventDefault(); tryStartProspectChat(); }
     if (e.key === 'Escape') closeNewConvModal();
   });
-
   convCompanyInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') { e.preventDefault(); tryStartConv(); }
+    if (e.key === 'Enter')  { e.preventDefault(); tryStartProspectChat(); }
     if (e.key === 'Escape') closeNewConvModal();
   });
 
-  function tryStartConv() {
+  function tryStartProspectChat() {
     const name = convProspectInput.value.trim();
     if (!name) return;
-    const activeChip = document.querySelector('#newConvProductSelector .product-chip.active');
-    const product = activeChip ? activeChip.dataset.product : 'general';
+    const company = convCompanyInput.value.trim();
     closeNewConvModal();
-    createConversation(name, convCompanyInput.value, product);
+    createConversation(name, company, 'general');
   }
 
-  newConvStartBtn.addEventListener('click', tryStartConv);
+  newConvStartBtn.addEventListener('click', tryStartProspectChat);
   newConvCancelBtn.addEventListener('click', closeNewConvModal);
   newConvModalClose.addEventListener('click', closeNewConvModal);
-  newConvModal.addEventListener('click', (e) => {
-    if (e.target === newConvModal) closeNewConvModal();
-  });
+  newConvModal.addEventListener('click', (e) => { if (e.target === newConvModal) closeNewConvModal(); });
 
   document.addEventListener('keydown', (e) => {
     if (e.key !== 'Escape') return;
@@ -661,9 +686,7 @@
 
   questionInput.addEventListener('input', () => {
     autoResize(questionInput);
-    if (!questionInput.disabled) {
-      sendBtn.disabled = questionInput.value.trim() === '' || isStreaming;
-    }
+    if (!questionInput.disabled) sendBtn.disabled = questionInput.value.trim() === '' || isStreaming;
   });
 
   questionInput.addEventListener('keydown', (e) => {
@@ -677,18 +700,79 @@
     if (!isStreaming && questionInput.value.trim()) sendMessage();
   });
 
-  // New Chat buttons open the creation modal
   newChatBtn.addEventListener('click', openNewConvModal);
-  sidebarNewChatBtn.addEventListener('click', openNewConvModal);
+  sidebarNewProspectBtn.addEventListener('click', openNewConvModal);
   noChatNewBtn.addEventListener('click', openNewConvModal);
+
+  phasePrepBtn.addEventListener('click', () => setSessionPhase('prep'));
+  phaseLiveBtn.addEventListener('click', () => setSessionPhase('live'));
+
+  const HINT_CHIP_ARROW = '<svg class="hint-chip-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>';
+
+  function hideProspectPrep() {
+    const section = document.getElementById('prospectPrepSection');
+    const container = document.getElementById('prospectChipsContainer');
+    if (section) section.classList.add('hidden');
+    if (container) container.innerHTML = '';
+  }
+
+  function showProspectChips(name, company) {
+    removeSuggestionChips();
+    const section = document.getElementById('prospectPrepSection');
+    const label = document.getElementById('prospectPrepLabel');
+    const container = document.getElementById('prospectChipsContainer');
+    if (!container) return;
+
+    if (label) {
+      label.textContent = company
+        ? `Prep for ${name} · ${company}`
+        : `Prep for ${name}`;
+    }
+    if (section) section.classList.remove('hidden');
+
+    const chips = [
+      { text: `What should I know about ${name} before the call?`, type: 'person' },
+      { text: `What should I know about ${company || 'this company'} to help me in the call?`, type: 'company' },
+      { text: 'What objections should I expect on this call?', type: null },
+    ];
+
+    const wrap = document.createElement('div');
+    wrap.className = 'hints-grid';
+    wrap.id = 'suggestionChips';
+
+    chips.forEach(({ text, type }) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'hint-chip hint-chip--action';
+      btn.innerHTML = `<span>${escapeHtml(text)}</span>${HINT_CHIP_ARROW}`;
+      btn.addEventListener('click', () => {
+        removeSuggestionChips();
+        sendMessage(text, { questionType: type });
+      });
+      wrap.appendChild(btn);
+    });
+
+    container.appendChild(wrap);
+    scrollBottom();
+  }
+
+  function removeSuggestionChips() {
+    const el = document.getElementById('suggestionChips');
+    if (!el) return;
+    const isProspect = Boolean(el.closest('#prospectChipsContainer'));
+    el.remove();
+    if (isProspect) hideProspectPrep();
+  }
 
   // ============================================================
   // Core Send Flow
   // ============================================================
 
-  function sendMessage() {
-    const question = questionInput.value.trim();
+  function sendMessage(questionOverride, options = {}) {
+    const question = (questionOverride ?? questionInput.value).trim();
     if (!question || isStreaming || !activeConvId) return;
+
+    removeSuggestionChips();
 
     if (!hasStarted) {
       hasStarted = true;
@@ -696,13 +780,20 @@
       welcomeState.classList.add('hidden');
     }
 
-    clearInput();
+    if (!questionOverride) clearInput();
+    else {
+      questionInput.value = '';
+      autoResize(questionInput);
+      sendBtn.disabled = true;
+    }
     appendUserBubble(question);
     saveUserMessage(question);
-    streamBotResponse(question);
+    streamBotResponse(question, options);
   }
 
-  async function streamBotResponse(question) {
+  async function streamBotResponse(question, options = {}) {
+    const { silent = false, onComplete = null, questionType = null } = options;
+    const targetConvId = activeConvId;
     isStreaming = true;
     setLoading(true);
 
@@ -715,18 +806,20 @@
     try {
       const conv    = getActiveConv();
       const allMsgs = conv ? conv.messages : [];
-      // Last 4 messages before the current one = 2 full exchanges (user + assistant each).
-      // saveUserMessage() was already called, so the current message is at allMsgs[-1];
-      // we exclude it and take the 4 preceding messages for history context.
-      const history = allMsgs.slice(-5, -1).map(m => ({ role: m.role, content: m.content }));
+      const history = allMsgs.slice(-5, -1).map((m) => ({ role: m.role, content: m.content }));
 
       const res = await fetch('/chat', {
         method:  'POST',
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
           question,
-          product: conv?.product || 'general',
+          product:         conv?.product || 'general',
           history,
+          session_id:      conv?.sessionId || newSessionId(),
+          mode:            getChatMode(),
+          prospect_name:   conv?.name || '',
+          prospect_company: conv?.company || '',
+          question_type:   questionType || null,
         }),
       });
 
@@ -769,8 +862,12 @@
                   appendFeedbackButtons(contentEl);
                 }
               }
-              // Persist the completed assistant message
-              saveAssistantMessage(fullText);
+              const targetConv = conversations.find((c) => c.id === targetConvId);
+              if (targetConv) {
+                targetConv.messages.push({ role: 'assistant', content: fullText });
+                saveConversations();
+              }
+              if (onComplete && activeConvId === targetConvId) onComplete();
               break outer;
             }
 
@@ -852,7 +949,6 @@
     return row.querySelector('.bubble-bot');
   }
 
-  // Renders a stored (non-streaming) bot message with full formatting
   function appendStoredBotBubble(rawText) {
     const row = document.createElement('div');
     row.className = 'message message-bot';
@@ -894,7 +990,7 @@
     sources.forEach((src) => {
       const pill = document.createElement('span');
       pill.className = 'source-pill';
-      pill.textContent = '\uD83D\uDCC4 ' + src;
+      pill.textContent = '📄 ' + src;
       wrap.appendChild(pill);
     });
     contentEl.appendChild(wrap);
@@ -934,14 +1030,13 @@
   // ============================================================
 
   function renderMarkdown(text) {
-    // If "Next move:" appears mid-bullet (not at line start), split it into its own bullet
     text = text.replace(/([^\n])\s+Next move:/gi, '$1\n• Next move:');
     const lines = text.replace(/\r\n/g, '\n').split('\n').filter((l) => l.trim() !== '');
     const items = [];
     let currentBullet = null;
 
     for (const line of lines) {
-      const trimmed = line.trim();
+      const trimmed     = line.trim();
       const bulletMatch = trimmed.match(/^([•\-\*]|\d+\.)\s+(.+)/);
 
       if (bulletMatch) {
@@ -1031,16 +1126,16 @@
     const mins  = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days  = Math.floor(diff / 86400000);
-    if (mins  < 1)  return 'just now';
-    if (mins  < 60) return `${mins}m ago`;
-    if (hours < 24) return `${hours}h ago`;
+    if (mins  < 1)   return 'just now';
+    if (mins  < 60)  return `${mins}m ago`;
+    if (hours < 24)  return `${hours}h ago`;
     if (days  === 1) return 'Yesterday';
-    if (days  < 7)  return `${days}d ago`;
+    if (days  < 7)   return `${days}d ago`;
     return new Date(isoString).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   }
 
   function escapeHtml(str) {
-    return str
+    return String(str)
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')
       .replace(/>/g, '&gt;')
@@ -1054,13 +1149,10 @@
 
   loadConversations();
   renderSidebar();
-  updateStats();
   renderMainPanel();
 
   // ============================================================
   // View Routing
-  // Central navigate(hash) dispatcher — add a new page by adding
-  // a section to index.html, CSS rules, and a case here.
   // ============================================================
 
   const ALL_PAGES = [landingEl, appEl, bestPracticesEl, gapsEl];
@@ -1107,24 +1199,21 @@
     }
   }
 
-  // ── Gaps data loader ─────────────────────────────────────
   async function loadGaps() {
     const container = document.getElementById('gapsContent');
     const loading   = document.getElementById('gapsLoading');
     if (loading) loading.style.display = 'block';
-
     try {
       const res  = await fetch('/gaps');
       const data = await res.json();
       renderGaps(container, data);
-    } catch (err) {
+    } catch (_) {
       container.innerHTML = '<p class="gaps-loading">Failed to load gaps. Make sure the server is running.</p>';
     }
   }
 
   function renderGaps(container, data) {
     const products = Object.keys(data);
-
     if (products.length === 0) {
       container.innerHTML = `
         <div class="gaps-empty">
@@ -1134,7 +1223,6 @@
         </div>`;
       return;
     }
-
     container.innerHTML = products.map((product) => {
       const items = data[product];
       const name  = product.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
@@ -1160,49 +1248,22 @@
     }).join('');
   }
 
-  function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;');
-  }
-
-  // ── Event wiring ─────────────────────────────────────────
-
-  // "Open App" / "Open Chats" buttons on landing page
   document.querySelectorAll('.js-open-app').forEach((btn) => {
     btn.addEventListener('click', () => navigate('app'));
   });
-
-  // "Best Practices" landing nav button
   document.querySelectorAll('.js-nav-best-practices').forEach((btn) => {
     btn.addEventListener('click', () => navigate('best-practices'));
   });
-
-  // "Knowledge Gaps" landing nav button
   document.querySelectorAll('.js-nav-gaps').forEach((btn) => {
     btn.addEventListener('click', () => navigate('gaps'));
   });
-
-  // "Back" buttons on info pages go back to landing
   document.querySelectorAll('.js-nav-landing').forEach((btn) => {
-    btn.addEventListener('click', (e) => {
-      e.preventDefault();
-      navigate('landing');
-    });
+    btn.addEventListener('click', (e) => { e.preventDefault(); navigate('landing'); });
   });
 
-  // Back button in app topbar
   backBtn.addEventListener('click', () => navigate('landing'));
+  logoLink.addEventListener('click', (e) => { e.preventDefault(); navigate('landing'); });
 
-  // Logo in app topbar goes back to landing
-  logoLink.addEventListener('click', (e) => {
-    e.preventDefault();
-    navigate('landing');
-  });
-
-  // Deep-link: if page loaded with a hash, navigate to it
   const initialHash = window.location.hash.replace('#', '');
   if (initialHash) navigate(initialHash);
 

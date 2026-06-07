@@ -16,20 +16,9 @@ AWS_REGION        = os.environ.get("AWS_REGION", "us-east-1")
 AWS_ACCESS_KEY_ID = os.environ.get("AWS_ACCESS_KEY_ID")
 AWS_SECRET_KEY    = os.environ.get("AWS_SECRET_ACCESS_KEY")
 
-# --- Bedrock Knowledge Base ---------------------------------------------
-BEDROCK_KB_ID = os.environ.get("BEDROCK_KB_ID", "")
-
-# --- Bedrock LLM (Claude Haiku 4.5 cross-region inference profile) ------
-BEDROCK_MODEL_ID = os.environ.get(
-    "BEDROCK_MODEL_ID",
-    "us.anthropic.claude-haiku-4-5-20251001-v1:0",
-)
-MAX_TOKENS = 512
-
-# --- Retrieval ----------------------------------------------------------
-RETRIEVAL_TOP_K = 5
-# Chunks retrieved per product when All Products mode detects a 2+ product comparison.
-COMPARISON_CHUNKS_PER_PRODUCT = 3
+# --- Bedrock Agent ------------------------------------------------------
+BEDROCK_AGENT_ID       = os.environ.get("BEDROCK_AGENT_ID", "")
+BEDROCK_AGENT_ALIAS_ID = os.environ.get("BEDROCK_AGENT_ALIAS_ID", "")
 
 # --- File paths ---------------------------------------------------------
 # Absolute path to the JSONL file where knowledge gaps are logged.
