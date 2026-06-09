@@ -33,10 +33,6 @@
         </div>
         <span class="logo-name">RepReady</span>
       </a>
-      <div class="landing-nav-links">
-        <button class="landing-nav-link js-nav-best-practices">Best Practices</button>
-        <button class="landing-nav-link js-nav-gaps">Knowledge Gaps</button>
-      </div>
     </nav>
 
     <!-- Hero -->
@@ -167,8 +163,8 @@
         <div class="sidebar-phase sidebar-phase--idle" id="sidebarPhaseIndicator" aria-live="polite" aria-label="Current call phase" hidden>
           <span class="sidebar-phase-dot" aria-hidden="true"></span>
           <div class="sidebar-phase-copy">
-            <span class="sidebar-phase-label" id="sidebarPhaseLabel">Prep</span>
-            <span class="sidebar-phase-sub" id="sidebarPhaseSub">Time to ask questions</span>
+            <span class="sidebar-phase-label" id="sidebarPhaseLabel">Before the call</span>
+            <span class="sidebar-phase-sub hidden" id="sidebarPhaseSub" aria-hidden="true"></span>
           </div>
         </div>
       </div>
@@ -178,12 +174,6 @@
         <!-- PROSPECT CHATS section -->
         <div class="sidebar-section">
           <div class="sidebar-section-label">PROSPECT CHATS</div>
-          <button class="sidebar-new-btn" id="sidebarNewProspectBtn" aria-label="Start a new prospect chat">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            New Prospect Chat
-          </button>
           <div class="conv-list" id="convList" role="listbox" aria-label="Prospect conversations"></div>
           <div class="sidebar-empty hidden" id="sidebarEmpty" aria-hidden="true">
             <div class="sidebar-empty-icon">
@@ -193,6 +183,47 @@
             </div>
             <p class="sidebar-empty-title">No chats yet</p>
             <p class="sidebar-empty-desc">Start a prospect chat to prep or coach live on a call.</p>
+          </div>
+        </div>
+
+        <div class="sidebar-section sidebar-section--kb">
+          <div class="sidebar-section-label sidebar-section-label--kb">Products synced in your knowledge base</div>
+          <div class="kb-file-list" id="kbFileList">
+            <div class="kb-file" data-product="repready_pro">
+              <span class="kb-file-dot" style="background:#6366f1"></span>
+              <div class="kb-file-info">
+                <span class="kb-file-name">RepReady Pro</span>
+                <span class="kb-file-src">repready_pro.txt</span>
+              </div>
+            </div>
+            <div class="kb-file" data-product="coachai">
+              <span class="kb-file-dot" style="background:#22c55e"></span>
+              <div class="kb-file-info">
+                <span class="kb-file-name">CoachAI</span>
+                <span class="kb-file-src">coachai.txt</span>
+              </div>
+            </div>
+            <div class="kb-file" data-product="salestrain">
+              <span class="kb-file-dot" style="background:#f59e0b"></span>
+              <div class="kb-file-info">
+                <span class="kb-file-name">SalesTrain</span>
+                <span class="kb-file-src">salestrain.txt</span>
+              </div>
+            </div>
+            <div class="kb-file" data-product="signalhq">
+              <span class="kb-file-dot" style="background:#ef4444"></span>
+              <div class="kb-file-info">
+                <span class="kb-file-name">SignalHQ</span>
+                <span class="kb-file-src">signalhq.txt</span>
+              </div>
+            </div>
+            <div class="kb-file" data-product="dealdesk">
+              <span class="kb-file-dot" style="background:#a78bfa"></span>
+              <div class="kb-file-info">
+                <span class="kb-file-name">DealDesk</span>
+                <span class="kb-file-src">dealdesk.txt</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -228,16 +259,18 @@
           <span class="topbar-prospect-name" id="topbarProspectName"></span>
           <span class="topbar-prospect-sep" id="topbarProspectSep" aria-hidden="true">&middot;</span>
           <span class="topbar-prospect-company" id="topbarProspectCompany"></span>
-          <span class="topbar-phase-badge phase-badge phase-badge--prep" id="topbarPhaseBadge">Prep</span>
+        </div>
+
+        <div class="topbar-right">
+          <button class="btn-new-chat hidden" id="topbarNewChatBtn" type="button" aria-label="Start a new prospect chat">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+            </svg>
+            New chat
+          </button>
         </div>
 
       </header>
-
-      <div class="phase-banner phase-banner--live hidden" id="phaseLiveBanner" aria-live="polite">
-        <span class="phase-banner-dot" aria-hidden="true"></span>
-        <span class="phase-banner-label">LIVE ON CALL</span>
-        <span class="phase-banner-text">This is the money time — win the moment</span>
-      </div>
 
       <!-- Chat area -->
       <main class="chat-area" id="chatArea">
@@ -254,12 +287,16 @@
             </div>
             <h1 class="empty-title">RepReady</h1>
           </div>
-          <p class="empty-tagline no-chat-desc">Select a prospect from the sidebar, or start a new chat below.</p>
+          <div class="no-chat-intro">
+            <p class="empty-tagline no-chat-desc">RepReady coaches B2B sales reps before and during calls.</p>
+            <ol class="no-chat-steps">
+              <li>Pick a prospect from the knowledge base or enter a name and company manually</li>
+              <li>Prepare for your call using the "Before the call" mode</li>
+              <li>Switch to the "On the call now" mode when the call starts</li>
+            </ol>
+          </div>
           <button class="no-chat-cta" id="noChatNewBtn" type="button">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-            </svg>
-            New Prospect Chat
+            + New Prospect Chat
           </button>
         </div>
 
@@ -276,16 +313,30 @@
             <h1 class="empty-title">RepReady</h1>
           </div>
           <p class="empty-tagline empty-tagline--prep" id="welcomeTagline">Time to ask questions — notes, objections, what to expect.</p>
-          <div class="welcome-starter-panel" aria-label="Suggested prompts">
-            <div class="welcome-section hidden" id="liveExamplesSection">
-              <span class="welcome-section-label">Live on call — try these</span>
-              <div class="hints-grid" aria-label="Live on call examples">
-                <p class="hint-chip">Prospect says we're 40% more than [competitor]—help me respond</p>
-                <p class="hint-chip">They asked a technical detail I blanked on mid-call</p>
+          <div class="welcome-mode-cards" aria-label="Call modes">
+            <div class="welcome-mode-card welcome-mode-card--prep">
+              <h3 class="welcome-mode-card-title">Before the call</h3>
+              <p class="welcome-mode-card-when">Use this while you're preparing</p>
+              <p class="welcome-mode-card-desc">Pull prospect notes, expected objections, and company background. Calm bullets before you dial.</p>
+              <div class="mode-examples" aria-label="Before the call examples">
+                <p class="mode-example">What should I know about [prospect name] before this call?</p>
+                <p class="mode-example">What objections should I expect?</p>
               </div>
             </div>
+            <div class="welcome-mode-card welcome-mode-card--live">
+              <h3 class="welcome-mode-card-title">On the call now</h3>
+              <p class="welcome-mode-card-when">Switch when you pick up the phone</p>
+              <p class="welcome-mode-card-desc">Type what just happened — get 4 coached bullets and a next move you can say in under 10 seconds.</p>
+              <div class="mode-examples" aria-label="On the call examples">
+                <p class="mode-example">Prospect is worried about setup and implementation — what do I say?</p>
+                <p class="mode-example">They went quiet after I mentioned pricing</p>
+              </div>
+            </div>
+          </div>
+          <p class="welcome-mode-hint">Start in <strong>Before the call</strong> to prep. Switch to <strong>On the call now</strong> when you dial.</p>
+          <div class="welcome-starter-panel" aria-label="Suggested prompts">
             <div class="welcome-section hidden" id="prospectPrepSection">
-              <span class="welcome-section-label" id="prospectPrepLabel">Prep for this call</span>
+              <span class="welcome-section-label" id="prospectPrepLabel">Prepare for your call</span>
               <div id="prospectChipsContainer" class="prospect-chips-container"></div>
             </div>
           </div>
@@ -296,22 +347,32 @@
 
       </main>
 
+      <div class="live-examples-panel hidden" id="liveExamplesSection" aria-label="Live on call examples">
+        <p class="live-examples-intro">First, select the product you're pitching below — then try one of these:</p>
+        <span class="welcome-section-label">Live on call — try these</span>
+        <div class="hints-grid" aria-label="Live on call example prompts">
+          <p class="hint-chip hint-chip--fill">Prospect is worried about setup and implementation — what do I say?</p>
+          <p class="hint-chip hint-chip--fill">They went quiet after I mentioned pricing</p>
+          <p class="hint-chip hint-chip--fill">Email my team lead a call update</p>
+        </div>
+      </div>
+
       <!-- Input area -->
       <div class="input-area" id="inputArea">
         <div class="product-pill-bar" id="productPillBar">
-          <span class="product-pill-label">Product:</span>
+          <span class="product-pill-label">Ask about:</span>
           <button class="active-product-pill" id="activeProductPill" title="Switch product context" aria-label="Active product — click to switch">
             <span class="active-product-dot" aria-hidden="true"></span>
-            <span class="active-product-label" id="activeProductLabel">All Products</span>
+            <span class="active-product-label" id="activeProductLabel">All products</span>
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
           </button>
           <div class="session-phase-toggle" id="sessionPhaseToggle" role="group" aria-label="Call phase" hidden>
-            <button type="button" class="phase-btn" id="phasePrepBtn" data-phase="prep" aria-pressed="true">Prep</button>
+            <button type="button" class="phase-btn" id="phasePrepBtn" data-phase="prep" aria-pressed="true">Before the call</button>
             <button type="button" class="phase-btn phase-btn--live" id="phaseLiveBtn" data-phase="live" aria-pressed="false">
               <span class="phase-live-dot" aria-hidden="true"></span>
-              Live on call
+              On the call now
             </button>
           </div>
         </div>
@@ -382,7 +443,7 @@
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
             </svg>
-            <h2 class="modal-title" id="newConvTitle">New Prospect Chat</h2>
+            <h2 class="modal-title" id="newConvTitle">Prep for a call</h2>
           </div>
           <button class="modal-close" id="newConvModalClose" aria-label="Close">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -390,111 +451,44 @@
             </svg>
           </button>
         </div>
+        <p class="modal-subtitle">Who are you calling? RepReady will look up their notes.</p>
         <div class="modal-form">
+          <div class="form-group">
+            <span class="form-group-label">Pre-loaded — we have notes on these people</span>
+            <div class="prospect-card-row" id="prospectCardRow">
+              <button type="button" class="prospect-card" data-name="Alex Rivera" data-company="CloudScale">
+                <span class="prospect-card-name">Alex Rivera</span>
+                <span class="prospect-card-company">CloudScale</span>
+              </button>
+              <button type="button" class="prospect-card" data-name="Marcus Johnson" data-company="FinEdge">
+                <span class="prospect-card-name">Marcus Johnson</span>
+                <span class="prospect-card-company">FinEdge</span>
+              </button>
+              <button type="button" class="prospect-card" data-name="Priya Patel" data-company="TalentFlow">
+                <span class="prospect-card-name">Priya Patel</span>
+                <span class="prospect-card-company">TalentFlow</span>
+              </button>
+            </div>
+          </div>
+          <div class="modal-divider"><span>or add any other prospect — no pre-loaded notes, but you can still research their company and ask product questions</span></div>
           <div class="form-group">
             <label for="convProspectName">Prospect Name <span class="field-required">*</span></label>
             <input type="text" id="convProspectName" class="form-input" placeholder="e.g. Sarah Johnson" autocomplete="off" />
+            <div class="kb-status-msg hidden" id="kbStatusMsg" aria-live="polite"></div>
           </div>
           <div class="form-group">
-            <label for="convCompanyName">Company <span class="field-optional">(optional)</span></label>
+            <label for="convCompanyName">Company <span class="field-required">*</span></label>
             <input type="text" id="convCompanyName" class="form-input" placeholder="e.g. Meridian Cloud" autocomplete="off" />
           </div>
         </div>
         <div class="modal-footer">
           <button class="btn-modal-cancel" id="newConvCancelBtn">Cancel</button>
-          <button class="btn-modal-primary" id="newConvStartBtn">Start Chat</button>
+          <button class="btn-modal-primary" id="newConvStartBtn">Start Prep</button>
         </div>
       </div>
     </div>
 
   </div>
-
-
-  <!-- ══════════════════════════════════════════════════════
-       BEST PRACTICES PAGE
-       ══════════════════════════════════════════════════════ -->
-  <div id="best-practices" class="info-page hidden" aria-label="Best Practices">
-
-    <nav class="info-page-nav" aria-label="Best practices navigation">
-      <button class="info-page-back js-nav-landing" aria-label="Back to home">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>
-        </svg>
-        Back
-      </button>
-      <a href="#" class="logo info-page-logo js-nav-landing" aria-label="RepReady home">
-        <div class="logo-mark">
-          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <rect width="20" height="20" rx="6" fill="currentColor"/>
-            <path d="M5 6h4.5a2.5 2.5 0 0 1 0 5H5V6zm0 5h3l2.5 3.5H8L5.5 11z" fill="white" fill-opacity="0.92"/>
-            <path d="M12.5 14l-1.5-2" stroke="white" stroke-opacity="0.92" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <span class="logo-name">RepReady</span>
-      </a>
-    </nav>
-
-    <div class="info-page-content">
-      <div class="info-page-header">
-        <div class="info-page-badge">Guide</div>
-        <h1 class="info-page-title">Best Practices</h1>
-        <p class="info-page-sub">RepReady is your live coach for difficult moments—not a cheat sheet. Use it mid-call when you need the move, not the facts.</p>
-      </div>
-
-      <div class="tips-grid">
-
-        <div class="tip-card">
-          <div class="tip-number">01</div>
-          <div class="tip-body">
-            <h3 class="tip-title">Don't know what to say? That's RepReady.</h3>
-            <p class="tip-desc">Blanked on a technical detail? Competitor came up you didn't prep for? Hard objection you can't answer off the top of your head? That's when you open RepReady.</p>
-          </div>
-        </div>
-
-        <div class="tip-card">
-          <div class="tip-number">02</div>
-          <div class="tip-body">
-            <h3 class="tip-title">Type while they're still talking</h3>
-            <p class="tip-desc">The moment you recognize you're stuck, start typing—not after they finish. Describe the objection or question in your own words while they're mid-sentence. By the time they stop talking, your coached response is ready.</p>
-          </div>
-        </div>
-
-        <div class="tip-card">
-          <div class="tip-number">03</div>
-          <div class="tip-body">
-            <h3 class="tip-title">Set the product before you ask</h3>
-            <p class="tip-desc">Select the product in New Chat or via the pill in the input bar. RepReady coaches from the right docs. Use All Products when the moment is a cross-product comparison.</p>
-          </div>
-        </div>
-
-        <div class="tip-card">
-          <div class="tip-number">04</div>
-          <div class="tip-body">
-            <h3 class="tip-title">Give RepReady the moment, not a search query</h3>
-            <p class="tip-desc">Battle cards give you information. RepReady gives you the move. Instead of "What is our SLA?" try "Prospect says our SLA isn't enterprise-grade compared to Guru—what do I say?" You'll get spoken-word bullets and a Next move you can act on immediately.</p>
-          </div>
-        </div>
-
-        <div class="tip-card">
-          <div class="tip-number">05</div>
-          <div class="tip-body">
-            <h3 class="tip-title">Say the bullets. Execute the Next move.</h3>
-            <p class="tip-desc">Every answer ends with a Next move—that's the point. RepReady remembers the last 2 exchanges, so when the prospect responds, just type what they said. No need to restate the background.</p>
-          </div>
-        </div>
-
-        <div class="tip-card">
-          <div class="tip-number">06</div>
-          <div class="tip-body">
-            <h3 class="tip-title">One hard moment per question</h3>
-            <p class="tip-desc">Keep it to one objection or stuck moment at a time. You'll get a tighter coached response, faster—and you won't lose the thread of the call.</p>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-  <!-- /best-practices -->
 
 
   <!-- ══════════════════════════════════════════════════════
@@ -523,9 +517,9 @@
 
     <div class="info-page-content">
       <div class="info-page-header">
-        <div class="info-page-badge gaps-badge">Gaps</div>
-        <h1 class="info-page-title">Knowledge Gaps</h1>
-        <p class="info-page-sub">Questions asked during live calls that RepReady couldn't answer with enough confidence. Use these to improve your knowledge base.</p>
+        <div class="info-page-badge gaps-badge">For managers</div>
+        <h1 class="info-page-title">Gaps log</h1>
+        <p class="info-page-sub">Questions from live calls that RepReady couldn't answer confidently. Review these with your team to identify missing content in your knowledge base.</p>
       </div>
       <div id="gapsContent" class="gaps-content">
         <div class="gaps-loading" id="gapsLoading">Loading gaps…</div>

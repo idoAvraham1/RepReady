@@ -17,15 +17,14 @@
   const questionInput         = document.getElementById('questionInput');
   const sendBtn               = document.getElementById('sendBtn');
   const inputArea             = document.getElementById('inputArea');
-  const sidebarNewProspectBtn = document.getElementById('sidebarNewProspectBtn');
   const noChatNewBtn          = document.getElementById('noChatNewBtn');
+  const topbarNewChatBtn      = document.getElementById('topbarNewChatBtn');
   const convList              = document.getElementById('convList');
   const productPillBar        = document.getElementById('productPillBar');
   const sessionPhaseToggle    = document.getElementById('sessionPhaseToggle');
   const phasePrepBtn          = document.getElementById('phasePrepBtn');
   const phaseLiveBtn          = document.getElementById('phaseLiveBtn');
   const mainPanel             = document.getElementById('mainPanel');
-  const phaseLiveBanner       = document.getElementById('phaseLiveBanner');
   const sidebarPhaseIndicator = document.getElementById('sidebarPhaseIndicator');
   const sidebarPhaseLabel     = document.getElementById('sidebarPhaseLabel');
   const sidebarPhaseSub       = document.getElementById('sidebarPhaseSub');
@@ -34,20 +33,18 @@
   const topbarProspectName    = document.getElementById('topbarProspectName');
   const topbarProspectSep     = document.getElementById('topbarProspectSep');
   const topbarProspectCompany = document.getElementById('topbarProspectCompany');
-  const topbarPhaseBadge      = document.getElementById('topbarPhaseBadge');
 
   // Product pill
   const activeProductPill  = document.getElementById('activeProductPill');
   const activeProductLabel = document.getElementById('activeProductLabel');
 
   const INPUT_PLACEHOLDER_LIVE = "What's happening on the call right now?";
-  const INPUT_PLACEHOLDER_PREP = 'Prep question — objections, background, what to expect…';
+  const INPUT_PLACEHOLDER_PREP = 'Ask about this prospect, objections, or what to expect…';
   const INPUT_PLACEHOLDER_IDLE = 'Select or create a chat first';
 
   // View routing
   const landingEl         = document.getElementById('landing');
   const appEl             = document.getElementById('app');
-  const bestPracticesEl   = document.getElementById('best-practices');
   const gapsEl            = document.getElementById('gaps');
   const backBtn           = document.getElementById('backBtn');
   const logoLink          = document.getElementById('logoLink');
@@ -57,6 +54,8 @@
   const newConvStartBtn   = document.getElementById('newConvStartBtn');
   const convProspectInput = document.getElementById('convProspectName');
   const convCompanyInput  = document.getElementById('convCompanyName');
+  const kbStatusMsg       = document.getElementById('kbStatusMsg');
+  const prospectCardRow   = document.getElementById('prospectCardRow');
 
   const editConvModal      = document.getElementById('editConvModal');
   const editConvModalClose = document.getElementById('editConvModalClose');
@@ -79,13 +78,15 @@
   let openDropdownEl = null;
 
   const PRODUCTS = [
-    { id: 'general',      label: 'All Products',  dot: '#8b8fa8' },
-    { id: 'repready_pro', label: 'RepReady Pro',   dot: '#6366f1' },
-    { id: 'coachai',      label: 'CoachAI',        dot: '#22c55e' },
-    { id: 'salestrain',   label: 'SalesTrain',     dot: '#f59e0b' },
-    { id: 'signalhq',     label: 'SignalHQ',       dot: '#ef4444' },
-    { id: 'dealdesk',     label: 'DealDesk',       dot: '#a78bfa' },
+    { id: 'general',      label: 'All products',  desc: 'Cross-product comparisons',             dot: '#8b8fa8' },
+    { id: 'repready_pro', label: 'RepReady Pro',   desc: 'AI knowledge assistant · battle cards', dot: '#6366f1' },
+    { id: 'coachai',      label: 'CoachAI',        desc: 'Real-time call coaching',               dot: '#22c55e' },
+    { id: 'salestrain',   label: 'SalesTrain',     desc: 'AI sales training & simulation',        dot: '#f59e0b' },
+    { id: 'signalhq',     label: 'SignalHQ',       desc: 'Prospect intelligence & signals',       dot: '#ef4444' },
+    { id: 'dealdesk',     label: 'DealDesk',       desc: 'CPQ & proposal automation',             dot: '#a78bfa' },
   ];
+
+  const KB_PROSPECTS = ['alex rivera', 'marcus johnson', 'priya patel'];
 
   // ============================================================
   // Mode
@@ -111,6 +112,7 @@
     const next = phase === 'live' ? 'live' : 'prep';
     if (next === 'live' && conv.sessionPhase !== 'live') {
       conv.sessionId = newSessionId();
+      conv.liveHintsHidden = false;
     }
     conv.sessionPhase = next;
     saveConversations();
@@ -131,9 +133,6 @@
     if (mainPanel) {
       mainPanel.classList.remove('main-panel--prep', 'main-panel--live');
       if (hasConv) mainPanel.classList.add(`main-panel--${phase}`);
-    }
-    if (phaseLiveBanner) {
-      phaseLiveBanner.classList.toggle('hidden', !hasConv || phase !== 'live');
     }
     if (inputArea) {
       inputArea.classList.remove('input-area--prep', 'input-area--live');
@@ -160,16 +159,26 @@
     }
 
     const liveSection = document.getElementById('liveExamplesSection');
-    if (liveSection) liveSection.classList.toggle('hidden', phase !== 'live');
+    const conv = getActiveConv();
+    if (liveSection) {
+      const showLive = !!activeConvId && phase === 'live' && !conv?.liveHintsHidden;
+      liveSection.classList.toggle('hidden', !showLive);
+    }
+
+    const prepSection = document.getElementById('prospectPrepSection');
+    if (prepSection) {
+      const hasChips = Boolean(document.getElementById('prospectChipsContainer')?.children.length);
+      prepSection.classList.toggle('hidden', phase !== 'prep' || !hasChips);
+    }
 
     const welcomeTagline = document.getElementById('welcomeTagline');
     if (welcomeTagline) {
       if (phase === 'live') {
         welcomeTagline.className = 'empty-tagline empty-tagline--live';
-        welcomeTagline.innerHTML = 'You\'re on the call. <strong>Type what just happened</strong> — win this moment.';
+        welcomeTagline.innerHTML = '<strong>On the call now</strong> — type what just happened and get your next move in seconds.';
       } else {
         welcomeTagline.className = 'empty-tagline empty-tagline--prep';
-        welcomeTagline.innerHTML = 'Time to ask questions — notes, objections, what to expect.';
+        welcomeTagline.innerHTML = '<strong>Before the call</strong> — ask about their notes, expected objections, or company background.';
       }
     }
 
@@ -196,13 +205,6 @@
       topbarProspectCompany.classList.toggle('hidden', !hasCompany);
     }
     if (topbarProspectSep) topbarProspectSep.classList.toggle('hidden', !hasCompany);
-
-    const phase = getConvPhase(conv);
-    if (topbarPhaseBadge) {
-      topbarPhaseBadge.textContent = phase === 'live' ? 'Live' : 'Prep';
-      topbarPhaseBadge.classList.remove('phase-badge--prep', 'phase-badge--live');
-      topbarPhaseBadge.classList.add(phase === 'live' ? 'phase-badge--live' : 'phase-badge--prep');
-    }
   }
 
   function updateSidebarPhaseIndicator() {
@@ -221,12 +223,11 @@
     sidebarPhaseIndicator.classList.add(`sidebar-phase--${phase}`);
 
     if (phase === 'live') {
-      if (sidebarPhaseLabel) sidebarPhaseLabel.textContent = 'LIVE CALL';
-      if (sidebarPhaseSub) sidebarPhaseSub.textContent = 'Win this moment';
+      if (sidebarPhaseLabel) sidebarPhaseLabel.textContent = 'On the call now';
     } else {
-      if (sidebarPhaseLabel) sidebarPhaseLabel.textContent = 'Prep mode';
-      if (sidebarPhaseSub) sidebarPhaseSub.textContent = 'Time to ask questions';
+      if (sidebarPhaseLabel) sidebarPhaseLabel.textContent = 'Before the call';
     }
+    if (sidebarPhaseSub) sidebarPhaseSub.hidden = true;
   }
 
   // ============================================================
@@ -351,8 +352,11 @@
       hasStarted = false;
       noChatState.classList.add('hidden');
       welcomeState.classList.remove('hidden');
-      if (conv) showProspectChips(conv.name, conv.company);
-      else hideProspectPrep();
+      if (conv) {
+        showProspectChips(conv.name, conv.company);
+      } else {
+        hideProspectPrep();
+      }
     } else {
       hasStarted = true;
       noChatState.classList.add('hidden');
@@ -380,6 +384,9 @@
     conversations.forEach((conv) => convList.appendChild(buildConvItem(conv)));
     if (sidebarEmpty) {
       sidebarEmpty.classList.toggle('hidden', conversations.length > 0);
+    }
+    if (topbarNewChatBtn) {
+      topbarNewChatBtn.classList.toggle('hidden', conversations.length === 0);
     }
     updateSidebarActive();
   }
@@ -446,6 +453,13 @@
   // Product Pill
   // ============================================================
 
+  function syncKbFileList(productId) {
+    const id = productId ?? getActiveConv()?.product;
+    document.querySelectorAll('#kbFileList .kb-file').forEach((el) => {
+      el.classList.toggle('kb-file--active', !!id && id !== 'general' && el.dataset.product === id);
+    });
+  }
+
   function updateProductPill() {
     const conv = getActiveConv();
     const pid  = conv?.product || 'general';
@@ -454,6 +468,7 @@
     const dot = activeProductPill.querySelector('.active-product-dot');
     if (dot) dot.style.background = p.dot;
     activeProductPill.dataset.product = pid;
+    syncKbFileList(pid);
   }
 
   function showProductSwitchDropdown() {
@@ -472,11 +487,21 @@
     const conv       = getActiveConv();
     const currentPid = conv?.product || 'general';
 
-    PRODUCTS.forEach(({ id, label, dot }) => {
+    const header = document.createElement('div');
+    header.className = 'product-dropdown-header';
+    header.textContent = "Select the product you're selling — RepReady coaches from that product's docs";
+    menu.appendChild(header);
+
+    PRODUCTS.forEach(({ id, label, desc, dot }) => {
       const btn = document.createElement('button');
-      btn.className = 'status-opt' + (id === currentPid ? ' status-opt-active' : '');
+      btn.className = 'status-opt status-opt-product' + (id === currentPid ? ' status-opt-active' : '');
       btn.setAttribute('role', 'menuitem');
-      btn.innerHTML = `<span style="width:8px;height:8px;border-radius:50%;background:${dot};flex-shrink:0;margin-right:10px;display:inline-block"></span>${label}`;
+      btn.innerHTML = `
+        <span style="width:8px;height:8px;border-radius:50%;background:${dot};flex-shrink:0;margin-right:10px;display:inline-block;margin-top:4px"></span>
+        <span class="status-opt-product-text">
+          <span class="status-opt-product-label">${label}</span>
+          <span class="status-opt-product-desc">${desc}</span>
+        </span>`;
       btn.addEventListener('click', (e) => {
         e.stopPropagation();
         closeStatusDropdown();
@@ -677,10 +702,42 @@
   // New Prospect Chat Modal
   // ============================================================
 
+  function checkKbStatus(name) {
+    if (!kbStatusMsg) return;
+    const trimmed = (name || '').trim();
+    if (!trimmed) {
+      kbStatusMsg.classList.add('hidden');
+      kbStatusMsg.textContent = '';
+      return;
+    }
+    const found = KB_PROSPECTS.includes(trimmed.toLowerCase());
+    kbStatusMsg.classList.remove('hidden', 'kb-status-msg--found', 'kb-status-msg--not-found');
+    if (found) {
+      kbStatusMsg.classList.add('kb-status-msg--found');
+      kbStatusMsg.textContent = `Notes found for ${trimmed} — RepReady will use their KB entry.`;
+    } else {
+      kbStatusMsg.classList.add('kb-status-msg--not-found');
+      kbStatusMsg.textContent = 'No notes found for this name — you can still ask product and company questions.';
+    }
+  }
+
+  function updateNewConvStartBtn() {
+    const nameOk    = convProspectInput.value.trim() !== '';
+    const companyOk = convCompanyInput.value.trim() !== '';
+    newConvStartBtn.disabled = !(nameOk && companyOk);
+  }
+
   function openNewConvModal() {
     convProspectInput.value  = '';
     convCompanyInput.value   = '';
     newConvStartBtn.disabled = true;
+    if (kbStatusMsg) {
+      kbStatusMsg.classList.add('hidden');
+      kbStatusMsg.textContent = '';
+    }
+    prospectCardRow?.querySelectorAll('.prospect-card').forEach((card) => {
+      card.classList.remove('prospect-card--selected');
+    });
     newConvModal.classList.remove('hidden');
     convProspectInput.focus();
   }
@@ -689,8 +746,22 @@
     newConvModal.classList.add('hidden');
   }
 
-  convProspectInput.addEventListener('input', () => {
-    newConvStartBtn.disabled = convProspectInput.value.trim() === '';
+  convProspectInput.addEventListener('input', updateNewConvStartBtn);
+  convProspectInput.addEventListener('keyup', () => {
+    checkKbStatus(convProspectInput.value);
+  });
+  convCompanyInput.addEventListener('input', updateNewConvStartBtn);
+
+  prospectCardRow?.addEventListener('click', (e) => {
+    const card = e.target.closest('.prospect-card');
+    if (!card) return;
+    convProspectInput.value = card.dataset.name || '';
+    convCompanyInput.value  = card.dataset.company || '';
+    updateNewConvStartBtn();
+    prospectCardRow.querySelectorAll('.prospect-card').forEach((el) => {
+      el.classList.toggle('prospect-card--selected', el === card);
+    });
+    checkKbStatus(convProspectInput.value);
   });
   convProspectInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter')  { e.preventDefault(); tryStartProspectChat(); }
@@ -703,8 +774,8 @@
 
   function tryStartProspectChat() {
     const name = convProspectInput.value.trim();
-    if (!name) return;
     const company = convCompanyInput.value.trim();
+    if (!name || !company) return;
     closeNewConvModal();
     createConversation(name, company, 'general');
   }
@@ -740,8 +811,8 @@
     if (!isStreaming && questionInput.value.trim()) sendMessage();
   });
 
-  sidebarNewProspectBtn.addEventListener('click', openNewConvModal);
   noChatNewBtn.addEventListener('click', openNewConvModal);
+  topbarNewChatBtn?.addEventListener('click', openNewConvModal);
 
   phasePrepBtn.addEventListener('click', () => setSessionPhase('prep'));
   phaseLiveBtn.addEventListener('click', () => setSessionPhase('live'));
@@ -763,17 +834,17 @@
     if (!container) return;
 
     if (label) {
-      label.textContent = company
-        ? `Prep for ${name} · ${company}`
-        : `Prep for ${name}`;
+      label.textContent = `Prepare for your call with ${name}`;
     }
-    if (section) section.classList.remove('hidden');
 
-    const chips = [
-      { text: `What should I know about ${name} before the call?`, type: 'person' },
+    const chips = [];
+    if (KB_PROSPECTS.includes(name.trim().toLowerCase())) {
+      chips.push({ text: `What should I know about ${name} before the call?`, type: 'person' });
+    }
+    chips.push(
       { text: `What should I know about ${company || 'this company'} to help me in the call?`, type: 'company' },
       { text: 'What objections should I expect on this call?', type: null },
-    ];
+    );
 
     const wrap = document.createElement('div');
     wrap.className = 'hints-grid';
@@ -792,6 +863,7 @@
     });
 
     container.appendChild(wrap);
+    if (section) section.classList.toggle('hidden', getChatMode() !== 'prep');
     scrollBottom();
   }
 
@@ -802,6 +874,26 @@
     el.remove();
     if (isProspect) hideProspectPrep();
   }
+
+  function fillInputFromChip(text) {
+    if (!activeConvId || questionInput.disabled) return;
+    questionInput.value = text;
+    autoResize(questionInput);
+    sendBtn.disabled = questionInput.value.trim() === '' || isStreaming;
+    questionInput.focus();
+  }
+
+  welcomeState?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.hint-chip--fill');
+    if (!chip) return;
+    fillInputFromChip(chip.textContent.trim());
+  });
+
+  document.getElementById('liveExamplesSection')?.addEventListener('click', (e) => {
+    const chip = e.target.closest('.hint-chip--fill');
+    if (!chip) return;
+    fillInputFromChip(chip.textContent.trim());
+  });
 
   // ============================================================
   // Core Send Flow
@@ -827,6 +919,16 @@
     }
     appendUserBubble(question);
     saveUserMessage(question);
+
+    if (getChatMode() === 'live') {
+      const conv = getActiveConv();
+      if (conv) {
+        conv.liveHintsHidden = true;
+        saveConversations();
+      }
+      document.getElementById('liveExamplesSection')?.classList.add('hidden');
+    }
+
     streamBotResponse(question, options);
   }
 
@@ -1198,12 +1300,13 @@
   loadConversations();
   renderSidebar();
   renderMainPanel();
+  syncKbFileList(getActiveConv()?.product);
 
   // ============================================================
   // View Routing
   // ============================================================
 
-  const ALL_PAGES = [landingEl, appEl, bestPracticesEl, gapsEl];
+  const ALL_PAGES = [landingEl, appEl, gapsEl];
 
   function _hideAll() {
     ALL_PAGES.forEach((el) => el && el.classList.add('hidden'));
@@ -1223,13 +1326,6 @@
     history.replaceState(null, '', location.pathname);
   }
 
-  function showBestPractices() {
-    _hideAll();
-    bestPracticesEl.classList.remove('hidden');
-    history.replaceState(null, '', '#best-practices');
-    window.scrollTo(0, 0);
-  }
-
   function showGaps() {
     _hideAll();
     gapsEl.classList.remove('hidden');
@@ -1241,8 +1337,6 @@
   function navigate(hash) {
     switch (hash) {
       case 'app':            showApp();           break;
-      case 'best-practices': showBestPractices(); break;
-      case 'gaps':           showGaps();          break;
       default:               showLanding();       break;
     }
   }
@@ -1303,12 +1397,6 @@
 
   document.querySelectorAll('.js-open-app').forEach((btn) => {
     btn.addEventListener('click', () => navigate('app'));
-  });
-  document.querySelectorAll('.js-nav-best-practices').forEach((btn) => {
-    btn.addEventListener('click', () => navigate('best-practices'));
-  });
-  document.querySelectorAll('.js-nav-gaps').forEach((btn) => {
-    btn.addEventListener('click', () => navigate('gaps'));
   });
   document.querySelectorAll('.js-nav-landing').forEach((btn) => {
     btn.addEventListener('click', (e) => { e.preventDefault(); navigate('landing'); });

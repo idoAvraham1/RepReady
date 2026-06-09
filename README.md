@@ -10,12 +10,12 @@ RepReady is a real-time sales call coach for B2B reps. It helps you **prepare be
 
 Every prospect chat runs in one of two phases, toggled in the UI:
 
-| Mode | When to use | Response style |
-|------|-------------|----------------|
-| **Prep** | Before or after the call — research, objections, background | Calm scannable notes — max **6 bullets** (`•`) |
-| **Live on call** | On the phone right now | Urgent coach bullets — exactly **4 lines** (`•`), last line is **Next move:** |
+| UI label | Backend mode | When to use | Response style |
+|----------|--------------|-------------|----------------|
+| **Before the call** | `prep` | Research, objections, background | Calm scannable notes — max **6 bullets** (`•`) |
+| **On the call now** | `live` | On the phone right now | Urgent coach bullets — exactly **4 lines** (`•`), last line is **Next move:** |
 
-The UI shifts tone with the mode: Prep feels relaxed; Live uses a focused “win this moment” layout.
+The UI shifts tone with the mode: **Before the call** feels relaxed; **On the call now** uses a focused “win this moment” layout with live example prompts above the input.
 
 ---
 
@@ -24,7 +24,7 @@ The UI shifts tone with the mode: Prep feels relaxed; Live uses a focused “win
 ```
 ┌─────────────────────────────────────────────────────────────────┐
 │  Browser (templates/ + static/)                                 │
-│  Prospect chats · Prep/Live toggle · Product pill · SSE stream  │
+│  Prospect chats · Before/On-call toggle · Product pill · SSE    │
 └────────────────────────────┬────────────────────────────────────┘
                              │ POST /chat  (question, mode, product,
                              │              prospect, session_id)
@@ -32,7 +32,7 @@ The UI shifts tone with the mode: Prep feels relaxed; Live uses a focused “win
 ┌─────────────────────────────────────────────────────────────────┐
 │  app.py (Flask)                                                 │
 │  Embeds routing tags in inputText · invokes Bedrock Agent       │
-│  Streams tokens via SSE · logs knowledge gaps locally           │
+│  Streams tokens via SSE                                         │
 └────────────────────────────┬────────────────────────────────────┘
                              │ bedrock-agent-runtime:InvokeAgent
                              ▼
@@ -103,14 +103,14 @@ Tools are implemented as **Lambda action groups** on the Bedrock Agent, not in t
 
 | Feature | Description |
 |---------|-------------|
-| **Prep / Live phases** | Per-conversation mode with distinct UI and agent response format |
+| **Before the call / On the call now** | Per-conversation phase toggle with distinct UI and agent response format |
 | **Prospect chats** | One chat per prospect; name and company sent as agent context |
-| **Product scoping** | Product pill filters agent context (`repready_pro`, `coachai`, …) |
+| **KB prospect cards** | Pre-loaded prospects (Alex Rivera, Marcus Johnson, Priya Patel) in the new-chat modal with notes lookup |
+| **Product scoping** | Product pill (“Ask about:”) filters agent context (`repready_pro`, `coachai`, …) |
+| **KB sidebar** | Synced product list in the sidebar; highlights the active product |
 | **SSE streaming** | Token-by-token responses in the browser |
 | **Session memory** | Bedrock `sessionId` per chat — follow-ups work without repeating context |
 | **Routing tags** | App embeds `[mode: prep/live]`, `[KB_LOOKUP_PERSON: …]`, `[LIVE_CALL: …]` in `inputText` |
-| **Knowledge gaps** | Questions the KB cannot answer are logged to `gaps_log.jsonl` |
-| **Gap dashboard** | Review gaps at `GET /gaps` (Knowledge Gaps page in the UI) |
 
 ---
 
@@ -172,24 +172,16 @@ docker build -t repready .
 docker run -p 5000:5000 --env-file .env repready
 ```
 
-**Persist knowledge gaps across container restarts:**
-
-```bash
-docker run -p 5000:5000 --env-file .env \
-  -v $(pwd)/gaps_log.jsonl:/app/gaps_log.jsonl \
-  repready
-```
-
 ---
 
 ## Usage
 
-1. **Open the app** → create a **New Prospect Chat** (name + optional company).
-2. **Prep mode** (default) — ask about the prospect, company, objections, or product. Use the prep chips or type freely.
-3. **Select product** via the pill in the input bar when the question is product-specific.
-4. **Live on call** — switch the toggle when on the phone. Describe what's happening; get 4 coached bullets + Next move.
-5. **Email team lead** (if action group is deployed) — e.g. *"Send mail to my team lead that Alex is still not sure about the product."*
-6. **Knowledge Gaps** — open the Gaps page to see questions the KB could not answer.
+1. **Open the app** → click **+ New Prospect Chat**.
+2. **Pick a KB prospect** (Alex, Marcus, or Priya) or enter any name and company manually. Company is required.
+3. **Before the call** (default) — ask about the prospect, company, objections, schedule, or product. Use the welcome chips or type freely.
+4. **Select product** via the pill in the input bar when the question is product-specific.
+5. **On the call now** — switch the toggle when you pick up the phone. Describe what's happening; get 4 coached bullets + Next move.
+6. **Email team lead** (if action group is deployed) — e.g. *"Send mail to my team lead that Alex is still not sure about the product."*
 
 ---
 
@@ -197,10 +189,9 @@ docker run -p 5000:5000 --env-file .env \
 
 | Route | Method | Description |
 |-------|--------|-------------|
-| `/` | GET | Web UI |
+| `/` | GET | Web UI (landing + chat app) |
 | `/chat` | POST | SSE stream — body: `question`, `mode`, `product`, `session_id`, `prospect_name`, `prospect_company`, `question_type` |
 | `/init` | GET | Today's calls via agent (optional; returns `[]` on failure) |
-| `/gaps` | GET | Knowledge gaps grouped by product |
 
 ---
 
@@ -216,18 +207,6 @@ docker run -p 5000:5000 --env-file .env \
 
 ---
 
-## Knowledge gaps
-
-When the agent signals it cannot answer from the KB (canonical fallback phrase or variants like *"logged this for the team to review"*), the question is appended to `gaps_log.jsonl`:
-
-```json
-{"question": "...", "product": "signalhq", "timestamp": "..."}
-```
-
-Gap detection logic lives in `services/gap_service.py` and should stay aligned with `prompts/agent_instruction.md` global rule 3.
-
----
-
 ## Project structure
 
 ```
@@ -235,7 +214,7 @@ repready-chatbot/
 ├── app.py                      # Flask routes, Bedrock Agent invoke, SSE, routing tags
 ├── config.py                   # Environment variables
 ├── services/
-│   └── gap_service.py          # Gap detection and JSONL logging
+│   └── gap_service.py          # Gap detection and JSONL logging (backend only)
 ├── prompts/
 │   ├── agent_instruction.md    # → paste into Bedrock Agent instructions
 │   └── kb_instruction.md       # → paste into KB instructions
@@ -243,9 +222,8 @@ repready-chatbot/
 │   ├── products/
 │   ├── customer_notes/
 │   └── metadatafilter/
-├── templates/                  # HTML (landing, app, gaps, best practices)
-├── static/                     # CSS and JS (Prep/Live UI, prospect chats)
-├── gaps_log.jsonl              # Runtime gap log (gitignored in production)
+├── templates/                  # HTML (landing page + chat app)
+├── static/                     # CSS and JS (prospect chats, mode toggle, SSE)
 ├── Dockerfile
 └── requirements.txt
 ```
@@ -271,8 +249,6 @@ repready-chatbot/
 | Person prep returns web data not notes | Agent instructions + `[KB_LOOKUP_PERSON]` routing; Customer Notes in KB with correct title |
 | Live mode returns paragraphs not bullets | Agent instructions LIVE format; `[LIVE_CALL:` tag in `inputText` |
 | Prep mode too long / markdown essays | Agent instructions PREP format (max 6 bullets); re-Prepare alias |
-| Gaps not logged | `gap_service.py` markers vs actual agent fallback wording |
-| Gaps lost on redeploy | Mount `gaps_log.jsonl` as a Docker volume |
 
 ---
 
