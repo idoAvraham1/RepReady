@@ -188,7 +188,7 @@ def _build_input_text(
     elif mode == "prep":
         tags.append(
             "[PREP: Help prepare before the call. Customer Notes + company web data. "
-            "Conversational format OK. Help pre-think objections and expected questions.]"
+            "Help pre-think objections and expected questions.]"
         )
 
     body = _apply_product_prefix(question, selected_product, mode, is_person_prep)

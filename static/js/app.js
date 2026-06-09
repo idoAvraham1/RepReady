@@ -30,6 +30,12 @@
   const sidebarPhaseIndicator = document.getElementById('sidebarPhaseIndicator');
   const sidebarPhaseLabel     = document.getElementById('sidebarPhaseLabel');
   const sidebarPhaseSub       = document.getElementById('sidebarPhaseSub');
+  const sidebarEmpty          = document.getElementById('sidebarEmpty');
+  const topbarContext         = document.getElementById('topbarContext');
+  const topbarProspectName    = document.getElementById('topbarProspectName');
+  const topbarProspectSep     = document.getElementById('topbarProspectSep');
+  const topbarProspectCompany = document.getElementById('topbarProspectCompany');
+  const topbarPhaseBadge      = document.getElementById('topbarPhaseBadge');
 
   // Product pill
   const activeProductPill  = document.getElementById('activeProductPill');
@@ -170,6 +176,34 @@
 
     applyPhaseAtmosphere();
     updateSidebarPhaseIndicator();
+    updateTopbarContext();
+  }
+
+  function updateTopbarContext() {
+    if (!topbarContext) return;
+
+    const conv = getActiveConv();
+    if (!conv || !activeConvId) {
+      topbarContext.classList.add('hidden');
+      return;
+    }
+
+    topbarContext.classList.remove('hidden');
+    if (topbarProspectName) topbarProspectName.textContent = conv.name;
+
+    const hasCompany = !!(conv.company && conv.company.trim());
+    if (topbarProspectCompany) {
+      topbarProspectCompany.textContent = hasCompany ? conv.company : '';
+      topbarProspectCompany.classList.toggle('hidden', !hasCompany);
+    }
+    if (topbarProspectSep) topbarProspectSep.classList.toggle('hidden', !hasCompany);
+
+    const phase = getConvPhase(conv);
+    if (topbarPhaseBadge) {
+      topbarPhaseBadge.textContent = phase === 'live' ? 'Live' : 'Prep';
+      topbarPhaseBadge.classList.remove('phase-badge--prep', 'phase-badge--live');
+      topbarPhaseBadge.classList.add(phase === 'live' ? 'phase-badge--live' : 'phase-badge--prep');
+    }
   }
 
   function updateSidebarPhaseIndicator() {
@@ -307,6 +341,7 @@
       noChatState.classList.remove('hidden');
       welcomeState.classList.add('hidden');
       updateInputAvailability();
+      updateTopbarContext();
       return;
     }
 
@@ -344,6 +379,9 @@
   function renderSidebar() {
     convList.innerHTML = '';
     conversations.forEach((conv) => convList.appendChild(buildConvItem(conv)));
+    if (sidebarEmpty) {
+      sidebarEmpty.classList.toggle('hidden', conversations.length > 0);
+    }
     updateSidebarActive();
   }
 
@@ -356,9 +394,12 @@
     item.dataset.id = conv.id;
 
     item.innerHTML = `
-      <div class="conv-avatar" aria-hidden="true">${initials(conv.name)}</div>
+      <div class="conv-avatar" aria-hidden="true" style="--avatar-hue: ${avatarHue(conv.name)}">${initials(conv.name)}</div>
       <div class="conv-meta">
-        <span class="conv-name">${escapeHtml(conv.name)}</span>
+        <div class="conv-name-row">
+          <span class="conv-name">${escapeHtml(conv.name)}</span>
+          <span class="phase-badge phase-badge--${phase}">${phase === 'live' ? 'Live' : 'Prep'}</span>
+        </div>
         <span class="conv-company">${escapeHtml(conv.company || '')}</span>
       </div>
       <span class="conv-time">${formatRelativeTime(conv.createdAt)}</span>
@@ -1056,7 +1097,9 @@
     const wrapped = items.map((item) => {
       if (typeof item === 'string') {
         hasBullets = true;
-        return `<li><span>${formatInline(item)}</span></li>`;
+        const isNextMove = /next move:/i.test(item);
+        const liClass = isNextMove ? ' class="next-move-item"' : '';
+        return `<li${liClass}><span>${formatInline(item)}</span></li>`;
       }
       return `<p>${formatInline(item.text)}</p>`;
     });
@@ -1119,6 +1162,13 @@
 
   function initials(name) {
     return name.trim().split(/\s+/).map((p) => p[0] || '').join('').slice(0, 2).toUpperCase() || '??';
+  }
+
+  function avatarHue(name) {
+    let h = 0;
+    const s = String(name || '');
+    for (let i = 0; i < s.length; i++) h = (h + s.charCodeAt(i) * 17) % 360;
+    return h;
   }
 
   function formatRelativeTime(isoString) {
@@ -1217,7 +1267,12 @@
     if (products.length === 0) {
       container.innerHTML = `
         <div class="gaps-empty">
-          <div class="gaps-empty-icon">✅</div>
+          <div class="gaps-empty-icon" aria-hidden="true">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+          </div>
           <h3 class="gaps-empty-title">No gaps logged yet</h3>
           <p class="gaps-empty-desc">RepReady will log questions it can't confidently answer here.</p>
         </div>`;
