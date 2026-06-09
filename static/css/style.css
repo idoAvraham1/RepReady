@@ -54,10 +54,10 @@
   /* Typography */
   --ff-heading: 'Syne', system-ui, sans-serif;
   --ff-body:    'DM Sans', system-ui, sans-serif;
-  --fs-xs:  10px;  --fs-sm:  12px;  --fs-base: 13.5px;
-  --fs-lg:  15px;  --fs-xl:  18px;  --fs-2xl: 23px;
+  --fs-xs:  11px;  --fs-sm:  13px;  --fs-base: 15px;
+  --fs-lg:  16px;  --fs-xl:  18px;  --fs-2xl: 23px;
   --fs-3xl: 32px;
-  --lh-tight: 1.1;  --lh-snug: 1.4;  --lh-base: 1.65;
+  --lh-tight: 1.15;  --lh-snug: 1.45;  --lh-base: 1.7;
 
   /* Layout */
   --topbar-h:     48px;
@@ -222,7 +222,7 @@ input:focus-visible {
 }
 
 .topbar-prospect-name {
-  font-size: var(--fs-sm);
+  font-size: var(--fs-base);
   font-weight: 600;
   color: var(--text-primary);
   white-space: nowrap;
@@ -277,29 +277,6 @@ input:focus-visible {
   letter-spacing: -0.4px;
   color: var(--text-primary);
 }
-
-/* New Chat button */
-.btn-new-chat {
-  justify-self: end;
-  display: flex;
-  align-items: center;
-  gap: var(--sp-2);
-  font-family: var(--ff-body);
-  font-size: var(--fs-sm);
-  font-weight: 600;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid var(--bg-border);
-  border-radius: var(--r-pill);
-  padding: 6px var(--sp-4);
-  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
-}
-.btn-new-chat:hover {
-  color: var(--text-primary);
-  border-color: var(--accent);
-  background: var(--accent-muted);
-}
-.btn-new-chat svg { flex-shrink: 0; }
 
 /* --- Sidebar ---------------------------------------------- */
 .sidebar {
@@ -888,6 +865,67 @@ input:focus-visible {
   line-height: var(--lh-tight);
 }
 
+/* Welcome + no-chat empty states — body font reads more open than display Syne */
+#welcomeState .empty-title,
+#noChatState .empty-title {
+  font-family: var(--ff-body);
+  font-size: var(--fs-2xl);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+#welcomeState .empty-tagline,
+#noChatState .empty-tagline {
+  font-family: var(--ff-body);
+  font-size: var(--fs-lg);
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+  margin-bottom: var(--sp-6);
+}
+
+/* Landing page — same open body typography */
+#landing .landing-logo .logo-name,
+#landing .landing-headline,
+#landing .feature-title,
+#landing .landing-preview-logo {
+  font-family: var(--ff-body);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+#landing .landing-headline {
+  line-height: 1.2;
+}
+
+#landing .landing-sub {
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+
+#landing .feature-title {
+  font-weight: 600;
+}
+
+/* Knowledge Gaps page */
+#gaps .info-page-title,
+#gaps .gaps-empty-title,
+#gaps .gap-product-name {
+  font-family: var(--ff-body);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1.3;
+}
+
+#gaps .info-page-sub,
+#gaps .gaps-empty-desc {
+  font-weight: 400;
+  line-height: 1.65;
+  letter-spacing: 0;
+}
+
 .empty-tagline {
   font-family: var(--ff-body);
   font-size: var(--fs-xl);
@@ -968,12 +1006,13 @@ input:focus-visible {
 .welcome-section-label {
   display: block;
   font-family: var(--ff-body);
-  font-size: 9.5px;
-  font-weight: 700;
-  color: var(--text-faint);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.09em;
+  letter-spacing: 0.06em;
   margin-bottom: var(--sp-3);
+  line-height: 1.4;
 }
 
 /* --- Hint chips (shared row style) ------------------------ */
@@ -987,17 +1026,17 @@ input:focus-visible {
 
 .hint-chip {
   font-family: var(--ff-body);
-  font-size: var(--fs-sm);
+  font-size: var(--fs-base);
   font-weight: 400;
   color: var(--text-secondary);
   background: var(--bg-elevated);
   border: 1px solid var(--bg-border);
   border-left: 2px solid rgba(99, 102, 241, 0.35);
   border-radius: var(--r-md);
-  padding: var(--sp-3) var(--sp-4);
+  padding: var(--sp-4) var(--sp-5);
   margin: 0;
   text-align: left;
-  line-height: 1.5;
+  line-height: var(--lh-snug);
   animation: chipFade var(--t-slow) both;
 }
 
@@ -1112,9 +1151,9 @@ input:focus-visible {
   background: var(--user-bubble);
   color: #fff;
   border-radius: 16px 16px 3px 16px;
-  padding: var(--sp-3) var(--sp-5);
+  padding: var(--sp-4) var(--sp-5);
   font-size: var(--fs-base);
-  line-height: 1.65;
+  line-height: var(--lh-base);
   max-width: var(--msg-max-w);
   word-break: break-word;
   box-shadow: 0 2px 10px rgba(91, 93, 240, 0.3);
@@ -1171,11 +1210,12 @@ input:focus-visible {
   border-radius: 3px 12px 12px 12px;
   padding: var(--sp-5) var(--sp-6);
   font-size: var(--fs-base);
-  line-height: 1.75;
+  line-height: var(--lh-base);
   max-width: var(--msg-max-w);
   word-break: break-word;
   box-shadow: var(--shadow-sm);
   color: var(--text-primary);
+  letter-spacing: 0.01em;
 }
 
 .main-panel--prep .bubble-bot {
@@ -1202,23 +1242,23 @@ input:focus-visible {
 
 .bubble-bot.streaming {
   white-space: pre-wrap;
-  font-size: var(--fs-sm);
-  line-height: 1.75;
+  font-size: var(--fs-base);
+  line-height: var(--lh-base);
 }
 
 .bubble-bot ul {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 13px;
+  gap: var(--sp-4);
   padding: 0;
 }
 
 .bubble-bot ul li {
   display: flex;
   align-items: flex-start;
-  gap: var(--sp-2);
-  line-height: 1.7;
+  gap: var(--sp-3);
+  line-height: var(--lh-base);
   font-weight: 400;
   font-size: var(--fs-base);
 }

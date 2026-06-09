@@ -17,7 +17,6 @@
   const questionInput         = document.getElementById('questionInput');
   const sendBtn               = document.getElementById('sendBtn');
   const inputArea             = document.getElementById('inputArea');
-  const newChatBtn            = document.getElementById('newChatBtn');
   const sidebarNewProspectBtn = document.getElementById('sidebarNewProspectBtn');
   const noChatNewBtn          = document.getElementById('noChatNewBtn');
   const convList              = document.getElementById('convList');
@@ -741,7 +740,6 @@
     if (!isStreaming && questionInput.value.trim()) sendMessage();
   });
 
-  newChatBtn.addEventListener('click', openNewConvModal);
   sidebarNewProspectBtn.addEventListener('click', openNewConvModal);
   noChatNewBtn.addEventListener('click', openNewConvModal);
 
