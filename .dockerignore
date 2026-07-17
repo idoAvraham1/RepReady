@@ -22,9 +22,6 @@ env/
 .idea/
 *.swp
 
-# Local gaps log — mount at runtime on EC2 if persistence is needed
-gaps_log.jsonl
-
 # OS
 .DS_Store
 Thumbs.db

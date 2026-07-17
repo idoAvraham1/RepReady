@@ -45,7 +45,6 @@
   // View routing
   const landingEl         = document.getElementById('landing');
   const appEl             = document.getElementById('app');
-  const gapsEl            = document.getElementById('gaps');
   const backBtn           = document.getElementById('backBtn');
   const logoLink          = document.getElementById('logoLink');
   const newConvModal      = document.getElementById('newConvModal');
@@ -850,14 +849,14 @@
     wrap.className = 'hints-grid';
     wrap.id = 'suggestionChips';
 
-    chips.forEach(({ text, type }) => {
+    chips.forEach(({ text }) => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'hint-chip hint-chip--action';
       btn.innerHTML = `<span>${escapeHtml(text)}</span>${HINT_CHIP_ARROW}`;
       btn.addEventListener('click', () => {
         removeSuggestionChips();
-        sendMessage(text, { questionType: type });
+        sendMessage(text);
       });
       wrap.appendChild(btn);
     });
@@ -933,7 +932,7 @@
   }
 
   async function streamBotResponse(question, options = {}) {
-    const { silent = false, onComplete = null, questionType = null } = options;
+    const { silent = false, onComplete = null } = options;
     const targetConvId = activeConvId;
     isStreaming = true;
     setLoading(true);
@@ -942,6 +941,7 @@
     let botBubble      = null;
     let fullText       = '';
     let pendingSources = [];
+    let hadStreamError = false;
     let firstToken     = true;
 
     try {
@@ -960,7 +960,6 @@
           mode:            getChatMode(),
           prospect_name:   conv?.name || '',
           prospect_company: conv?.company || '',
-          question_type:   questionType || null,
         }),
       });
 
@@ -993,9 +992,16 @@
               currentEvent = null;
               continue;
             }
+            if (currentEvent === 'error') {
+              hadStreamError = true;
+              if (!botBubble) thinkingEl.remove();
+              appendErrorBubble();
+              currentEvent = null;
+              continue;
+            }
 
             if (data === '[DONE]') {
-              if (botBubble) {
+              if (botBubble && !hadStreamError) {
                 finalizeBubble(botBubble, fullText);
                 const contentEl = botBubble.closest('.message-content');
                 if (contentEl) {
@@ -1003,10 +1009,12 @@
                   appendFeedbackButtons(contentEl);
                 }
               }
-              const targetConv = conversations.find((c) => c.id === targetConvId);
-              if (targetConv) {
-                targetConv.messages.push({ role: 'assistant', content: fullText });
-                saveConversations();
+              if (!hadStreamError) {
+                const targetConv = conversations.find((c) => c.id === targetConvId);
+                if (targetConv) {
+                  targetConv.messages.push({ role: 'assistant', content: fullText });
+                  saveConversations();
+                }
               }
               if (onComplete && activeConvId === targetConvId) onComplete();
               break outer;
@@ -1306,7 +1314,7 @@
   // View Routing
   // ============================================================
 
-  const ALL_PAGES = [landingEl, appEl, gapsEl];
+  const ALL_PAGES = [landingEl, appEl];
 
   function _hideAll() {
     ALL_PAGES.forEach((el) => el && el.classList.add('hidden'));
@@ -1326,73 +1334,11 @@
     history.replaceState(null, '', location.pathname);
   }
 
-  function showGaps() {
-    _hideAll();
-    gapsEl.classList.remove('hidden');
-    history.replaceState(null, '', '#gaps');
-    window.scrollTo(0, 0);
-    loadGaps();
-  }
-
   function navigate(hash) {
     switch (hash) {
       case 'app':            showApp();           break;
       default:               showLanding();       break;
     }
-  }
-
-  async function loadGaps() {
-    const container = document.getElementById('gapsContent');
-    const loading   = document.getElementById('gapsLoading');
-    if (loading) loading.style.display = 'block';
-    try {
-      const res  = await fetch('/gaps');
-      const data = await res.json();
-      renderGaps(container, data);
-    } catch (_) {
-      container.innerHTML = '<p class="gaps-loading">Failed to load gaps. Make sure the server is running.</p>';
-    }
-  }
-
-  function renderGaps(container, data) {
-    const products = Object.keys(data);
-    if (products.length === 0) {
-      container.innerHTML = `
-        <div class="gaps-empty">
-          <div class="gaps-empty-icon" aria-hidden="true">
-            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-              <polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-          </div>
-          <h3 class="gaps-empty-title">No gaps logged yet</h3>
-          <p class="gaps-empty-desc">RepReady will log questions it can't confidently answer here.</p>
-        </div>`;
-      return;
-    }
-    container.innerHTML = products.map((product) => {
-      const items = data[product];
-      const name  = product.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
-      const rows  = items.map((item) => {
-        const date = item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '';
-        return `
-          <li class="gap-item">
-            <div class="gap-item-dot"></div>
-            <div class="gap-item-body">
-              <p class="gap-item-question">${escapeHtml(item.question)}</p>
-              <span class="gap-item-meta">${date}${item.max_score != null ? ` · score ${item.max_score}` : ''}</span>
-            </div>
-          </li>`;
-      }).join('');
-      return `
-        <div class="gap-product-group">
-          <div class="gap-product-header">
-            <span class="gap-product-name">${name}</span>
-            <span class="gap-count-badge">${items.length} gap${items.length !== 1 ? 's' : ''}</span>
-          </div>
-          <ul class="gap-list">${rows}</ul>
-        </div>`;
-    }).join('');
   }
 
   document.querySelectorAll('.js-open-app').forEach((btn) => {

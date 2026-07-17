@@ -93,7 +93,6 @@ Tools are implemented as **Lambda action groups** on the Bedrock Agent, not in t
 
 | Tool | Purpose |
 |------|---------|
-| `get_todays_calls` | Today's calendar calls (Google Calendar via service account) |
 | `get_company_context` | Company background via Tavily — never for person prep |
 | `send_call_update_email` | Email team lead via Resend when the rep explicitly asks (optional) |
 
@@ -110,7 +109,7 @@ Tools are implemented as **Lambda action groups** on the Bedrock Agent, not in t
 | **KB sidebar** | Synced product list in the sidebar; highlights the active product |
 | **SSE streaming** | Token-by-token responses in the browser |
 | **Session memory** | Bedrock `sessionId` per chat — follow-ups work without repeating context |
-| **Routing tags** | App embeds `[mode: prep/live]`, `[KB_LOOKUP_PERSON: …]`, `[LIVE_CALL: …]` in `inputText` |
+| **Routing tags** | App embeds `[mode: prep/live]`, prospect context tags, and `[LIVE_CALL: …]` in `inputText` |
 
 ---
 
@@ -178,10 +177,13 @@ docker run -p 5000:5000 --env-file .env repready
 
 1. **Open the app** → click **+ New Prospect Chat**.
 2. **Pick a KB prospect** (Alex, Marcus, or Priya) or enter any name and company manually. Company is required.
-3. **Before the call** (default) — ask about the prospect, company, objections, schedule, or product. Use the welcome chips or type freely.
+3. **Before the call** (default) — ask about the prospect, company, objections, or product. Use the welcome chips or type freely.
 4. **Select product** via the pill in the input bar when the question is product-specific.
 5. **On the call now** — switch the toggle when you pick up the phone. Describe what's happening; get 4 coached bullets + Next move.
 6. **Email team lead** (if action group is deployed) — e.g. *"Send mail to my team lead that Alex is still not sure about the product."*
+
+Routing behavior is mode-first: the app only tells the agent whether the turn is `prep` or `live`.
+In prep mode, the prompt instructions decide when to call `get_company_context` based on the rep's question text.
 
 ---
 
@@ -190,8 +192,7 @@ docker run -p 5000:5000 --env-file .env repready
 | Route | Method | Description |
 |-------|--------|-------------|
 | `/` | GET | Web UI (landing + chat app) |
-| `/chat` | POST | SSE stream — body: `question`, `mode`, `product`, `session_id`, `prospect_name`, `prospect_company`, `question_type` |
-| `/init` | GET | Today's calls via agent (optional; returns `[]` on failure) |
+| `/chat` | POST | SSE stream — body: `question`, `mode`, `product`, `session_id`, `prospect_name`, `prospect_company` |
 
 ---
 
@@ -213,8 +214,7 @@ docker run -p 5000:5000 --env-file .env repready
 repready-chatbot/
 ├── app.py                      # Flask routes, Bedrock Agent invoke, SSE, routing tags
 ├── config.py                   # Environment variables
-├── services/
-│   └── gap_service.py          # Gap detection and JSONL logging (backend only)
+├── services/                   # Routing + Bedrock streaming helpers
 ├── prompts/
 │   ├── agent_instruction.md    # → paste into Bedrock Agent instructions
 │   └── kb_instruction.md       # → paste into KB instructions
@@ -227,6 +227,8 @@ repready-chatbot/
 ├── Dockerfile
 └── requirements.txt
 ```
+
+`aws_lambdas/` files in this repository are reference copies only. The deployed versions live in AWS console action groups.
 
 ---
 
@@ -246,7 +248,7 @@ repready-chatbot/
 | Agent works in console but not web app | Alias vs DRAFT — update alias to latest prepared version; restart Flask |
 | Old “presales assistant” responses | Alias points to old version; orchestration template may duplicate outdated persona |
 | Email tool not invoked | Action group enabled on prepared version; instructions mention `send_call_update_email`; new chat (fresh `sessionId`) |
-| Person prep returns web data not notes | Agent instructions + `[KB_LOOKUP_PERSON]` routing; Customer Notes in KB with correct title |
+| Person prep returns web data not notes | Agent instructions in prep mode + Customer Notes in KB with correct title |
 | Live mode returns paragraphs not bullets | Agent instructions LIVE format; `[LIVE_CALL:` tag in `inputText` |
 | Prep mode too long / markdown essays | Agent instructions PREP format (max 6 bullets); re-Prepare alias |
 

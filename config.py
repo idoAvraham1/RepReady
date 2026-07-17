@@ -1,10 +1,4 @@
-"""
-config.py — Centralised configuration for RepReady.
-
-This is the ONLY module that reads os.environ / .env.
-All other modules import their constants from here so that
-environment variables and magic numbers are managed in one place.
-"""
+"""Configuration for the Flask web app."""
 
 import os
 from dotenv import load_dotenv
@@ -20,6 +14,3 @@ AWS_SECRET_KEY    = os.environ.get("AWS_SECRET_ACCESS_KEY")
 BEDROCK_AGENT_ID       = os.environ.get("BEDROCK_AGENT_ID", "")
 BEDROCK_AGENT_ALIAS_ID = os.environ.get("BEDROCK_AGENT_ALIAS_ID", "")
 
-# --- File paths ---------------------------------------------------------
-# Absolute path to the JSONL file where knowledge gaps are logged.
-GAP_LOG_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "gaps_log.jsonl")

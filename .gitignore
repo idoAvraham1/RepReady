@@ -1,9 +1,6 @@
 # Environment — never commit credentials
 .env
 
-# Logs
-gaps_log.jsonl
-
 # Python
 __pycache__/
 *.py[cod]
