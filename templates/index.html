@@ -4,15 +4,21 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="description" content="RepReady is a live call coach for B2B sales reps — get the right move in Prep and on live calls." />
-  <meta name="theme-color" content="#6366f1" />
-  <meta property="og:title" content="RepReady — Live Call Coach" />
+  <meta name="theme-color" content="#0F6E56" />
+  <meta property="og:title" content="RepReady" />
   <meta property="og:description" content="Always know your next move on a live sales call." />
-  <title>RepReady — Live Call Coach</title>
+  <title>RepReady</title>
   <link rel="icon" href="/static/favicon.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/static/css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600&family=Source+Sans+3:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/main.css" />
+  <link rel="stylesheet" href="/static/css/components/topbar.css" />
+  <link rel="stylesheet" href="/static/css/components/sidebar.css" />
+  <link rel="stylesheet" href="/static/css/components/chat.css" />
+  <link rel="stylesheet" href="/static/css/components/input.css" />
+  <link rel="stylesheet" href="/static/css/components/modals.css" />
+  <link rel="stylesheet" href="/static/css/components/landing.css" />
 </head>
 <body>
 
@@ -76,11 +82,18 @@
                 What objections should I expect on the Alex call?
               </div>
               <div class="landing-preview-msg landing-preview-msg--bot">
-                <span class="landing-preview-avatar">RR</span>
                 <div class="landing-preview-bullets">
+                  <span class="coach-eyebrow">coach — prep</span>
                   <p>• Confluence overlap — he already has docs but reps still go silent mid-call</p>
                   <p>• ROI proof for the board — needs pipeline impact within 90 days</p>
                   <p>• Guru comparison — flat $199/mo vs per-seat wiki tools (RepReady Pro)</p>
+                  <div class="next-move-block">
+                    <div class="next-move-block-label">
+                      <svg class="next-move-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                      next move
+                    </div>
+                    <p class="next-move-block-text">Lead with the silent-rep pain, then ask what their board needs to see in 90 days.</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -100,7 +113,7 @@
 
       <!-- CHANGE 2: SVG icon containers replace emoji spans -->
       <div class="feature-card">
-        <div class="feature-icon feature-icon--indigo" aria-hidden="true">
+        <div class="feature-icon feature-icon--prep" aria-hidden="true">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
             <polyline points="14 2 14 8 20 8"/>
@@ -190,7 +203,7 @@
           <div class="sidebar-section-label sidebar-section-label--kb">Products synced in your knowledge base</div>
           <div class="kb-file-list" id="kbFileList">
             <div class="kb-file" data-product="repready_pro">
-              <span class="kb-file-dot" style="background:#6366f1"></span>
+              <span class="kb-file-dot" style="background:#0F6E56"></span>
               <div class="kb-file-info">
                 <span class="kb-file-name">RepReady Pro</span>
                 <span class="kb-file-src">repready_pro.txt</span>
@@ -218,7 +231,7 @@
               </div>
             </div>
             <div class="kb-file" data-product="dealdesk">
-              <span class="kb-file-dot" style="background:#a78bfa"></span>
+              <span class="kb-file-dot" style="background:#3d5a80"></span>
               <div class="kb-file-info">
                 <span class="kb-file-name">DealDesk</span>
                 <span class="kb-file-src">dealdesk.txt</span>
@@ -348,8 +361,15 @@
       </main>
 
       <div class="live-examples-panel hidden" id="liveExamplesSection" aria-label="Live on call examples">
+        <div class="live-examples-header">
+          <span class="welcome-section-label">Live on call — try these</span>
+          <button type="button" class="live-examples-dismiss" id="liveExamplesDismissBtn" aria-label="Hide live tip suggestions" title="Hide tips">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
         <p class="live-examples-intro">First, select the product you're pitching below — then try one of these:</p>
-        <span class="welcome-section-label">Live on call — try these</span>
         <div class="hints-grid" aria-label="Live on call example prompts">
           <p class="hint-chip hint-chip--fill">Prospect is worried about setup and implementation — what do I say?</p>
           <p class="hint-chip hint-chip--fill">They went quiet after I mentioned pricing</p>
@@ -367,6 +387,9 @@
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <polyline points="6 9 12 15 18 9"/>
             </svg>
+          </button>
+          <button type="button" class="live-tips-restore hidden" id="liveTipsRestoreBtn" aria-label="Show live tip suggestions">
+            Show tips
           </button>
           <div class="session-phase-toggle" id="sessionPhaseToggle" role="group" aria-label="Call phase" hidden>
             <button type="button" class="phase-btn" id="phasePrepBtn" data-phase="prep" aria-pressed="true">Before the call</button>
@@ -490,6 +513,6 @@
 
   </div>
 
-  <script src="/static/js/app.js"></script>
+  <script type="module" src="/static/js/app.js"></script>
 </body>
 </html>

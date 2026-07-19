@@ -74,6 +74,9 @@ def stream_agent_response(session_id: str, input_text: str, session_state: dict)
         enableTrace=True,
         sessionState=session_state,
         inputText=input_text,
+        streamingConfigurations={
+            "streamFinalResponse": True,
+        },
     )
     for event in response["completion"]:
         if "trace" in event:

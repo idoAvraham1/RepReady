@@ -1,0 +1,136 @@
+/* RepReady — topbar.css */
+
+/* --- Top Bar ---------------------------------------------- */
+.topbar {
+  flex-shrink: 0;
+  height: var(--topbar-h);
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 var(--main-pad-x);
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--bg-border);
+  z-index: 100;
+  gap: var(--sp-4);
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  min-width: 0;
+}
+
+.topbar-context {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-width: 0;
+  text-align: center;
+}
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 0;
+}
+
+.btn-new-chat {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ff-heading);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  padding: 7px 14px;
+  white-space: nowrap;
+  transition: background var(--t-fast), opacity var(--t-fast);
+  box-shadow: none;
+}
+.btn-new-chat:hover {
+  background: var(--accent-hover);
+  transform: none;
+  box-shadow: none;
+}
+.btn-new-chat:active { opacity: 0.92; }
+
+.topbar-prospect-name {
+  font-size: var(--fs-base);
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.topbar-prospect-sep {
+  color: var(--text-faint);
+  font-size: var(--fs-sm);
+  flex-shrink: 0;
+}
+
+.topbar-prospect-company {
+  font-size: var(--fs-sm);
+  font-weight: 400;
+  color: var(--text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 140px;
+}
+
+.topbar-logo-compact .logo-name {
+  font-size: var(--fs-lg);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  user-select: none;
+}
+
+.logo-mark {
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  transition: transform var(--t-base);
+}
+.logo:hover .logo-mark { transform: scale(1.06); }
+
+.logo-name {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-xl);
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--text-primary);
+}
+
+
+/* --- Topbar Left Group ------------------------------------ */
+.btn-back {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 5px 10px;
+  border-radius: var(--r-pill);
+  border: 1px solid transparent;
+  transition: color var(--t-fast), border-color var(--t-fast), background var(--t-fast);
+}
+.btn-back:hover {
+  color: var(--text-primary);
+  border-color: var(--bg-border);
+  background: var(--bg-elevated);
+}
+

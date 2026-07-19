@@ -1,0 +1,283 @@
+/* RepReady — modals.css */
+
+/* --- Modal ------------------------------------------------- */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+  padding: var(--sp-4);
+  animation: overlayIn 200ms ease both;
+}
+
+@keyframes overlayIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal {
+  background: var(--bg-surface);
+  border: 1px solid var(--bg-border);
+  border-radius: var(--r-xl);
+  width: 460px;
+  max-width: 100%;
+  box-shadow: var(--shadow-xl);
+  animation: modalIn 300ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--sp-5) var(--sp-6) var(--sp-4);
+  border-bottom: 1px solid var(--bg-border);
+}
+
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  color: var(--text-primary);
+}
+.modal-title-group svg { color: var(--accent); flex-shrink: 0; }
+
+.modal-title {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-lg);
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  color: var(--text-primary);
+}
+
+.modal-subtitle {
+  font-size: var(--fs-sm);
+  color: var(--text-secondary);
+  line-height: 1.5;
+  padding: var(--sp-4) var(--sp-6) 0;
+  margin: 0 0 var(--sp-2);
+}
+
+.form-group-label {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-xs);
+  font-weight: 600;
+  color: var(--text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.prospect-card-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--sp-2);
+}
+
+.prospect-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  padding: 10px var(--sp-3);
+  background: var(--bg-elevated);
+  border: 1px solid var(--bg-border);
+  border-radius: var(--r-md);
+  cursor: pointer;
+  text-align: left;
+  transition: border-color var(--t-fast), background var(--t-fast), box-shadow var(--t-fast);
+}
+.prospect-card:hover {
+  border-color: rgba(15, 110, 86, 0.35);
+  background: var(--accent-muted);
+}
+.prospect-card--selected {
+  border-color: var(--accent);
+  background: var(--accent-muted);
+  box-shadow: 0 0 0 2px rgba(15, 110, 86, 0.12);
+}
+
+.prospect-card-name {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.prospect-card-company {
+  font-size: var(--fs-xs);
+  color: var(--text-faint);
+}
+
+.modal-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  color: var(--text-faint);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+}
+.modal-divider::before,
+.modal-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--bg-border);
+}
+
+.kb-status-msg {
+  font-size: var(--fs-xs);
+  line-height: 1.45;
+  padding: 8px var(--sp-3);
+  border-radius: var(--r-md);
+  margin-top: var(--sp-2);
+}
+.kb-status-msg--found {
+  background: rgba(34, 197, 94, 0.1);
+  color: #15803d;
+  border: 1px solid rgba(34, 197, 94, 0.25);
+}
+.kb-status-msg--not-found {
+  background: var(--bg-elevated);
+  color: var(--text-secondary);
+  border: 1px solid var(--bg-border);
+}
+
+.modal-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--r-md);
+  color: var(--text-secondary);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.modal-close:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+.modal-form {
+  padding: var(--sp-5) var(--sp-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+}
+
+.form-group label {
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.field-required { color: var(--accent); }
+.field-optional { font-size: var(--fs-xs); font-weight: 400; color: var(--text-faint); }
+
+.form-input {
+  width: 100%;
+  border: 1px solid var(--bg-border);
+  border-radius: var(--r-md);
+  padding: 10px var(--sp-4);
+  font-family: var(--ff-body);
+  font-size: var(--fs-base);
+  color: var(--text-primary);
+  background: var(--bg-elevated);
+  outline: none;
+  transition: border-color var(--t-fast), box-shadow var(--t-fast);
+}
+.form-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(15, 110, 86, 0.12);
+}
+.form-input::placeholder { color: var(--text-faint); }
+
+.modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--sp-2);
+  padding: var(--sp-4) var(--sp-6) var(--sp-5);
+  border-top: 1px solid var(--bg-border);
+}
+
+.btn-modal-cancel {
+  font-family: var(--ff-body);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: var(--text-secondary);
+  padding: 7px var(--sp-4);
+  border-radius: var(--r-pill);
+  transition: background var(--t-fast), color var(--t-fast);
+}
+.btn-modal-cancel:hover { background: var(--bg-elevated); color: var(--text-primary); }
+
+.btn-modal-primary {
+  font-family: var(--ff-heading);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  color: #fff;
+  background: var(--accent);
+  padding: 7px var(--sp-5);
+  border-radius: var(--r-md);
+  transition: background var(--t-fast), opacity var(--t-fast);
+  box-shadow: none;
+}
+.btn-modal-primary:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: none;
+}
+.btn-modal-primary:disabled { opacity: 0.3; cursor: not-allowed; }
+
+
+/* --- Product Selector (New Chat Modal) -------------------- */
+.product-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.product-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--ff-body);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--bg-elevated);
+  border: 1px solid var(--bg-border);
+  border-radius: var(--r-pill);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: border-color var(--t-fast), color var(--t-fast), background var(--t-fast);
+}
+.product-chip:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+.product-chip.active {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+.product-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
