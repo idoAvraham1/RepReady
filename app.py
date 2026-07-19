@@ -32,13 +32,32 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    """Serve the single-page frontend."""
+    """Serve the single-page chatbot UI.
+
+    Returns:
+        Rendered ``index.html`` template for the frontend.
+    """
     return render_template("index.html")
 
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    """Handle a rep's question via Server-Sent Events."""
+    """Stream an agent answer for a rep's question over Server-Sent Events.
+
+    Reads a JSON body from the request. Fields:
+        question: The rep's question; required (empty yields HTTP 400).
+        product: Product scope for retrieval/context; defaults to ``general``.
+        session_id: Bedrock agent session key for multi-turn continuity;
+            a new UUID is minted when omitted so the first turn still works.
+        mode: Conversation mode (e.g. ``prep``); shapes how the prompt and
+            session state are built for the agent.
+        prospect_name: Optional prospect contact name for company-prep flows.
+        prospect_company: Optional prospect company name for company-prep flows.
+
+    Returns:
+        A ``text/event-stream`` response that yields token frames, or a
+        JSON error with status 400 when ``question`` is empty.
+    """
     data = request.get_json() or {}
     question = (data.get("question") or "").strip()
     selected_product = data.get("product") or "general"
@@ -72,9 +91,19 @@ def chat():
     )
 
     def event_stream():
+        """Yield SSE frames for one agent reply.
+
+        Opens with an empty ``sources`` event so the frontend can clear or
+        initialize its citations UI before tokens arrive. Newlines inside
+        tokens are escaped because SSE frames are delimited by blank lines.
+        Agent failures are surfaced as an ``error`` event (not an HTTP 500)
+        so the client can finish the stream cleanly with ``[DONE]``.
+        """
         try:
+            # Frontend expects a sources event before token frames.
             yield f"event: sources\ndata: {json.dumps([])}\n\n"
             for token in stream_agent_response(session_id, input_text, session_state):
+                # SSE is line-oriented; keep multi-line tokens in one data field.
                 escaped = token.replace("\n", "\\n")
                 yield f"data: {escaped}\n\n"
             yield "data: [DONE]\n\n"
@@ -88,6 +117,7 @@ def chat():
         mimetype="text/event-stream",
         headers={
             "Cache-Control": "no-cache",
+            # Disable nginx proxy buffering so tokens flush to the client.
             "X-Accel-Buffering": "no",
             "Connection": "keep-alive",
         },

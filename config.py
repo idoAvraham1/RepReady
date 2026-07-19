@@ -13,4 +13,4 @@ AWS_SECRET_KEY    = os.environ.get("AWS_SECRET_ACCESS_KEY")
 # --- Bedrock Agent ------------------------------------------------------
 BEDROCK_AGENT_ID       = os.environ.get("BEDROCK_AGENT_ID", "")
 BEDROCK_AGENT_ALIAS_ID = os.environ.get("BEDROCK_AGENT_ALIAS_ID", "")
-
+BEDROCK_KNOWLEDGE_BASE_ID = os.environ.get("BEDROCK_KB_ID", "")

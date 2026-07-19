@@ -253,7 +253,3 @@ repready-chatbot/
 | Prep mode too long / markdown essays | Agent instructions PREP format (max 6 bullets); re-Prepare alias |
 
 ---
-
-## License
-
-Proprietary — NorthStar Software / RepReady.

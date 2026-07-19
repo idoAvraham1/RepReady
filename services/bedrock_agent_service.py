@@ -1,4 +1,8 @@
-"""Bedrock Agent client and streaming utilities."""
+"""Bedrock Agent client and streaming utilities.
+
+Owns the boto3 bedrock-agent-runtime client and turns invoke_agent
+completion events into token strings for the Flask SSE layer.
+"""
 
 import logging
 
@@ -12,7 +16,14 @@ _agent_client = None
 
 
 def _get_agent_client():
-    """Return a lazily-initialized bedrock-agent-runtime boto3 client."""
+    """Return a lazily-initialized bedrock-agent-runtime boto3 client.
+
+    Created once and reused so each chat turn does not pay for a new
+    client/session setup.
+
+    Returns:
+        A configured ``boto3`` client for ``bedrock-agent-runtime``.
+    """
     global _agent_client
     if _agent_client is None:
         _agent_client = boto3.client(
@@ -25,13 +36,32 @@ def _get_agent_client():
 
 
 def _unwrap_trace(event: dict) -> dict:
-    """Bedrock nests trace payload under trace.trace in streaming responses."""
+    """Normalize Bedrock's nested streaming trace payload.
+
+    Streaming responses nest the useful fields under ``trace.trace``;
+    some events only have the outer dict. Fall back to the outer object
+    so callers can read orchestration fields from either shape.
+
+    Args:
+        event: A single event from the ``completion`` event stream.
+
+    Returns:
+        The inner trace dict when present, otherwise the outer ``trace``
+        object (or an empty dict if neither exists).
+    """
     outer = event.get("trace") or {}
     return outer.get("trace") or outer
 
 
 def _log_agent_trace(event: dict) -> None:
-    """Log tool and KB steps from Bedrock trace events."""
+    """Log tool calls, KB lookups, rationale, and failures from a trace event.
+
+    Used for ops visibility into what the agent did mid-turn without
+    forwarding that detail to the client.
+
+    Args:
+        event: A completion-stream event that contains a ``trace`` key.
+    """
     inner = _unwrap_trace(event)
     if not inner:
         return
@@ -56,6 +86,7 @@ def _log_agent_trace(event: dict) -> None:
         logger.info("Agent tool response received")
 
     rationale = orch.get("rationale") or {}
+    # Bedrock uses either key depending on agent/runtime version.
     text = rationale.get("text") or rationale.get("traceText")
     if text:
         logger.info("Agent rationale: %s", str(text)[:200])
@@ -66,15 +97,29 @@ def _log_agent_trace(event: dict) -> None:
 
 
 def stream_agent_response(session_id: str, input_text: str, session_state: dict):
-    """Yield streamed token chunks from the Bedrock agent response."""
+    """Yield UTF-8 token chunks from a Bedrock agent invoke_agent call.
+
+    Args:
+        session_id: Bedrock session key tying multi-turn state together.
+        input_text: Fully built prompt text (question plus any routing
+            context already assembled by the caller).
+        session_state: Prompt-session attributes and filters Bedrock uses
+            for this turn (product scope, prospect fields, etc.).
+
+    Yields:
+        Decoded token strings from the agent's final streamed response.
+        Trace-only events are logged and skipped.
+    """
     response = _get_agent_client().invoke_agent(
         agentId=BEDROCK_AGENT_ID,
         agentAliasId=BEDROCK_AGENT_ALIAS_ID,
         sessionId=session_id,
+        # Trace events feed _log_agent_trace; not sent to the client.
         enableTrace=True,
         sessionState=session_state,
         inputText=input_text,
         streamingConfigurations={
+            # Without this, the final answer may arrive as one buffered blob.
             "streamFinalResponse": True,
         },
     )
