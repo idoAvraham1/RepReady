@@ -31,8 +31,8 @@ The UI shifts tone with the mode: **Before the call** feels relaxed; **On the ca
                              ▼
 ┌─────────────────────────────────────────────────────────────────┐
 │  app.py (Flask)                                                 │
-│  Embeds routing tags in inputText · invokes Bedrock Agent       │
-│  Streams tokens via SSE                                         │
+│  Embeds routing tags in inputText · builds sessionState         │
+│  (optional KB metadata filter) · invokes Bedrock Agent · SSE    │
 └────────────────────────────┬────────────────────────────────────┘
                              │ bedrock-agent-runtime:InvokeAgent
                              ▼
@@ -41,13 +41,13 @@ The UI shifts tone with the mode: **Before the call** feels relaxed; **On the ca
 │  ┌──────────────┐  ┌─────────────────┐  ┌──────────────────┐  │
 │  │ Agent        │  │ Knowledge Base  │  │ Action groups    │  │
 │  │ instructions │  │ (S3 sync)       │  │ (Lambda / MCP)   │  │
-│  │ + orchestration│ │ product docs   │  │ calendar, Tavily │  │
-│  │              │  │ customer notes  │  │ email, etc.      │  │
+│  │ + orchestration│ │ product docs   │  │ Tavily, email,   │  │
+│  │              │  │ customer notes  │  │ etc.             │  │
 │  └──────────────┘  └─────────────────┘  └──────────────────┘  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**This repository is the web app only.** Retrieval, generation, tool calls, and KB lookup are handled by the Bedrock Agent you configure in AWS. The Flask app passes context (mode, prospect, product) and streams the agent response back to the browser.
+**This repository is the web app only.** Retrieval, generation, tool calls, and KB lookup are handled by the Bedrock Agent you configure in AWS. The Flask app passes context (mode, prospect, product), optionally scopes KB retrieval with a metadata filter when a product is selected, and streams the agent response back to the browser.
 
 ---
 
@@ -72,14 +72,19 @@ The `data/` folder shows **what we upload to the S3 bucket** that backs the Bedr
 data/
 ├── products/              # Product docs (RepReady Pro, CoachAI, SalesTrain, …)
 ├── customer_notes/        # Per-prospect prep files for KB retrieval
-└── metadatafilter/        # Example .metadata.json sidecars for product filtering
+└── metadatafilter/        # Example .metadata.json sidecars (upload next to each source file in S3)
 ```
 
 Product files use `[PRODUCT — TOPIC]` section blocks. Customer Notes use the title format:
 
 `Customer Notes: [Name] — [Company]`
 
-Sync these to S3 and re-run KB ingestion in Bedrock when content changes.
+Sidecar examples:
+
+- Product: `"product": "<product_id>"` (e.g. `repready_pro`)
+- Customer notes: `"doc_type": "customer_notes"` (plus optional `prospect_name` / `company`)
+
+On S3, place each `{filename}.metadata.json` beside its source file, then re-run KB ingestion when content or metadata changes.
 
 ### `customer_notes/` (repo root)
 
@@ -105,11 +110,11 @@ Tools are implemented as **Lambda action groups** on the Bedrock Agent, not in t
 | **Before the call / On the call now** | Per-conversation phase toggle with distinct UI and agent response format |
 | **Prospect chats** | One chat per prospect; name and company sent as agent context |
 | **KB prospect cards** | Pre-loaded prospects (Alex Rivera, Marcus Johnson, Priya Patel) in the new-chat modal with notes lookup |
-| **Product scoping** | Product pill (“Ask about:”) filters agent context (`repready_pro`, `coachai`, …) |
+| **Product scoping** | Product pill (“Ask about:”) adds `[Active product: …]` tags **and** a KB metadata filter (`product=<id>` OR `doc_type=customer_notes`); `general` skips the filter |
 | **KB sidebar** | Synced product list in the sidebar; highlights the active product |
-| **SSE streaming** | Token-by-token responses in the browser |
+| **SSE streaming** | Streamed responses in the browser (`streamFinalResponse` on `InvokeAgent`) |
 | **Session memory** | Bedrock `sessionId` per chat — follow-ups work without repeating context |
-| **Routing tags** | App embeds `[mode: prep/live]`, prospect context tags, and `[LIVE_CALL: …]` in `inputText` |
+| **Routing tags** | App embeds `[mode: prep/live]`, prospect tags, and `[PREP: …]` / `[LIVE_CALL: …]` in `inputText` |
 
 ---
 
@@ -119,7 +124,7 @@ Tools are implemented as **Lambda action groups** on the Bedrock Agent, not in t
 |-------|------------|
 | Backend | Flask, boto3 |
 | AI | Amazon Bedrock **Agent** + Knowledge Base |
-| Tools | AWS Lambda action groups (Calendar, Tavily, Resend, …) |
+| Tools | AWS Lambda action groups (Tavily, Resend, …) |
 | Frontend | Vanilla HTML, CSS, JavaScript |
 | State | `localStorage` (conversations), Bedrock sessions (agent memory) |
 | Deployment | Docker (optional) |
@@ -148,8 +153,10 @@ cp .env.example .env
 | `AWS_SECRET_ACCESS_KEY` | Yes* | AWS secret key |
 | `BEDROCK_AGENT_ID` | Yes | Bedrock Agent ID |
 | `BEDROCK_AGENT_ALIAS_ID` | Yes | Published alias ID the web app invokes |
+| `BEDROCK_KB_ID` | Yes** | Knowledge Base ID used for product metadata filters on `InvokeAgent` |
 
-\*On EC2, prefer an IAM instance role instead of keys in `.env`.
+\*On EC2, prefer an IAM instance role instead of keys in `.env`.  
+\*\*Required for product-scoped KB filtering. Without it, the app still runs but skips `knowledgeBaseConfigurations` (no hard product filter).
 
 Restart Flask after changing `.env` (`python app.py` loads config at startup).
 
@@ -178,12 +185,13 @@ docker run -p 5000:5000 --env-file .env repready
 1. **Open the app** → click **+ New Prospect Chat**.
 2. **Pick a KB prospect** (Alex, Marcus, or Priya) or enter any name and company manually. Company is required.
 3. **Before the call** (default) — ask about the prospect, company, objections, or product. Use the welcome chips or type freely.
-4. **Select product** via the pill in the input bar when the question is product-specific.
+4. **Select product** via the pill in the input bar when the question is product-specific (scopes KB retrieval + answer context). Use **All products** for cross-product comparisons.
 5. **On the call now** — switch the toggle when you pick up the phone. Describe what's happening; get 4 coached bullets + Next move.
 6. **Email team lead** (if action group is deployed) — e.g. *"Send mail to my team lead that Alex is still not sure about the product."*
 
 Routing behavior is mode-first: the app only tells the agent whether the turn is `prep` or `live`.
 In prep mode, the prompt instructions decide when to call `get_company_context` based on the rep's question text.
+When a specific product is selected, `sessionState` also applies a KB metadata filter: `(product = <id>) OR (doc_type = customer_notes)`. Prospect matching stays semantic via tags / query text.
 
 ---
 
@@ -236,8 +244,10 @@ repready-chatbot/
 
 1. Add `data/products/<product_id>.txt` with `[PRODUCT — TOPIC]` sections.
 2. Add metadata sidecar under `data/metadatafilter/<product_id>.txt.metadata.json` with `"product": "<product_id>"`.
-3. Upload to S3 and re-sync the Knowledge Base.
-4. Add the product to the `PRODUCTS` array in `static/js/app.js`.
+3. Upload the doc **and** sidecar to S3 (sidecar beside the source file as `<filename>.metadata.json`) and re-sync the Knowledge Base.
+4. Add the product to the `PRODUCTS` array in `static/js/state.js`.
+
+Customer notes need a sidecar with `"doc_type": "customer_notes"` so they remain retrievable when a product filter is active.
 
 ---
 
@@ -248,8 +258,10 @@ repready-chatbot/
 | Agent works in console but not web app | Alias vs DRAFT — update alias to latest prepared version; restart Flask |
 | Old “presales assistant” responses | Alias points to old version; orchestration template may duplicate outdated persona |
 | Email tool not invoked | Action group enabled on prepared version; instructions mention `send_call_update_email`; new chat (fresh `sessionId`) |
-| Person prep returns web data not notes | Agent instructions in prep mode + Customer Notes in KB with correct title |
+| Person prep returns web data not notes | Agent instructions in prep mode + Customer Notes in KB with correct title; notes sidecars have `doc_type=customer_notes` and are ingested |
+| Wrong product’s pricing / facts | Product pill selected; `BEDROCK_KB_ID` set; product metadata on S3 matches pill id; KB re-synced |
 | Live mode returns paragraphs not bullets | Agent instructions LIVE format; `[LIVE_CALL:` tag in `inputText` |
 | Prep mode too long / markdown essays | Agent instructions PREP format (max 6 bullets); re-Prepare alias |
+| Answer appears all at once (no typing) | `streamFinalResponse: True` on `InvokeAgent` (see `services/bedrock_agent_service.py`); agent role needs `bedrock:InvokeModelWithResponseStream` |
 
 ---
